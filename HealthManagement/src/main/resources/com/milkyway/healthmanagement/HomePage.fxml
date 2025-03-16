@@ -6,10 +6,14 @@
 <?import javafx.scene.chart.PieChart?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollPane?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.ColumnConstraints?>
+<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
@@ -108,7 +112,7 @@
                <center>
                   <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                      <children>
-                        <AnchorPane layoutX="210.0" layoutY="61.0" prefHeight="554.4" prefWidth="895.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                        <AnchorPane layoutX="210.0" layoutY="61.0" prefHeight="554.4" prefWidth="895.2" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
                               <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="254.0" prefWidth="867.0" stylesheets="@style/main.css">
                                  <styleClass>
@@ -228,6 +232,71 @@
                               </AnchorPane>
                            </children>
                         </AnchorPane>
+                        <VBox layoutX="138.0" layoutY="94.0" prefHeight="554.4" prefWidth="895.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                           <children>
+                              <HBox prefHeight="100.0" prefWidth="200.0">
+                                 <children>
+                                    <AnchorPane prefHeight="59.0" prefWidth="896.0">
+                                       <children>
+                                          <TextField layoutX="32.0" layoutY="38.0" prefHeight="27.0" prefWidth="790.0" styleClass="search" stylesheets="@style/main.css" text="Tìm Kiếm">
+                                             <font>
+                                                <Font size="13.0" />
+                                             </font>
+                                          </TextField>
+                                          <FontAwesomeIconView glyphName="SEARCH" layoutX="38.0" layoutY="59.0" size="1.6EM" />
+                                       </children>
+                                    </AnchorPane>
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="51.0" prefWidth="895.0" spacing="10.0">
+                                 <children>
+                                    <Button mnemonicParsing="false" stylesheets="@style/main.css">
+                                       <graphic>
+                                          <Label text="Danh Sách Bài Tập" />
+                                       </graphic>
+                                       <styleClass>
+                                          <String fx:value="nav-btn" />
+                                          <String fx:value="gradient-bg" />
+                                          <String fx:value="shadow" />
+                                       </styleClass>
+                                       <HBox.margin>
+                                          <Insets left="30.0" />
+                                       </HBox.margin>
+                                    </Button>
+                                    <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" stylesheets="@style/main.css">
+                                       <graphic>
+                                          <Label text="Gần Đây" />
+                                       </graphic>
+                                       <styleClass>
+                                          <String fx:value="nav-btn" />
+                                          <String fx:value="shadow" />
+                                          <String fx:value="gradient-bg" />
+                                       </styleClass>
+                                    </Button>
+                                 </children>
+                              </HBox>
+                              <HBox prefHeight="100.0" prefWidth="200.0" styleClass="shadow" stylesheets="@style/main.css" VBox.vgrow="ALWAYS">
+                                 <children>
+                                    <ScrollPane prefHeight="403.0" prefWidth="896.0">
+                                      <content>
+                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
+                                             <children>
+                                                <GridPane layoutX="-7.0" prefHeight="0.0" prefWidth="13.0">
+                                                  <columnConstraints>
+                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                                  </columnConstraints>
+                                                </GridPane>
+                                             </children>
+                                          </AnchorPane>
+                                      </content>
+                                    </ScrollPane>
+                                 </children>
+                                 <VBox.margin>
+                                    <Insets left="10.0" right="10.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                        </VBox>
                      </children>
                   </AnchorPane>
                </center>

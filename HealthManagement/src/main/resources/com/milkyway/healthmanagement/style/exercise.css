@@ -1,7 +1,4 @@
-/*
- * Empty Stylesheet file.
- */
-
-.mainFxmlClass {
-
+.exercise{
+    -fx-background-color: #fff;
+    -fx-background-radius: 30px;
 }
