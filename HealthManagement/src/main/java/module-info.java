@@ -7,4 +7,5 @@ module com.milkyway.healthmanagement {
 
     opens com.milkyway.healthmanagement to javafx.fxml;
     exports com.milkyway.healthmanagement;
+    requires java.persistence;
 }
