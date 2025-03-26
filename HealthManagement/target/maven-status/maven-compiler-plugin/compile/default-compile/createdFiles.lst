@@ -1,0 +1,7 @@
+com\milkyway\healthmanagement\mealfoodController.class
+com\milkyway\healthmanagement\App.class
+com\milkyway\healthmanagement\AddMealFoodController.class
+com\milkyway\healthmanagement\SecondaryController.class
+com\milkyway\healthmanagement\mealfoodController$NutritionData.class
+com\milkyway\healthmanagement\PrimaryController.class
+module-info.class
