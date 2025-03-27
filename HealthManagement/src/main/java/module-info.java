@@ -3,6 +3,8 @@ module com.milkyway.healthmanagement {
     requires javafx.fxml;
 
     requires java.base;
+    requires java.persistence;
+    
 
 
     opens com.milkyway.healthmanagement to javafx.fxml;
