@@ -18,7 +18,7 @@ public class MealFoodPK implements Serializable {
 
     @Basic(optional = false)
     @Column(name = "mealId")
-    private String mealId;
+    private int mealId;
     @Basic(optional = false)
     @Column(name = "foodId")
     private int foodId;
@@ -26,16 +26,16 @@ public class MealFoodPK implements Serializable {
     public MealFoodPK() {
     }
 
-    public MealFoodPK(String mealId, int foodId) {
+    public MealFoodPK(int mealId, int foodId) {
         this.mealId = mealId;
         this.foodId = foodId;
     }
 
-    public String getMealId() {
+    public int getMealId() {
         return mealId;
     }
 
-    public void setMealId(String mealId) {
+    public void setMealId(int mealId) {
         this.mealId = mealId;
     }
 
@@ -50,7 +50,7 @@ public class MealFoodPK implements Serializable {
     @Override
     public int hashCode() {
         int hash = 0;
-        hash += (mealId != null ? mealId.hashCode() : 0);
+        hash += (int) mealId;
         hash += (int) foodId;
         return hash;
     }
@@ -62,7 +62,7 @@ public class MealFoodPK implements Serializable {
             return false;
         }
         MealFoodPK other = (MealFoodPK) object;
-        if ((this.mealId == null && other.mealId != null) || (this.mealId != null && !this.mealId.equals(other.mealId))) {
+        if (this.mealId != other.mealId) {
             return false;
         }
         if (this.foodId != other.foodId) {

@@ -1,8 +1,8 @@
-CREATE DATABASE  IF NOT EXISTS `fitnessapp` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
-USE `fitnessapp`;
+CREATE DATABASE  IF NOT EXISTS `healthmanagementdb` /*!40100 DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci */ /*!80016 DEFAULT ENCRYPTION='N' */;
+USE `healthmanagementdb`;
 -- MySQL dump 10.13  Distrib 8.0.40, for Win64 (x86_64)
 --
--- Host: localhost    Database: fitnessapp
+-- Host: localhost    Database: healthmanagementdb
 -- ------------------------------------------------------
 -- Server version	9.1.0
 
@@ -25,16 +25,11 @@ DROP TABLE IF EXISTS `exercise`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `exercise` (
-  `idExercise` char(36) NOT NULL,
+  `idExercise` int NOT NULL AUTO_INCREMENT,
   `exerciseName` varchar(255) NOT NULL,
-  `imageExercise` blob,
-  `effortLevel` varchar(50) DEFAULT NULL,
-  `duration` time NOT NULL,
-  `energyBurn` double NOT NULL,
-  `userId` char(36) DEFAULT NULL,
-  PRIMARY KEY (`idExercise`),
-  KEY `userId` (`userId`),
-  CONSTRAINT `exercise_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
+  `imageExercise` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
+  `caloriesBurnedPerMin` float DEFAULT NULL,
+  PRIMARY KEY (`idExercise`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -45,6 +40,37 @@ CREATE TABLE `exercise` (
 LOCK TABLES `exercise` WRITE;
 /*!40000 ALTER TABLE `exercise` DISABLE KEYS */;
 /*!40000 ALTER TABLE `exercise` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `exerciselog`
+--
+
+DROP TABLE IF EXISTS `exerciselog`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `exerciselog` (
+  `idExLog` int NOT NULL AUTO_INCREMENT,
+  `effortLevel` varchar(50) DEFAULT NULL,
+  `duration` time NOT NULL,
+  `energyBurn` double NOT NULL,
+  `userId` int NOT NULL,
+  `exerciseId` int NOT NULL,
+  PRIMARY KEY (`idExLog`),
+  KEY `fk_exerciselog_exercise` (`exerciseId`),
+  KEY `fk_exerciselog_user` (`userId`),
+  CONSTRAINT `fk_exerciselog_exercise` FOREIGN KEY (`exerciseId`) REFERENCES `exercise` (`idExercise`) ON DELETE CASCADE,
+  CONSTRAINT `fk_exerciselog_user` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `exerciselog`
+--
+
+LOCK TABLES `exerciselog` WRITE;
+/*!40000 ALTER TABLE `exerciselog` DISABLE KEYS */;
+/*!40000 ALTER TABLE `exerciselog` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
@@ -82,11 +108,11 @@ DROP TABLE IF EXISTS `meal`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `meal` (
-  `idMeal` char(36) NOT NULL,
+  `idMeal` int NOT NULL AUTO_INCREMENT,
   `nameMeal` enum('Breakfast','Lunch','Dinner','Snack') NOT NULL,
   `totalCalories` double NOT NULL,
   `dateOfMeal` datetime NOT NULL,
-  `userId` char(36) DEFAULT NULL,
+  `userId` int DEFAULT NULL,
   PRIMARY KEY (`idMeal`),
   KEY `userId` (`userId`),
   CONSTRAINT `meal_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
@@ -110,7 +136,7 @@ DROP TABLE IF EXISTS `meal_food`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `meal_food` (
-  `mealId` char(36) NOT NULL,
+  `mealId` int NOT NULL,
   `foodId` int NOT NULL,
   `unit` enum('g','ml','piece') NOT NULL,
   `quantity` int NOT NULL,
@@ -138,15 +164,16 @@ DROP TABLE IF EXISTS `target`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `target` (
-  `idTarget` char(36) NOT NULL,
-  `targetName` varchar(255) NOT NULL,
+  `idTarget` int NOT NULL AUTO_INCREMENT,
+  `targetName` varchar(500) NOT NULL,
   `dateCreated` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `startDate` datetime NOT NULL,
   `endDate` datetime NOT NULL,
   `targetNumber` float NOT NULL,
-  `unit` enum('kg','lbs','km','miles') NOT NULL,
+  `unit` char(15) NOT NULL,
   `progress` float NOT NULL,
-  `userId` char(36) DEFAULT NULL,
+  `status` enum('Not Started','In Progress','Achieved','Failed','Cancelled') NOT NULL DEFAULT 'Not Started',
+  `userId` int DEFAULT NULL,
   PRIMARY KEY (`idTarget`),
   KEY `userId` (`userId`),
   CONSTRAINT `target_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
@@ -170,14 +197,15 @@ DROP TABLE IF EXISTS `user`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!50503 SET character_set_client = utf8mb4 */;
 CREATE TABLE `user` (
-  `id` char(36) NOT NULL,
+  `id` int NOT NULL AUTO_INCREMENT,
   `username` varchar(255) NOT NULL,
   `password` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL,
-  `fullname` varchar(255) DEFAULT NULL,
-  `dayOfBirth` datetime DEFAULT NULL,
-  `gender` char(1) DEFAULT NULL,
-  `phoneNumber` varchar(20) DEFAULT NULL,
+  `gender` varchar(10) DEFAULT NULL,
+  `current_weight` decimal(5,2) DEFAULT NULL,
+  `age` int DEFAULT NULL,
+  `height` int DEFAULT NULL,
+  `registration_date` date DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
@@ -192,6 +220,10 @@ LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'healthmanagementdb'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -202,4 +234,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-03-23 18:29:49
+-- Dump completed on 2025-03-26 21:20:56

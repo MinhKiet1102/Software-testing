@@ -5,11 +5,15 @@
 package com.milkyway.pojo;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
@@ -30,17 +34,19 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "User.findByUsername", query = "SELECT u FROM User u WHERE u.username = :username"),
     @NamedQuery(name = "User.findByPassword", query = "SELECT u FROM User u WHERE u.password = :password"),
     @NamedQuery(name = "User.findByEmail", query = "SELECT u FROM User u WHERE u.email = :email"),
-    @NamedQuery(name = "User.findByFullname", query = "SELECT u FROM User u WHERE u.fullname = :fullname"),
-    @NamedQuery(name = "User.findByDayOfBirth", query = "SELECT u FROM User u WHERE u.dayOfBirth = :dayOfBirth"),
     @NamedQuery(name = "User.findByGender", query = "SELECT u FROM User u WHERE u.gender = :gender"),
-    @NamedQuery(name = "User.findByPhoneNumber", query = "SELECT u FROM User u WHERE u.phoneNumber = :phoneNumber")})
+    @NamedQuery(name = "User.findByCurrentWeight", query = "SELECT u FROM User u WHERE u.currentWeight = :currentWeight"),
+    @NamedQuery(name = "User.findByAge", query = "SELECT u FROM User u WHERE u.age = :age"),
+    @NamedQuery(name = "User.findByHeight", query = "SELECT u FROM User u WHERE u.height = :height"),
+    @NamedQuery(name = "User.findByRegistrationDate", query = "SELECT u FROM User u WHERE u.registrationDate = :registrationDate")})
 public class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "id")
-    private String id;
+    private Integer id;
     @Basic(optional = false)
     @Column(name = "username")
     private String username;
@@ -50,41 +56,46 @@ public class User implements Serializable {
     @Basic(optional = false)
     @Column(name = "email")
     private String email;
-    @Column(name = "fullname")
-    private String fullname;
-    @Column(name = "dayOfBirth")
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date dayOfBirth;
     @Column(name = "gender")
-    private Character gender;
-    @Column(name = "phoneNumber")
-    private String phoneNumber;
+    private String gender;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "current_weight")
+    private BigDecimal currentWeight;
+    @Column(name = "age")
+    private Integer age;
+    @Column(name = "height")
+    private Integer height;
+    @Column(name = "registration_date")
+    @Temporal(TemporalType.DATE)
+    private Date registrationDate;
     @OneToMany(mappedBy = "userId")
     private Set<Meal> mealSet;
-    @OneToMany(mappedBy = "userId")
-    private Set<Exercise> exerciseSet;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "userId")
+    private Set<Exerciselog> exerciselogSet;
     @OneToMany(mappedBy = "userId")
     private Set<Target> targetSet;
+    
+    public static User currentUser;
 
     public User() {
     }
 
-    public User(String id) {
+    public User(Integer id) {
         this.id = id;
     }
 
-    public User(String id, String username, String password, String email) {
+    public User(Integer id, String username, String password, String email) {
         this.id = id;
         this.username = username;
         this.password = password;
         this.email = email;
     }
 
-    public String getId() {
+    public Integer getId() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(Integer id) {
         this.id = id;
     }
 
@@ -112,36 +123,44 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public String getFullname() {
-        return fullname;
-    }
-
-    public void setFullname(String fullname) {
-        this.fullname = fullname;
-    }
-
-    public Date getDayOfBirth() {
-        return dayOfBirth;
-    }
-
-    public void setDayOfBirth(Date dayOfBirth) {
-        this.dayOfBirth = dayOfBirth;
-    }
-
-    public Character getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(Character gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
-    public String getPhoneNumber() {
-        return phoneNumber;
+    public BigDecimal getCurrentWeight() {
+        return currentWeight;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
+    public void setCurrentWeight(BigDecimal currentWeight) {
+        this.currentWeight = currentWeight;
+    }
+
+    public Integer getAge() {
+        return age;
+    }
+
+    public void setAge(Integer age) {
+        this.age = age;
+    }
+
+    public Integer getHeight() {
+        return height;
+    }
+
+    public void setHeight(Integer height) {
+        this.height = height;
+    }
+
+    public Date getRegistrationDate() {
+        return registrationDate;
+    }
+
+    public void setRegistrationDate(Date registrationDate) {
+        this.registrationDate = registrationDate;
     }
 
     public Set<Meal> getMealSet() {
@@ -152,12 +171,12 @@ public class User implements Serializable {
         this.mealSet = mealSet;
     }
 
-    public Set<Exercise> getExerciseSet() {
-        return exerciseSet;
+    public Set<Exerciselog> getExerciselogSet() {
+        return exerciselogSet;
     }
 
-    public void setExerciseSet(Set<Exercise> exerciseSet) {
-        this.exerciseSet = exerciseSet;
+    public void setExerciselogSet(Set<Exerciselog> exerciselogSet) {
+        this.exerciselogSet = exerciselogSet;
     }
 
     public Set<Target> getTargetSet() {
