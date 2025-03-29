@@ -204,7 +204,7 @@
                                                         </Label>
                                                     </children>
                                                 </AnchorPane>
-                                        <TableView fx:id="finishedPlans_tableView" layoutX="14.0" layoutY="14.0" onMouseClicked="#finishedPlansSelectData" prefHeight="310.0" prefWidth="865.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="231.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
+                                        <TableView fx:id="finishedPlans_tableView" layoutX="14.0" layoutY="14.0" prefHeight="310.0" prefWidth="865.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="231.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
                                             <columns>
                                                 <TableColumn fx:id="finishedPlans_col_planID" prefWidth="61.0" text="Mã " />
                                                 <TableColumn fx:id="finishedPlans_col_plan" prefWidth="107.0" text="Kế hoạch" />
@@ -233,7 +233,7 @@
                                                 </Label>
                                                 <ComboBox fx:id="finishedPlans_status" layoutX="139.0" layoutY="68.0" prefHeight="25.0" prefWidth="118.0" promptText="Chọn..." AnchorPane.leftAnchor="137.0" AnchorPane.rightAnchor="35.0" />
                                                 <TextField fx:id="finishedPlans_planID" layoutX="142.0" layoutY="27.0" prefHeight="25.0" prefWidth="113.0" AnchorPane.leftAnchor="140.0" AnchorPane.rightAnchor="37.0" />
-                                                <Button fx:id="finishedPlans_updateBtn" layoutX="78.0" layoutY="114.0" mnemonicParsing="false" onAction="#finishedPlansUpdateBtn" prefHeight="49.0" prefWidth="190.0" styleClass="btn" stylesheets="@style/target.css" text="Cập nhật" AnchorPane.leftAnchor="76.0" AnchorPane.rightAnchor="75.0" />
+                                                <Button fx:id="finishedPlans_updateBtn" layoutX="78.0" layoutY="114.0" mnemonicParsing="false" prefHeight="49.0" prefWidth="190.0" styleClass="btn" stylesheets="@style/target.css" text="Cập nhật" AnchorPane.leftAnchor="76.0" AnchorPane.rightAnchor="75.0" />
                                             </children>
                                         </AnchorPane>
                                                 <AnchorPane layoutX="609.0" layoutY="337.0" prefHeight="180.0" prefWidth="270.0" styleClass="card" stylesheets="@style/target.css">
