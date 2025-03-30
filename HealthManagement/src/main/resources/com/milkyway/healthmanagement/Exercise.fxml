@@ -11,27 +11,24 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="215.0" prefWidth="225.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/23.0.1" fx:controller="com.milkyway.healthmanagement.ExerciseController">
+<AnchorPane id="AnchorPane" prefHeight="215.0" prefWidth="225.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.ExerciseController">
    <children>
-      <VBox layoutX="69.0" layoutY="8.0" prefHeight="215.0" prefWidth="225.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <VBox alignment="TOP_CENTER" layoutX="69.0" layoutY="8.0" prefHeight="215.0" prefWidth="225.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
-            <ImageView fitHeight="130.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
+            <ImageView fx:id="imageExercise" fitHeight="130.0" fitWidth="150.0" pickOnBounds="true" preserveRatio="true">
                <image>
-                  <Image url="@image/activity_group_Cardio.png" />
+                  <Image url="@image/Individual_Sport.png" />
                </image>
                <VBox.margin>
-                  <Insets left="50.0" top="10.0" />
+                  <Insets top="10.0" />
                </VBox.margin>
             </ImageView>
-            <HBox prefHeight="100.0" prefWidth="200.0">
+            <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
-                  <Label alignment="CENTER" prefHeight="19.0" prefWidth="226.0" text="Cardio">
+                  <Label fx:id="nameExerciseLabel" text="Label">
                      <font>
                         <Font size="20.0" />
                      </font>
-                     <HBox.margin>
-                        <Insets top="15.0" />
-                     </HBox.margin>
                   </Label>
                </children>
             </HBox>
@@ -43,7 +40,7 @@
       <URL value="@style/main.css" />
    </stylesheets>
    <styleClass>
-      <String fx:value="exercise" />
       <String fx:value="shadow" />
+      <String fx:value="exercise" />
    </styleClass>
 </AnchorPane>

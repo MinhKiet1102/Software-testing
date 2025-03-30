@@ -61,6 +61,15 @@ public class Exercise implements Serializable {
         this.exerciseName = exerciseName;
     }
 
+
+    public Exercise(Integer idExercise, String exerciseName, String imageExercise, float caloriesBurnedPerMin) {
+        this.idExercise = idExercise;
+        this.exerciseName = exerciseName;
+        this.imageExercise = imageExercise;
+        this.caloriesBurnedPerMin = caloriesBurnedPerMin;
+    }
+    
+
     public Integer getIdExercise() {
         return idExercise;
     }

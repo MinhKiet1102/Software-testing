@@ -45,7 +45,11 @@ public class Exerciselog implements Serializable {
     @Basic(optional = false)
     @Column(name = "duration")
     @Temporal(TemporalType.TIME)
-    private Date duration;
+    private int duration;
+    @Basic(optional = false)
+    @Column(name = "datetime")
+    @Temporal(TemporalType.DATE)
+    private Date datetime;
     @Basic(optional = false)
     @Column(name = "energyBurn")
     private double energyBurn;
@@ -63,10 +67,11 @@ public class Exerciselog implements Serializable {
         this.idExLog = idExLog;
     }
 
-    public Exerciselog(Integer idExLog, Date duration, double energyBurn) {
+    public Exerciselog(Integer idExLog, int duration, double energyBurn, Date datetime) {
         this.idExLog = idExLog;
         this.duration = duration;
         this.energyBurn = energyBurn;
+        this.datetime = datetime;
     }
 
     public Integer getIdExLog() {
@@ -85,13 +90,22 @@ public class Exerciselog implements Serializable {
         this.effortLevel = effortLevel;
     }
 
-    public Date getDuration() {
+    public int getDuration() {
         return duration;
     }
 
-    public void setDuration(Date duration) {
+    public void setDuration(int duration) {
         this.duration = duration;
     }
+    
+    public Date getDatetime() {
+        return datetime;
+    }
+
+    public void setDatetime(Date datetime) {
+        this.datetime = datetime;
+    }
+
 
     public double getEnergyBurn() {
         return energyBurn;
@@ -141,5 +155,4 @@ public class Exerciselog implements Serializable {
     public String toString() {
         return "com.milkyway.pojo.Exerciselog[ idExLog=" + idExLog + " ]";
     }
-    
 }
