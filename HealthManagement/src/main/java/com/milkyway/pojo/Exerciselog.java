@@ -106,6 +106,7 @@ public class Exerciselog implements Serializable {
         this.datetime = datetime;
     }
 
+
     public double getEnergyBurn() {
         return energyBurn;
     }
@@ -154,5 +155,4 @@ public class Exerciselog implements Serializable {
     public String toString() {
         return "com.milkyway.pojo.Exerciselog[ idExLog=" + idExLog + " ]";
     }
-
 }
