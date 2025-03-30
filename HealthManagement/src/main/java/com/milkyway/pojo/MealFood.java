@@ -58,7 +58,7 @@ public class MealFood implements Serializable {
         this.quantity = quantity;
     }
 
-    public MealFood(String mealId, int foodId) {
+    public MealFood(int mealId, int foodId) {
         this.mealFoodPK = new MealFoodPK(mealId, foodId);
     }
 

@@ -4,9 +4,18 @@
  */
 package com.milkyway.healthmanagement;
 
+import com.milkyway.pojo.Exercise;
+import java.io.InputStream;
 import java.net.URL;
+import java.sql.SQLException;
+
 import java.util.ResourceBundle;
+
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 
 /**
  * FXML Controller class
@@ -14,10 +23,28 @@ import javafx.fxml.Initializable;
  * @author ASUS
  */
 public class ExerciseController implements Initializable {
+    @FXML
+    private ImageView imageExercise;
 
-    /**
-     * Initializes the controller class.
-     */
+    @FXML
+    private Label nameExerciseLabel; 
+    
+    private Exercise exercise;
+    public void setData(Exercise exercise){
+        this.exercise = exercise;
+        nameExerciseLabel.setText(exercise.getExerciseName());
+        String imgScr = "/com/milkyway/healthmanagement/image/" + exercise.getImageExercise();
+        InputStream input = getClass().getResourceAsStream(imgScr);
+        if(input != null)
+        {
+            Image image = new Image(input);
+            imageExercise.setImage(image);
+        }
+        else {
+                 System.err.println("Không tìm thấy ảnh mặc định!");
+            }
+    }
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         // TODO

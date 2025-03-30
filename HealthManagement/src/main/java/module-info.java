@@ -3,9 +3,12 @@ module com.milkyway.healthmanagement {
     requires javafx.fxml;
 
     requires java.base;
+    requires java.persistence;
+    requires java.sql;
+    
 
 
     opens com.milkyway.healthmanagement to javafx.fxml;
     exports com.milkyway.healthmanagement;
-    requires java.persistence;
+    exports com.milkyway.pojo;
 }

@@ -9,6 +9,8 @@ import java.util.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -39,9 +41,10 @@ public class Target implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idTarget")
-    private String idTarget;
+    private Integer idTarget;
     @Basic(optional = false)
     @Column(name = "targetName")
     private String targetName;
@@ -76,11 +79,11 @@ public class Target implements Serializable {
     public Target() {
     }
 
-    public Target(String idTarget) {
+    public Target(Integer idTarget) {
         this.idTarget = idTarget;
     }
 
-    public Target(String idTarget, String targetName, Date dateCreated, Date startDate, Date endDate, float targetNumber, String unit, float progress, String status) {
+    public Target(Integer idTarget, String targetName, Date dateCreated, Date startDate, Date endDate, float targetNumber, String unit, float progress, String status) {
         this.idTarget = idTarget;
         this.targetName = targetName;
         this.dateCreated = dateCreated;
@@ -92,11 +95,11 @@ public class Target implements Serializable {
         this.status = status;
     }
 
-    public String getIdTarget() {
+    public Integer getIdTarget() {
         return idTarget;
     }
 
-    public void setIdTarget(String idTarget) {
+    public void setIdTarget(Integer idTarget) {
         this.idTarget = idTarget;
     }
 

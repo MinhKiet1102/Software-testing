@@ -5,19 +5,18 @@
 package com.milkyway.pojo;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.util.Set;
 import javax.persistence.Basic;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.Lob;
-import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 /**
  *
@@ -29,54 +28,51 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "Exercise.findAll", query = "SELECT e FROM Exercise e"),
     @NamedQuery(name = "Exercise.findByIdExercise", query = "SELECT e FROM Exercise e WHERE e.idExercise = :idExercise"),
     @NamedQuery(name = "Exercise.findByExerciseName", query = "SELECT e FROM Exercise e WHERE e.exerciseName = :exerciseName"),
-    @NamedQuery(name = "Exercise.findByEffortLevel", query = "SELECT e FROM Exercise e WHERE e.effortLevel = :effortLevel"),
-    @NamedQuery(name = "Exercise.findByDuration", query = "SELECT e FROM Exercise e WHERE e.duration = :duration"),
-    @NamedQuery(name = "Exercise.findByEnergyBurn", query = "SELECT e FROM Exercise e WHERE e.energyBurn = :energyBurn")})
+    @NamedQuery(name = "Exercise.findByImageExercise", query = "SELECT e FROM Exercise e WHERE e.imageExercise = :imageExercise"),
+    @NamedQuery(name = "Exercise.findByCaloriesBurnedPerMin", query = "SELECT e FROM Exercise e WHERE e.caloriesBurnedPerMin = :caloriesBurnedPerMin")})
 public class Exercise implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idExercise")
-    private String idExercise;
+    private Integer idExercise;
     @Basic(optional = false)
     @Column(name = "exerciseName")
     private String exerciseName;
-    @Lob
     @Column(name = "imageExercise")
-    private byte[] imageExercise;
-    @Column(name = "effortLevel")
-    private String effortLevel;
-    @Basic(optional = false)
-    @Column(name = "duration")
-    @Temporal(TemporalType.TIME)
-    private Date duration;
-    @Basic(optional = false)
-    @Column(name = "energyBurn")
-    private double energyBurn;
-    @JoinColumn(name = "userId", referencedColumnName = "id")
-    @ManyToOne
-    private User userId;
+    private String imageExercise;
+    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "caloriesBurnedPerMin")
+    private Float caloriesBurnedPerMin;
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
+    private Set<Exerciselog> exerciselogSet;
 
     public Exercise() {
     }
 
-    public Exercise(String idExercise) {
+    public Exercise(Integer idExercise) {
         this.idExercise = idExercise;
     }
 
-    public Exercise(String idExercise, String exerciseName, Date duration, double energyBurn) {
+    public Exercise(Integer idExercise, String exerciseName) {
         this.idExercise = idExercise;
         this.exerciseName = exerciseName;
-        this.duration = duration;
-        this.energyBurn = energyBurn;
     }
 
-    public String getIdExercise() {
+    public Exercise(Integer idExercise, String exerciseName, String imageExercise, float caloriesBurnedPerMin) {
+        this.idExercise = idExercise;
+        this.exerciseName = exerciseName;
+        this.imageExercise = imageExercise;
+        this.caloriesBurnedPerMin = caloriesBurnedPerMin;
+    }
+    
+    public Integer getIdExercise() {
         return idExercise;
     }
 
-    public void setIdExercise(String idExercise) {
+    public void setIdExercise(Integer idExercise) {
         this.idExercise = idExercise;
     }
 
@@ -88,44 +84,28 @@ public class Exercise implements Serializable {
         this.exerciseName = exerciseName;
     }
 
-    public byte[] getImageExercise() {
+    public String getImageExercise() {
         return imageExercise;
     }
 
-    public void setImageExercise(byte[] imageExercise) {
+    public void setImageExercise(String imageExercise) {
         this.imageExercise = imageExercise;
     }
 
-    public String getEffortLevel() {
-        return effortLevel;
+    public Float getCaloriesBurnedPerMin() {
+        return caloriesBurnedPerMin;
     }
 
-    public void setEffortLevel(String effortLevel) {
-        this.effortLevel = effortLevel;
+    public void setCaloriesBurnedPerMin(Float caloriesBurnedPerMin) {
+        this.caloriesBurnedPerMin = caloriesBurnedPerMin;
     }
 
-    public Date getDuration() {
-        return duration;
+    public Set<Exerciselog> getExerciselogSet() {
+        return exerciselogSet;
     }
 
-    public void setDuration(Date duration) {
-        this.duration = duration;
-    }
-
-    public double getEnergyBurn() {
-        return energyBurn;
-    }
-
-    public void setEnergyBurn(double energyBurn) {
-        this.energyBurn = energyBurn;
-    }
-
-    public User getUserId() {
-        return userId;
-    }
-
-    public void setUserId(User userId) {
-        this.userId = userId;
+    public void setExerciselogSet(Set<Exerciselog> exerciselogSet) {
+        this.exerciselogSet = exerciselogSet;
     }
 
     @Override

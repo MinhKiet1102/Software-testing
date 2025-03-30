@@ -11,6 +11,8 @@ import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
@@ -37,9 +39,10 @@ public class Meal implements Serializable {
 
     private static final long serialVersionUID = 1L;
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Basic(optional = false)
     @Column(name = "idMeal")
-    private String idMeal;
+    private Integer idMeal;
     @Basic(optional = false)
     @Column(name = "nameMeal")
     private String nameMeal;
@@ -59,22 +62,22 @@ public class Meal implements Serializable {
     public Meal() {
     }
 
-    public Meal(String idMeal) {
+    public Meal(Integer idMeal) {
         this.idMeal = idMeal;
     }
 
-    public Meal(String idMeal, String nameMeal, double totalCalories, Date dateOfMeal) {
+    public Meal(Integer idMeal, String nameMeal, double totalCalories, Date dateOfMeal) {
         this.idMeal = idMeal;
         this.nameMeal = nameMeal;
         this.totalCalories = totalCalories;
         this.dateOfMeal = dateOfMeal;
     }
 
-    public String getIdMeal() {
+    public Integer getIdMeal() {
         return idMeal;
     }
 
-    public void setIdMeal(String idMeal) {
+    public void setIdMeal(Integer idMeal) {
         this.idMeal = idMeal;
     }
 
