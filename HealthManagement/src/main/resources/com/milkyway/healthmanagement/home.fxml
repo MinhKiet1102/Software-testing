@@ -16,7 +16,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.PrimaryController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.HomeController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
@@ -32,28 +32,28 @@
                                     <Font size="20.0" />
                                  </font>
                               </Label>
-                              <Label alignment="CENTER" layoutX="5.0" layoutY="146.0" prefHeight="30.0" prefWidth="178.0" text="Tên" textFill="#1bac5a">
+                              <Label fx:id="username" alignment="CENTER" layoutX="5.0" layoutY="146.0" prefHeight="30.0" prefWidth="178.0" text="Tên" textFill="#1bac5a">
                                  <font>
                                     <Font name="System Bold" size="20.0" />
                                  </font>
                               </Label>
                               <Line endX="75.99998474121094" endY="-1.52587890625E-5" layoutX="100.0" layoutY="193.0" startX="-71.19999694824219" startY="-1.52587890625E-5" stroke="WHITE" />
-                              <Button layoutX="7.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
+                              <Button layoutX="7.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
                                  <graphic>
                                     <FontAwesomeIconView fill="WHITE" glyphName="DASHBOARD" size="1.5EM" />
                                  </graphic>
                               </Button>
-                              <Button layoutX="7.0" layoutY="280.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" styleClass="nav-btn" stylesheets="@style/main.css" text="Bài Tập">
+                              <Button layoutX="7.0" layoutY="280.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToExercisePage" styleClass="nav-btn" stylesheets="@style/main.css" text="Bài Tập">
                                  <graphic>
                                     <FontAwesomeIconView fill="WHITE" glyphName="BOOK" size="1.5EM" />
                                  </graphic>
                               </Button>
-                              <Button layoutX="9.0" layoutY="318.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" styleClass="nav-btn" stylesheets="@style/main.css" text="Dinh Dưỡng">
+                              <Button layoutX="9.0" layoutY="318.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToMealFood" styleClass="nav-btn" stylesheets="@style/main.css" text="Dinh Dưỡng">
                                  <graphic>
                                     <FontAwesomeIconView fill="WHITE" glyphName="APPLE" size="1.5EM" />
                                  </graphic>
                               </Button>
-                              <Button layoutX="9.0" layoutY="356.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" styleClass="nav-btn" stylesheets="@style/main.css" text="Mục Tiêu -  Kế Hoạch">
+                              <Button layoutX="9.0" layoutY="356.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToTarget" styleClass="nav-btn" stylesheets="@style/main.css" text="Mục Tiêu -  Kế Hoạch">
                                  <graphic>
                                     <FontAwesomeIconView fill="WHITE" glyphName="BULLSEYE" size="1.5EM" />
                                  </graphic>
@@ -61,7 +61,7 @@
                                     <Font name="Arial" size="12.0" />
                                  </font>
                               </Button>
-                              <Button layoutX="14.0" layoutY="514.0" mnemonicParsing="false" stylesheets="@style/main.css">
+                              <Button fx:id="logout_btn" layoutX="14.0" layoutY="514.0" mnemonicParsing="false" onAction="#logout" stylesheets="@style/main.css">
                                  <graphic>
                                     <FontAwesomeIconView glyphName="SIGN_OUT" size="1.6EM" />
                                  </graphic>
