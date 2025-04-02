@@ -20,7 +20,7 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.PrimaryController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.ExercisePageController">
    <children>
       <AnchorPane prefHeight="200.0" prefWidth="200.0">
          <children>
@@ -234,11 +234,11 @@
                         </AnchorPane>
                         <VBox layoutX="138.0" layoutY="94.0" prefHeight="554.4" prefWidth="895.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                            <children>
-                              <HBox prefHeight="100.0" prefWidth="200.0">
+                              <HBox prefHeight="91.0" prefWidth="895.0">
                                  <children>
-                                    <AnchorPane prefHeight="59.0" prefWidth="896.0">
+                                    <AnchorPane prefHeight="2.0" prefWidth="896.0">
                                        <children>
-                                          <TextField layoutX="32.0" layoutY="38.0" prefHeight="27.0" prefWidth="790.0" styleClass="search" stylesheets="@style/main.css" text="Tìm Kiếm">
+                                          <TextField fx:id="txtFind" layoutX="32.0" layoutY="38.0" prefHeight="27.0" prefWidth="790.0" promptText="Tìm Kiếm" styleClass="search" stylesheets="@style/main.css">
                                              <font>
                                                 <Font size="13.0" />
                                              </font>
@@ -250,7 +250,7 @@
                               </HBox>
                               <HBox prefHeight="51.0" prefWidth="895.0" spacing="10.0">
                                  <children>
-                                    <Button mnemonicParsing="false" stylesheets="@style/main.css">
+                                    <Button mnemonicParsing="false" onAction="#SwitchToExercisePage" stylesheets="@style/main.css">
                                        <graphic>
                                           <Label text="Danh Sách Bài Tập" />
                                        </graphic>
@@ -263,9 +263,9 @@
                                           <Insets left="30.0" />
                                        </HBox.margin>
                                     </Button>
-                                    <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" stylesheets="@style/main.css">
+                                    <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#SwitchToExerciseLog" stylesheets="@style/main.css">
                                        <graphic>
-                                          <Label text="Gần Đây" />
+                                          <Label text="Thông Tin Bài Tập" />
                                        </graphic>
                                        <styleClass>
                                           <String fx:value="nav-btn" />
@@ -275,20 +275,16 @@
                                     </Button>
                                  </children>
                               </HBox>
-                              <HBox prefHeight="100.0" prefWidth="200.0" styleClass="shadow" stylesheets="@style/main.css" VBox.vgrow="ALWAYS">
+                              <HBox prefHeight="411.0" prefWidth="895.0" styleClass="shadow" stylesheets="@style/main.css">
                                  <children>
-                                    <ScrollPane prefHeight="403.0" prefWidth="896.0">
-                                      <content>
-                                        <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="200.0" prefWidth="200.0">
-                                             <children>
-                                                <GridPane layoutX="-7.0" prefHeight="0.0" prefWidth="13.0">
-                                                  <columnConstraints>
-                                                    <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                  </columnConstraints>
-                                                </GridPane>
-                                             </children>
-                                          </AnchorPane>
-                                      </content>
+                                    <ScrollPane fx:id="scrollPanel" prefHeight="411.0" prefWidth="894.0">
+                                       <content>
+                                          <GridPane fx:id="gridPane" prefHeight="11.0" prefWidth="25.0">
+                                            <columnConstraints>
+                                              <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
+                                            </columnConstraints>
+                                          </GridPane>
+                                       </content>
                                     </ScrollPane>
                                  </children>
                                  <VBox.margin>

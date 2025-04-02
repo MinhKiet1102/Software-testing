@@ -6,7 +6,12 @@ package com.milkyway.healthmanagement;
 
 import java.net.URL;
 import java.util.ResourceBundle;
+import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
+import javafx.scene.control.DatePicker;
+import javafx.scene.control.TextField;
 
 /**
  * FXML Controller class
@@ -15,12 +20,30 @@ import javafx.fxml.Initializable;
  */
 public class ExerciseDetailController extends SwitchSceneController implements Initializable {
 
-    /**
-     * Initializes the controller class.
-     */
+    @FXML
+    private DatePicker dtpDate;
+
+    @FXML
+    private TextField txtDuration;
+
+    @FXML
+    private ComboBox<String> txtEffort;
+
+    @FXML
+    private TextField txtExercise;
+    
+    @FXML
+    private Button btnCancel;
+
+    @FXML
+    private Button btnSave;
+    
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
-    }    
-    
+        if (txtEffort != null) {
+            txtEffort.getItems().addAll("Nhẹ", "Vừa", "Nặng");}    
+        else {
+            System.err.println("Lỗi: ComboBox txtEffort chưa được khởi tạo từ FXML!");
+        }
+    }
 }

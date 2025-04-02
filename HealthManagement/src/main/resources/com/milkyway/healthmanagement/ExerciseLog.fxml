@@ -41,6 +41,7 @@
                               </Label>
                               <Line endX="75.99998474121094" endY="-1.52587890625E-5" layoutX="100.0" layoutY="193.0" startX="-71.19999694824219" startY="-1.52587890625E-5" stroke="WHITE" />
                               <Button layoutX="7.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
+
                                  <graphic>
                                     <FontAwesomeIconView fill="WHITE" glyphName="DASHBOARD" size="1.5EM" />
                                  </graphic>
@@ -51,6 +52,7 @@
                                  </graphic>
                               </Button>
                               <Button layoutX="9.0" layoutY="318.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToMealFood" styleClass="nav-btn" stylesheets="@style/main.css" text="Dinh Dưỡng">
+
                                  <graphic>
                                     <FontAwesomeIconView fill="WHITE" glyphName="APPLE" size="1.5EM" />
                                  </graphic>
@@ -64,6 +66,7 @@
                                  </font>
                               </Button>
                               <Button fx:id="logout_btn" layoutX="14.0" layoutY="514.0" mnemonicParsing="false" onAction="#logout" stylesheets="@style/main.css">
+
                                  <graphic>
                                     <FontAwesomeIconView glyphName="SIGN_OUT" size="1.6EM" />
                                  </graphic>
