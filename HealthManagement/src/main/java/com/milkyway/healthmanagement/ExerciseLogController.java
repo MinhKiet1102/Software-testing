@@ -181,6 +181,8 @@ public class ExerciseLogController extends SwitchSceneController implements Init
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        displayUsername();
+        
         this.loadTableView();
     }
 

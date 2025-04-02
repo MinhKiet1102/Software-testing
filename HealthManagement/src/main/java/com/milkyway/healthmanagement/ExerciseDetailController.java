@@ -18,7 +18,7 @@ import javafx.scene.control.TextField;
  *
  * @author ASUS
  */
-public class ExerciseDetailController implements Initializable {
+public class ExerciseDetailController extends SwitchSceneController implements Initializable {
 
     @FXML
     private DatePicker dtpDate;

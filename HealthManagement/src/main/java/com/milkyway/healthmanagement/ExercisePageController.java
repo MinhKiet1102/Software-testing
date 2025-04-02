@@ -92,6 +92,8 @@ public class ExercisePageController extends SwitchSceneController implements Ini
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            displayUsername();
+            
             loadExercise(null);
         } catch (IOException ex) {
             Logger.getLogger(ExercisePageController.class.getName()).log(Level.SEVERE, null, ex);
