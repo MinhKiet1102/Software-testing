@@ -1,15 +1,10 @@
 com\milkyway\pojo\MealFoodPK.class
-com\milkyway\healthmanagement\TargetController.class
 com\milkyway\healthmanagement\MealFoodController.class
 com\milkyway\healthmanagement\ExerciseLogController$ExerciseTableRow.class
 com\milkyway\healthmanagement\TargetController.class
 com\milkyway\service\ExerciseService.class
 com\milkyway\interfaces\ExerciseLogInterface.class
 com\milkyway\service\TargetService.class
-com\milkyway\healthmanagement\ExerciseLogController$ExerciseTableRow.class
-com\milkyway\healthmanagement\TargetController.class
-com\milkyway\service\ExerciseService.class
-com\milkyway\interfaces\ExerciseLogInterface.class
 com\milkyway\pojo\Meal.class
 com\milkyway\service\LoginService.class
 com\milkyway\healthmanagement\ExerciseController.class
@@ -28,6 +23,4 @@ com\milkyway\healthmanagement\SwitchSceneController.class
 com\milkyway\pojo\Target.class
 com\milkyway\healthmanagement\ExerciseLogController.class
 com\milkyway\pojo\Food.class
-com\milkyway\healthmanagement\ExerciseLogController$1.class
 com\milkyway\healthmanagement\LoginController.class
-
