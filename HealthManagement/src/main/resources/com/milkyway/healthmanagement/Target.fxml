@@ -172,7 +172,7 @@
                                           </Label>
                                                     </children>
                                                 </AnchorPane>
-                                                <TableView fx:id="myPlans_tableView" layoutX="14.0" layoutY="229.0" onMouseClicked="#myPlansSelectData" prefHeight="294.0" prefWidth="830.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="229.0">
+                                                <TableView fx:id="myPlans_tableView" layoutX="14.0" layoutY="229.0" onMouseClicked="#myPlansSelectData" prefHeight="294.0" prefWidth="830.0" stylesheets="@style/target.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="229.0">
                                                     <columns>
                                                         <TableColumn fx:id="myPlans_col_plan" prefWidth="256.0" text="Kế hoạch" />
                                                         <TableColumn fx:id="myPlans_col_target" prefWidth="186.0" text="Mục tiêu" />
@@ -206,7 +206,7 @@
                                                         </Label>
                                                     </children>
                                                 </AnchorPane>
-                                                <TableView fx:id="finishedPlans_tableView" layoutX="14.0" layoutY="14.0" onMouseClicked="#finishedPlansSelectData" prefHeight="310.0" prefWidth="865.0" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="231.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
+                                                <TableView fx:id="finishedPlans_tableView" layoutX="14.0" layoutY="14.0" onMouseClicked="#finishedPlansSelectData" prefHeight="310.0" prefWidth="865.0" stylesheets="@style/target.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="231.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
                                                     <columns>
                                                         <TableColumn fx:id="finishedPlans_col_planID" prefWidth="61.0" text="Mã " />
                                                         <TableColumn fx:id="finishedPlans_col_plan" prefWidth="107.0" text="Kế hoạch" />
