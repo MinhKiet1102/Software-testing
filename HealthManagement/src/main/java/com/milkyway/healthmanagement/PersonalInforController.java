@@ -4,8 +4,10 @@
  */
 package com.milkyway.healthmanagement;
 
+import com.milkyway.pojo.History;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
+import com.milkyway.service.HistoryService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -16,19 +18,23 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
+import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
-import javafx.scene.control.Label;
 import javafx.scene.control.PasswordField;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
-import javafx.stage.Stage;
+import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.text.Text;
 
 /**
  * FXML Controller class
@@ -51,9 +57,41 @@ public class PersonalInforController extends SwitchSceneController implements In
 
     @FXML
     private TextField newWeight;
-    
+
     @FXML
-    private Label username;
+    private TextField newHeight;
+
+    @FXML
+    private Text CurrentBMI;
+
+    @FXML
+    private Text CurrentWeight;
+
+    @FXML
+    private Text ChangeRecommendation;
+
+    @FXML
+    private Text WeightChange;
+
+    @FXML
+    private Text CaloriesPerDay;
+
+    @FXML
+    private Text WeightStatus;
+
+    @FXML
+    private Text OptimalWeight;
+
+    @FXML
+    private Text totalEatenCaloriesText;
+
+    @FXML
+    private Text totalBurnedCaloriesText;
+
+    @FXML
+    private Text totalEnteredCalories;
+
+    private User signedInUser;
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
@@ -64,7 +102,7 @@ public class PersonalInforController extends SwitchSceneController implements In
     }
 
     public void handleUpdateUserName() throws SQLException {
-        int userId = User.currentUser.getId();
+        int userId = User.getCurrentUser().getId();
         String newusername = newUsername.getText();
 
         if (newusername == null || newusername.trim().isEmpty()) {
@@ -76,7 +114,7 @@ public class PersonalInforController extends SwitchSceneController implements In
         updateUsername(userId, newusername);
         newUsername.clear();
         showAlert(Alert.AlertType.INFORMATION, "Thành công", "Thay đổi tên đăng nhập thành công!");
-        User.currentUser.setUsername(newusername);
+        User.getCurrentUser().setUsername(newusername);
     }
 
     public void updateUsername(int userId, String newUsername) throws SQLException {
@@ -103,7 +141,7 @@ public class PersonalInforController extends SwitchSceneController implements In
     }
 
     public void handleUpdatePassword(ActionEvent event) throws IOException, SQLException {
-        int userId = User.currentUser.getId();
+        int userId = User.getCurrentUser().getId();
 
         String newpassword = newPassword.getText();
         String newconfirmPassword = newConfirmPassword.getText();
@@ -156,7 +194,7 @@ public class PersonalInforController extends SwitchSceneController implements In
     }
 
     public void handleUpdateWeight() throws SQLException {
-        int userId = User.currentUser.getId();
+        int userId = User.getCurrentUser().getId();
         LocalDate weightDate = newDateAddWeight.getValue();
 
         if (weightDate == null) {
@@ -168,27 +206,68 @@ public class PersonalInforController extends SwitchSceneController implements In
         Date utilDate = Date.from(instant);
 
         String dateWeight = newWeight.getText();
-        if (dateWeight.isEmpty()) {
-            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Cân nặng mới không được để trống!");
+        String heightText = newHeight.getText();
+
+        if (dateWeight.isEmpty() && (heightText == null || heightText.isEmpty())) {
+            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Hãy nhập ít nhất một trong hai giá trị: cân nặng hoặc chiều cao.");
             return;
         }
 
-        try {
-            BigDecimal weightValue = new BigDecimal(dateWeight);
+        // Xử lý cập nhật cân nặng nếu có
+        BigDecimal weightValue = null;
+        if (!dateWeight.isEmpty()) {
+            try {
+                weightValue = new BigDecimal(dateWeight);
 
-            if (weightValue.compareTo(BigDecimal.ZERO) <= 0) {
-                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị trọng số dương khác không.");
+                if (weightValue.compareTo(BigDecimal.ZERO) <= 0) {
+                    showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị trọng số dương khác không.");
+                    return;
+                }
+
+                updateWeight(userId, weightValue);
+                User.getCurrentUser().setCurrentWeight(weightValue);
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị trọng lượng hợp lệ.");
                 return;
             }
-
-            updateWeight(userId, weightValue);
-            newDateAddWeight.setValue(null);
-            newWeight.clear();
-            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Thay đổi cân nặng thành công!");
-            User.currentUser.setCurrentWeight(weightValue);
-        } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị trọng lượng hợp lệ.");
         }
+
+        // Xử lý cập nhật chiều cao nếu có
+        Integer heightValue = null;
+        if (heightText != null && !heightText.isEmpty()) {
+            try {
+                heightValue = Integer.parseInt(heightText);
+
+                if (heightValue <= 0) {
+                    showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập chiều cao dương hợp lệ.");
+                    return;
+                }
+
+                updateHeight(userId, heightValue);
+                User.getCurrentUser().setHeight(heightValue);
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị chiều cao hợp lệ.");
+                return;
+            }
+        }
+
+        // Thêm dữ liệu vào bảng history
+        History history = new History();
+        history.setHistoryDate(utilDate);
+        history.setHistoryWeight(weightValue);
+        history.setHistoryHeight(heightValue);
+        history.setUserId(User.getCurrentUser());
+
+        HistoryService historyService = new HistoryService();
+        historyService.save(history);
+
+        // Cập nhật bảng hiển thị
+        updateWeightHistoryTable();
+
+        newWeight.clear();
+        newHeight.clear();
+
+        showAlert(Alert.AlertType.INFORMATION, "Thành công", "Cập nhật thông tin thành công!");
     }
 
     public void updateWeight(int userId, BigDecimal newWeight) throws SQLException {
@@ -214,12 +293,161 @@ public class PersonalInforController extends SwitchSceneController implements In
         }
     }
 
+    public void updateHeight(int userId, int newHeight) throws SQLException {
+        Connection con = JdbcUtils.getConn();
+        if (con == null) {
+            return;
+        }
+
+        String query = "UPDATE user SET height=? WHERE id=?;";
+
+        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+            preparedStatement.setInt(1, newHeight);
+            preparedStatement.setInt(2, userId);
+            preparedStatement.executeUpdate();
+        } catch (SQLException se) {
+            se.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException throwables) {
+                throwables.printStackTrace();
+            }
+        }
+    }
+
+//    private double calculateAndDisplayTotalEatenCalories() {
+//        UserFoodDaoImpl userFoodDao =new UserFoodDaoImpl();
+//
+//        int userId = User.currentUser.getId();
+//
+//        LocalDate foodDate = LocalDate.now();
+//        Instant instant = foodDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+//        Date utilDate = Date.from(instant);
+//
+//        double totalCalories= userFoodDao.calculateTotalCalories(userId,utilDate);
+//        totalEatenCaloriesText.setText(String.valueOf(totalCalories));
+//        return  totalCalories;
+//    }
+//    private double calculateAndDisplayTotalBurnedCalories() {
+//        UserExerciseDaoImpl userExerciseDao = new UserExerciseDaoImpl();
+//
+//        int userId = User.currentUser.getId();
+//
+//        LocalDate exerciseDate = LocalDate.now();
+//        Instant instant = exerciseDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
+//        Date utilDate = Date.from(instant);
+//        double totalCalories= userExerciseDao.calculateTotalBurnedCalories(userId,utilDate);
+//        totalBurnedCaloriesText.setText(String.valueOf(totalCalories));
+//        return totalCalories;
+//    }
+//    private void calculateAndDisplayTotalEnteredCalories(){
+//        double enteringBodyCalories= calculateAndDisplayTotalEatenCalories()-calculateAndDisplayTotalBurnedCalories();
+//        totalEnteredCalories.setText(String.valueOf(enteringBodyCalories));
+//
+//    }
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        displayUsername();
-        
-        newDateAddWeight.setValue(LocalDate.now());
-        
+        try {
+            displayUsername();
+
+            newDateAddWeight.setValue(LocalDate.now());
+
+            signedInUser = User.getCurrentUser();
+
+            initializeWeightHistoryTable();
+            updateWeightHistoryTable();
+
+            HistoryService history = new HistoryService();
+            BigDecimal latestWeight = history.findLatestHistoryByUserId(User.getCurrentUser().getId()).getHistoryWeight();
+            User.getCurrentUser().setCurrentWeight(latestWeight);
+
+            double bmi = signedInUser.calculateBMI();
+            BigDecimal weightToLoseOrGain = signedInUser.calculateWeightToLoseOrGain();
+            int caloriesPerDay = signedInUser.calculateCaloriesPerDay();
+
+            // Update UI elements
+            CurrentBMI.setText(String.valueOf(bmi));
+            CurrentWeight.setText(String.valueOf(signedInUser.getCurrentWeight()));
+            ChangeRecommendation.setText(signedInUser.determineWeightChangeRecommendation());
+            WeightChange.setText(weightToLoseOrGain.toString());
+            CaloriesPerDay.setText(String.valueOf(caloriesPerDay));
+            WeightStatus.setText(signedInUser.determineWeightStatus());
+            OptimalWeight.setText(String.valueOf(signedInUser.calculateOptimalWeight()));
+
+//        calculateAndDisplayTotalEatenCalories();
+//        calculateAndDisplayTotalBurnedCalories();
+//        calculateAndDisplayTotalEnteredCalories();
+        } catch (SQLException ex) {
+            Logger.getLogger(PersonalInforController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
+    }
+
+    @FXML
+    private TableView<WeightHistoryRow> weightHistoryTable;
+
+    @FXML
+    private TableColumn<WeightHistoryRow, String> dateColumn;
+
+    @FXML
+    private TableColumn<WeightHistoryRow, String> weightColumn;
+
+    @FXML
+    private TableColumn<WeightHistoryRow, String> heightColumn;
+
+    private ObservableList<WeightHistoryRow> weightHistoryData = FXCollections.observableArrayList();
+
+    private void updateWeightHistoryTable() throws SQLException {
+        HistoryService history = new HistoryService();
+        int userId = User.getCurrentUser().getId();
+        List<History> historyList = history.findAllByUserId(userId);
+
+        weightHistoryData.clear();
+        for (History h : historyList) {
+            WeightHistoryRow row = new WeightHistoryRow(
+                    h.getHistoryDate().toString(),
+                    String.valueOf(h.getHistoryWeight()),
+                    String.valueOf(h.getHistoryHeight()) // Thêm height
+            );
+            weightHistoryData.add(row);
+        }
+
+        weightHistoryTable.setItems(weightHistoryData);
+    }
+
+    private void initializeWeightHistoryTable() {
+        weightHistoryTable.getColumns().clear();
+        dateColumn.setCellValueFactory(new PropertyValueFactory<>("date"));
+        weightColumn.setCellValueFactory(new PropertyValueFactory<>("weight"));
+        heightColumn.setCellValueFactory(new PropertyValueFactory<>("height"));
+
+        weightHistoryTable.getColumns().addAll(dateColumn, weightColumn, heightColumn);
+    }
+
+    public static class WeightHistoryRow {
+
+        private final String date;
+        private final String weight;
+        private final String height;
+
+        public WeightHistoryRow(String date, String weight, String height) {
+            this.date = date;
+            this.weight = weight;
+            this.height = height;
+        }
+
+        public String getDate() {
+            return date;
+        }
+
+        public String getWeight() {
+            return weight;
+        }
+
+        public String getHeight() {
+            return height;
+        }
     }
 
 }

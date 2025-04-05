@@ -6,10 +6,10 @@
 <?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.Separator?>
 <?import javafx.scene.control.TableColumn?>
 <?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
-<?import javafx.scene.control.cell.PropertyValueFactory?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -122,140 +122,114 @@
                                     <children>
                                         <AnchorPane prefHeight="555.0" prefWidth="324.0" stylesheets="@style/target.css">
                                             <children>
-                                                <TextField fx:id="newUsername" layoutX="158.0" layoutY="44.0" styleClass="TextField" />
-                                                <Label layoutX="15.0" layoutY="46.0" text="Tên đăng nhập">
+                                                <TextField fx:id="newUsername" layoutX="158.0" layoutY="113.0" styleClass="TextField" />
+                                                <Label layoutX="15.0" layoutY="115.0" text="Tên đăng nhập">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
                                                 </Label>
-                                                <Button layoutX="227.0" layoutY="78.0" mnemonicParsing="false" onAction="#handleUpdateUserName" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Cập nhật">
+                                                <Button layoutX="227.0" layoutY="147.0" mnemonicParsing="false" onAction="#handleUpdateUserName" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Cập nhật">
                                                     <font>
                                                         <Font size="14.0" />
                                                     </font>
                                                 </Button>
-                                                <Label layoutX="15.0" layoutY="126.0" prefHeight="21.0" prefWidth="127.0" text="Mật khẩu">
+                                                <Label layoutX="15.0" layoutY="195.0" prefHeight="21.0" prefWidth="127.0" text="Mật khẩu">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
                                                 </Label>
-                                                <PasswordField fx:id="newPassword" layoutX="158.0" layoutY="123.0" styleClass="TextField" />
-                                                <Label layoutX="15.0" layoutY="165.0" text="Xác nhận mật khẩu">
+                                                <PasswordField fx:id="newPassword" layoutX="158.0" layoutY="192.0" styleClass="TextField" />
+                                                <Label layoutX="15.0" layoutY="234.0" text="Xác nhận mật khẩu">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
                                                 </Label>
-                                                <PasswordField fx:id="newConfirmPassword" layoutX="158.0" layoutY="163.0" styleClass="TextField" />
-                                                <Button layoutX="227.0" layoutY="198.0" mnemonicParsing="false" onAction="#handleUpdatePassword" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Cập nhật" />
-                                                <Label layoutX="15.0" layoutY="234.0" text="Thêm cân nặng:">
+                                                <PasswordField fx:id="newConfirmPassword" layoutX="158.0" layoutY="232.0" styleClass="TextField" />
+                                                <Button layoutX="227.0" layoutY="267.0" mnemonicParsing="false" onAction="#handleUpdatePassword" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Cập nhật" />
+                                                <Label layoutX="15.0" layoutY="310.0" text="Cập nhật số đo:">
                                                     <font>
                                                         <Font size="20.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="15.0" layoutY="273.0" text="Ngày thêm">
+                                                <Label layoutX="15.0" layoutY="354.0" text="Ngày thêm">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
                                                 </Label>
-                                                <Label layoutX="15.0" layoutY="314.0" text="Cân nặng">
+                                                <Label layoutX="15.0" layoutY="395.0" text="Cân nặng">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
                                                 </Label>
-                                                <DatePicker fx:id="newDateAddWeight" layoutX="131.0" layoutY="270.0" styleClass="TextField" />
-                                                <TextField fx:id="newWeight" layoutX="132.0" layoutY="311.0" prefHeight="25.0" prefWidth="147.0" styleClass="TextField" />
-                                                <Label layoutX="286.0" layoutY="314.0" text="KG">
+                                                <DatePicker fx:id="newDateAddWeight" layoutX="131.0" layoutY="351.0" styleClass="TextField" />
+                                                <TextField fx:id="newWeight" layoutX="132.0" layoutY="392.0" prefHeight="25.0" prefWidth="147.0" styleClass="TextField" />
+                                                <Label layoutX="286.0" layoutY="395.0" text="kg">
                                                     <font>
                                                         <Font size="15.0" />
                                                     </font>
                                                 </Label>
-                                                <Button layoutX="227.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleUpdateWeight" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Thêm" />
+                                                <Button layoutX="227.0" layoutY="481.0" mnemonicParsing="false" onAction="#handleUpdateWeight" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Cập nhật" />
                                                 <Label layoutX="112.0" text="Cài đặt">
                                                     <font>
                                                         <Font size="30.0" />
                                                     </font>
                                                 </Label>
-                                                <TableView fx:id="weightHistoryTable" layoutX="13.0" layoutY="391.0" prefHeight="150.0" prefWidth="298.0">
-                                                    <columns>
-                                                        <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Ngày" />
-                                                        <TableColumn fx:id="weightColumn" minWidth="0.0" prefWidth="139.0" text="Cân nặng" />
-                                                    </columns>
-                                                </TableView>
-                                            </children>
-                                        </AnchorPane>
-                                        <AnchorPane prefHeight="555.0" prefWidth="569.0">
-                                            <children>
-
-                                                
-                                                
-                                                <DatePicker fx:id="datePicker" layoutX="181.0" layoutY="53.0" prefHeight="31.0" prefWidth="226.0" />
-                                                <Label layoutX="14.0" layoutY="55.0" prefHeight="21.0" prefWidth="143.0" styleClass="labels" text="Chọn ngày">
+                                    <Label layoutX="15.0" layoutY="436.0" text="Chiều cao">
                                        <font>
-                                          <Font size="18.0" />
-                                       </font></Label>
-                                                <Label layoutX="14.0" layoutY="107.0" prefHeight="30.0" prefWidth="176.0" styleClass="labels" text="Thức ăn đã dùng">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font></Label>
-                                                <Label layoutX="14.0" layoutY="341.0" prefHeight="21.0" prefWidth="143.0" styleClass="labels" text="Bài tập đã tập">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font></Label>
-                                                <Label layoutX="313.0" layoutY="107.0" prefHeight="30.0" prefWidth="236.0" styleClass="labels" text="Tổng lượng calo">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font></Label>
-                                                <Text fx:id="totalEatenCaloriesText" layoutX="423.0" layoutY="326.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" />
-                                                <Label layoutX="316.0" layoutY="340.0" prefHeight="30.0" prefWidth="232.0" styleClass="labels" text="Tổng lượng calo">
-                                       <font>
-                                          <Font size="20.0" />
-                                       </font></Label>
-                                                <Text fx:id="totalBurnedCaloriesText" layoutX="422.0" layoutY="505.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" />
-
-                                                <TableView fx:id="foodEntryTable" layoutX="14.0" layoutY="144.0" prefHeight="181.0" prefWidth="542.0">
-                                                    <columns>
-                                                        <TableColumn fx:id="foodNameColumn" prefWidth="172.0" text="Tên thức ăn" />
-                                                        <TableColumn fx:id="foodQuantityCaloriesColumn" prefWidth="156.0" text="Lượng calo" />
-                                                        <TableColumn fx:id="foodMealColumn" prefWidth="128.0" text="Bữa ăn" />
-                                                        <TableColumn fx:id="deleteFoodColumn" prefWidth="84.0" text="Xóa" />
-                                                    </columns>
-                                                </TableView>
-                                                <TableView fx:id="exerciseTable" layoutX="12.0" layoutY="378.0" prefHeight="162.0" prefWidth="543.0">
-                                                    <columns>
-
-                                                        <TableColumn fx:id="exerciseColumn" prefWidth="159.0" text="Bài tập">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="exerciseName" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-
-                                                        <TableColumn fx:id="intervalColumn" prefWidth="145.0" text="Thời gian">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="interval" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-
-
-                                                        <TableColumn fx:id="caloriesConsumedColumn" prefWidth="140.0" text="Calo tiêu thụ">
-                                                            <cellValueFactory>
-                                                                <PropertyValueFactory property="caloriesConsumed" />
-                                                            </cellValueFactory>
-                                                        </TableColumn>
-
-                                                        <TableColumn fx:id="deleteColumn" prefWidth="97.0" text="Xóa">
-                                                            <cellFactory>
-                                                                <PropertyValueFactory property="deleteButton" />
-                                                            </cellFactory>
-                                                        </TableColumn>
-                                                    </columns>
-                                                </TableView>
-                                    <Label layoutX="246.0" text="Lịch sử">
-                                       <font>
-                                          <Font size="30.0" />
+                                          <Font size="15.0" />
                                        </font>
                                     </Label>
-                                    <Line endY="413.0" layoutY="142.0" startY="-142.0" />
-
-
+                                    <TextField fx:id="newHeight" layoutX="132.0" layoutY="433.0" prefHeight="25.0" prefWidth="147.0" styleClass="TextField" />
+                                    <Label layoutX="286.0" layoutY="436.0" text="cm">
+                                       <font>
+                                          <Font size="15.0" />
+                                       </font>
+                                    </Label>
+                                    <Label layoutX="15.0" layoutY="68.0" text="Tài khoản:">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font>
+                                    </Label>
+                                            </children>
+                                        </AnchorPane>
+                                        <AnchorPane prefHeight="555.0" prefWidth="569.0" stylesheets="@style/personalinfor.css">
+                                            <children>
+                                                <Line endY="413.0" layoutY="142.0" startY="-142.0" />
+                                                <Text layoutX="84.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="BMI Hiện tại" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <Text fx:id="CurrentBMI" layoutX="149.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <Text layoutX="226.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cân nặng hiện tại" textAlignment="CENTER" wrappingWidth="67.01513838768005" />
+                                                <Text fx:id="CurrentWeight" layoutX="299.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <Text layoutX="43.0" layoutY="321.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Tốt hơn hết bạn nên" wrappingWidth="141.01513671875" />
+                                                <Text fx:id="ChangeRecommendation" layoutX="173.0" layoutY="322.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="107.01513671875" />
+                                                <Text fx:id="WeightChange" layoutX="251.0" layoutY="323.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="38.01513671875" />
+                                                <Text layoutX="279.0" layoutY="322.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="KG so với cân nặng của bạn" wrappingWidth="209.01513671875" />
+                                                <Text layoutX="64.0" layoutY="536.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Bạn đã nạp vào cơ thể" wrappingWidth="173.01513671875" />
+                                                <Text fx:id="CaloriesPerDay" layoutX="306.0" layoutY="536.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="X" wrappingWidth="38.01513835787773" />
+                                                <Text layoutX="341.0" layoutY="536.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="cal mỗi ngày" wrappingWidth="107.01513290405273" />
+                                                <Text layoutX="107.0" layoutY="258.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Trạng thái cân nặng hiện tại của bạn là" wrappingWidth="262.99999552965164" />
+                                                <Text fx:id="WeightStatus" layoutX="377.0" layoutY="258.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="142.01513850688934" />
+                                                <Separator layoutX="171.0" layoutY="213.0" prefWidth="200.0" />
+                                                <Separator layoutX="171.0" layoutY="500.0" prefWidth="200.0" />
+                                                <Separator layoutX="171.0" layoutY="359.0" prefWidth="200.0" />
+                                                <Separator layoutX="171.0" layoutY="287.0" prefWidth="200.0" />
+                                                <Text layoutX="373.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cân nặng lý tưởng" textAlignment="CENTER" wrappingWidth="77.01513838768005" />
+                                                <Text fx:id="OptimalWeight" layoutX="456.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <Text layoutX="106.0" layoutY="396.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Bạn đã hấp thụ" wrappingWidth="104.99999552965164" />
+                                                <Text layoutX="256.0" layoutY="397.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cal hôm nay" wrappingWidth="142.01513850688934" />
+                                                <Separator layoutX="176.0" layoutY="432.0" prefWidth="200.0" />
+                                                <Text fx:id="totalEnteredCalories" layoutX="208.0" layoutY="536.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="53.01513835787773" />
+                                                <Text layoutX="258.0" layoutY="535.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="trong " wrappingWidth="46.01513835787773" />
+                                                <Text fx:id="totalEatenCaloriesText" layoutX="205.0" layoutY="397.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="60.01513637602329" />
+                                                <Text layoutX="107.0" layoutY="473.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Bạn đã tiêu thụ" wrappingWidth="105.99999552965164" />
+                                                <Text layoutX="254.0" layoutY="473.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cal hôm nay" wrappingWidth="142.01513850688934" />
+                                                <Text fx:id="totalBurnedCaloriesText" layoutX="204.0" layoutY="474.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="73.01513850688934" />
+                                                <TableView fx:id="weightHistoryTable" layoutX="42.0" layoutY="14.0" prefHeight="150.0" prefWidth="479.0">
+                                                    <columns>
+                                                        <TableColumn fx:id="dateColumn" prefWidth="157.0" text="Ngày" />
+                                                        <TableColumn fx:id="weightColumn" minWidth="0.0" prefWidth="164.0" text="Cân nặng" />
+                                          <TableColumn fx:id="heightColumn" minWidth="0.0" prefWidth="157.0" text="Chiều cao" />
+                                                    </columns>
+                                                </TableView>
                                             </children>
                                         </AnchorPane>
                                     </children>

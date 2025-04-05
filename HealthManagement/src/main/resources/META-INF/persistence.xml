@@ -8,6 +8,7 @@
     <class>com.milkyway.pojo.User</class>
     <class>com.milkyway.pojo.Exercise</class>
     <class>com.milkyway.pojo.Meal</class>
+    <class>com.milkyway.pojo.History</class>
     <properties>
       <property name="javax.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/healthmanagement?zeroDateTimeBehavior=CONVERT_TO_NULL"/>
       <property name="javax.persistence.jdbc.user" value="root"/>

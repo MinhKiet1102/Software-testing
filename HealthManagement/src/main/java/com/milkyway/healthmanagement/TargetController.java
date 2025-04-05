@@ -280,7 +280,7 @@ public class TargetController extends SwitchSceneController implements Initializ
                 return;
             }
 
-            planService.addPlan(planName, startDate, endDate, targetValue, String.valueOf(myPlans_unit.getSelectionModel().getSelectedItem()), User.currentUser.getId());
+            planService.addPlan(planName, startDate, endDate, targetValue, String.valueOf(myPlans_unit.getSelectionModel().getSelectedItem()), User.getCurrentUser().getId());
 
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Thêm kế hoạch thành công!");
             myPlansShowData();
@@ -459,7 +459,7 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     public ObservableList<Target> myPlansDataList() {
         try {
-            return planService.getPlansForCurrentUser(User.currentUser.getId());
+            return planService.getPlansForCurrentUser(User.getCurrentUser().getId());
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra khi tải dữ liệu kế hoạch!");
             return FXCollections.observableArrayList();
@@ -567,7 +567,7 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     public void finishedPlansDisplayCP() {
         try {
-            int count = planService.countQuantityPlans(User.currentUser.getId());
+            int count = planService.countQuantityPlans(User.getCurrentUser().getId());
             finishedPlans_countPlan.setText(String.valueOf(count));
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra khi tải dữ liệu kế hoạch!");
@@ -577,7 +577,7 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     public void finishedPlansDisplayAP() {
         try {
-            int count = planService.countAchievedPlans(User.currentUser.getId());
+            int count = planService.countAchievedPlans(User.getCurrentUser().getId());
             finishedPlans_achievedPlan.setText(String.valueOf(count));
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra khi tải dữ liệu kế hoạch!");
@@ -664,7 +664,7 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     public ObservableList<Target> finishedPlansDataList() {
         try {
-            return planService.getFinishedPlansDataList(User.currentUser.getId());
+            return planService.getFinishedPlansDataList(User.getCurrentUser().getId());
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra khi tải dữ liệu kế hoạch!");
             e.printStackTrace();
