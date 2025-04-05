@@ -38,12 +38,12 @@
                                             </font>
                                         </Label>
                                         <Line endX="75.99998474121094" endY="-1.52587890625E-5" layoutX="100.0" layoutY="193.0" startX="-71.19999694824219" startY="-1.52587890625E-5" stroke="WHITE" />
-                                        <Button layoutX="7.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
+                                        <Button layoutX="9.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
                                             <graphic>
                                                 <FontAwesomeIconView fill="WHITE" glyphName="DASHBOARD" size="1.5EM" />
                                             </graphic>
                                         </Button>
-                                        <Button layoutX="7.0" layoutY="280.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToExercisePage" styleClass="nav-btn" stylesheets="@style/main.css" text="Bài Tập">
+                                        <Button layoutX="9.0" layoutY="280.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToExercisePage" styleClass="nav-btn" stylesheets="@style/main.css" text="Bài Tập">
                                             <graphic>
                                                 <FontAwesomeIconView fill="WHITE" glyphName="BOOK" size="1.5EM" />
                                             </graphic>
@@ -62,7 +62,7 @@
                                                 <String fx:value="shadow" />
                                             </styleClass>
                                         </Button>
-                                        <AnchorPane layoutX="2.0" layoutY="350.0" prefHeight="124.0" prefWidth="200.0">
+                                        <AnchorPane layoutX="2.0" layoutY="350.0" prefHeight="91.0" prefWidth="204.0">
                                             <children>
                                                 <Button fx:id="menu_target_btn" layoutX="7.0" layoutY="7.0" minHeight="36.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToTarget" onMouseEntered="#showMenu" onMouseExited="#hideMenu" styleClass="nav-btn" stylesheets="@style/main.css" text="Mục Tiêu -  Kế Hoạch">
                                                     <graphic>
@@ -72,14 +72,22 @@
                                                         <Font name="Arial" size="12.0" />
                                                     </font>
                                                 </Button>
-                                                <AnchorPane fx:id="menu_target_nav" layoutX="1.0" layoutY="35.0" onMouseEntered="#showMenu" onMouseExited="#hideMenu" prefHeight="23.0" prefWidth="200.0" visible="false">
+                                                <AnchorPane fx:id="menu_target_nav" layoutY="39.0" onMouseEntered="#showMenu" onMouseExited="#hideMenu" prefHeight="54.0" prefWidth="204.0" visible="false" AnchorPane.bottomAnchor="-2.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="39.0">
                                                     <children>
-                                                        <Button fx:id="menu_target_nav_main" layoutX="41.0" layoutY="-1.0" minHeight="30.0" minWidth="155.0" mnemonicParsing="false" styleClass="nav-btn" stylesheets="@style/main.css" text="Kế hoạch" />
-                                                        <Button fx:id="menu_target_nav_sub" layoutX="41.0" layoutY="25.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" styleClass="nav-btn" stylesheets="@style/main.css" text="Cập nhật trạng thái" />
+                                                        <Button fx:id="menu_target_nav_main" layoutX="41.0" layoutY="-6.0" minHeight="30.0" minWidth="155.0" mnemonicParsing="false" prefHeight="29.0" prefWidth="155.0" styleClass="nav-btn" stylesheets="@style/main.css" text="Kế hoạch" />
+                                                        <Button fx:id="menu_target_nav_sub" layoutX="41.0" layoutY="19.0" minHeight="30.0" minWidth="100.0" mnemonicParsing="false" styleClass="nav-btn" stylesheets="@style/main.css" text="Cập nhật trạng thái" />
                                                     </children>
                                                 </AnchorPane>
                                             </children>
                                         </AnchorPane>
+                                        <Button fx:id="menu_personal_btn" layoutX="9.0" layoutY="394.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToPersonalInfor" styleClass="nav-btn" stylesheets="@style/main.css" text="Thông tin cá nhân">
+                                            <graphic>
+                                                <FontAwesomeIconView fill="WHITE" glyphName="USER" size="1.5EM" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Arial" size="12.0" />
+                                            </font>
+                                        </Button>
                                     </children>
                                     <styleClass>
                                         <String fx:value="nav-form" />
@@ -124,7 +132,7 @@
                                             <children>
                                                 <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="200.0" prefWidth="830.0" styleClass="border" stylesheets="@style/target.css" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="14.0">
                                                     <children>
-                                                        <Label layoutX="19.0" layoutY="14.0" text="Kế hoạch:" textFill="WHITE">
+                                                        <Label layoutX="19.0" layoutY="14.0" text="Tên kế hoạch:" textFill="WHITE">
                                                             <font>
                                                                 <Font size="15.0" />
                                                             </font>
@@ -165,11 +173,11 @@
                                                         </Label>
                                                         <TextField fx:id="myPlans_progress" layoutX="648.0" layoutY="87.0" prefHeight="27.0" prefWidth="135.0" styleClass="TextField" stylesheets="@style/target.css" />
                                                         <Button fx:id="myPlans_updateProgress" layoutX="647.0" layoutY="143.0" mnemonicParsing="false" onAction="#myPlansUpdateProgressBtn" prefHeight="35.0" prefWidth="137.0" styleClass="btn" stylesheets="@style/target.css" text="Cập nhật tiến trình" />
-                                          <Label fx:id="progressPercent" layoutX="791.0" layoutY="86.0" text="0%">
-                                             <font>
-                                                <Font size="20.0" />
-                                             </font>
-                                          </Label>
+                                                        <Label fx:id="progressPercent" layoutX="791.0" layoutY="86.0" text="0%">
+                                                            <font>
+                                                                <Font size="20.0" />
+                                                            </font>
+                                                        </Label>
                                                     </children>
                                                 </AnchorPane>
                                                 <TableView fx:id="myPlans_tableView" layoutX="14.0" layoutY="229.0" onMouseClicked="#myPlansSelectData" prefHeight="294.0" prefWidth="830.0" stylesheets="@style/target.css" tableMenuButtonVisible="true" AnchorPane.bottomAnchor="17.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="16.0" AnchorPane.topAnchor="229.0">

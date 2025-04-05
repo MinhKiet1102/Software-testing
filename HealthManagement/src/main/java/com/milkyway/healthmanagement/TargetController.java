@@ -19,18 +19,22 @@ import java.util.Optional;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.Interpolator;
+import javafx.animation.TranslateTransition;
 import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
 import javafx.util.Callback;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 
 /**
  * FXML Controller class
@@ -142,13 +146,34 @@ public class TargetController extends SwitchSceneController implements Initializ
     private TableView<Target> finishedPlans_tableView;
 
     @FXML
+    private Button menu_personal_btn;
+
+    private final double ORIGINAL_Y = 394;
+    private final double EXPANDED_Y = 441;
+    private final double ORIGINAL_X = 9;
+
+    private void animateMoveY(Node node, double toY, double durationMillis) {
+        TranslateTransition transition = new TranslateTransition(Duration.millis(durationMillis), node);
+        transition.setToY(toY - node.getLayoutY()); 
+        transition.setInterpolator(Interpolator.EASE_BOTH);
+        transition.setOnFinished(e -> {
+            node.setTranslateY(0); 
+            node.setLayoutY(toY);  // Cập nhật vị trí thật
+        });
+        transition.play();
+    }
+
+    @FXML
     private void showMenu() {
         menu_target_nav.setVisible(true);
+        menu_personal_btn.setLayoutX(ORIGINAL_X); 
+        animateMoveY(menu_personal_btn, EXPANDED_Y, 200); 
     }
 
     @FXML
     private void hideMenu() {
         menu_target_nav.setVisible(false);
+        animateMoveY(menu_personal_btn, ORIGINAL_Y, 200); 
     }
 
     private ObservableList<Target> myPlansListData = FXCollections.observableArrayList();

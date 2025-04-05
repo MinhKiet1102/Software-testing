@@ -28,3 +28,4 @@ com\milkyway\pojo\Target.class
 com\milkyway\healthmanagement\ExerciseLogController.class
 com\milkyway\pojo\Food.class
 com\milkyway\healthmanagement\LoginController.class
+com\milkyway\healthmanagement\PersonalInforController.class
