@@ -5,7 +5,7 @@
 package com.milkyway.pojo;
 
 import java.io.Serializable;
-import java.util.Date;
+import java.sql.Date;
 import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,7 +44,6 @@ public class Exerciselog implements Serializable {
     private String effortLevel;
     @Basic(optional = false)
     @Column(name = "duration")
-    @Temporal(TemporalType.TIME)
     private int duration;
     @Basic(optional = false)
     @Column(name = "datetime")
@@ -73,6 +72,15 @@ public class Exerciselog implements Serializable {
         this.energyBurn = energyBurn;
         this.datetime = datetime;
     }
+      public Exerciselog(Integer idExLog, int duration, double energyBurn, Date datetime, Exercise exerciseId) {
+        this.idExLog = idExLog;
+        this.duration = duration;
+        this.energyBurn = energyBurn;
+        this.datetime = datetime;
+        this.exerciseId = exerciseId;
+    }
+
+    
 
     public Integer getIdExLog() {
         return idExLog;

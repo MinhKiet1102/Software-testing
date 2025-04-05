@@ -14,7 +14,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane id="AnchorPane" prefHeight="250.0" prefWidth="700.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.ExerciseDetailController">
+<AnchorPane id="AnchorPane" prefHeight="270.0" prefWidth="700.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.ExerciseDetailController">
     <stylesheets>
         <URL value="@/styles/exercisedetail.css" />
     </stylesheets>
@@ -39,7 +39,7 @@
                   <String fx:value="shadow" />
                </styleClass>
             </HBox>
-            <HBox prefHeight="250.0" prefWidth="679.0" styleClass="gradient-bg" stylesheets="@style/main.css">
+            <HBox prefHeight="292.0" prefWidth="679.0" styleClass="gradient-bg" stylesheets="@style/main.css">
                <children>
                   <VBox prefHeight="241.0" prefWidth="342.0">
                      <children>
@@ -76,6 +76,26 @@
                               <TextField fx:id="txtExercise" prefHeight="26.0" prefWidth="174.0" styleClass="shadow" stylesheets="@style/main.css">
                                  <HBox.margin>
                                     <Insets left="70.0" />
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox fx:id="caloriesBox" layoutX="20.0" layoutY="77.0" prefHeight="46.0" prefWidth="426.0">
+                           <children>
+                              <Label prefHeight="42.0" prefWidth="132.0" stylesheets="@style/main.css" text="Lượng Calo tiêu thụ (Calo/phút)" wrapText="true">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <TextField fx:id="txtCaloriesPerMinute" prefHeight="26.0" prefWidth="174.0" styleClass="shadow" stylesheets="@style/main.css">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
                                  </HBox.margin>
                               </TextField>
                            </children>
@@ -130,7 +150,7 @@
             </HBox>
             <HBox alignment="CENTER_RIGHT" prefHeight="120.0" prefWidth="700.0" spacing="10.0">
                <children>
-                  <Button fx:id="btnSave" mnemonicParsing="false" styleClass="border">
+                  <Button fx:id="btnSave" mnemonicParsing="false" onAction="#saveExercise" styleClass="border">
                      <graphic>
                         <Label text="Lưu" />
                      </graphic>

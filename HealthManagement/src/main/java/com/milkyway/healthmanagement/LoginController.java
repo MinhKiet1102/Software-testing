@@ -136,7 +136,7 @@ public class LoginController implements Initializable {
                 si_loginBtn.getScene().getWindow().hide();
 
                 // SHOW MAIN FORM
-                Parent root = FXMLLoader.load(getClass().getResource("base.fxml"));
+                Parent root = FXMLLoader.load(getClass().getResource("/com/milkyway/healthmanagement/ExercisePage.fxml"));
                 Stage stage = new Stage();
                 Scene scene = new Scene(root);
                 stage.setScene(scene);

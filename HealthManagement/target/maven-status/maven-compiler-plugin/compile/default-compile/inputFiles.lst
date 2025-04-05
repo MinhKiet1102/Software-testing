@@ -1,10 +1,11 @@
-
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\SwitchSceneController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Food.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Exercise.java
+D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\LoginController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\TargetController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\JdbcUtils.java
 D:\Software-testing\HealthManagement\src\main\java\module-info.java
+D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\HomePageController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\service\ExerciseService.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\User.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Meal.java
@@ -16,7 +17,5 @@ D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\MealFoodPK.
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\App.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Exerciselog.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseController.java
-D:\Software-testing\HealthManagement\src\main\java\com\milkyway\interfaces\ExerciseLogInterface.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExercisePageController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\service\ExerciseLogService.java
-C:\Users\Admin\Desktop\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\LoginController.java
