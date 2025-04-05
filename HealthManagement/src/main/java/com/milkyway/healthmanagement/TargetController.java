@@ -11,6 +11,8 @@ import java.net.URL;
 import java.sql.SQLException;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +20,7 @@ import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.application.Platform;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,6 +28,9 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.*;
+import javafx.util.Callback;
+import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 
 /**
  * FXML Controller class
@@ -447,7 +453,70 @@ public class TargetController extends SwitchSceneController implements Initializ
         myPlans_col_progress.setCellValueFactory(new PropertyValueFactory<>("progress"));
         myPlans_col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
 
+        myPlans_col_status.setCellValueFactory(cellData -> {
+            Target target = cellData.getValue();
+            String status = planService.calculateStatus(target);
+            try {
+                planService.updatePlanStatus(target.getIdTarget(), status);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty(status);
+        });
+
+        myPlans_col_status.setCellFactory(new Callback<TableColumn<Target, String>, TableCell<Target, String>>() {
+            @Override
+            public TableCell<Target, String> call(TableColumn<Target, String> param) {
+                return new TableCell<Target, String>() {
+                    @Override
+                    protected void updateItem(String status, boolean empty) {
+                        super.updateItem(status, empty);
+
+                        if (empty || status == null) {
+                            setText(null);
+                            setGraphic(null);
+                            setStyle("");
+                        } else {
+                            Text text = new Text(status);
+                            setGraphic(text);
+
+                            switch (status) {
+                                case "Not Started":
+                                    text.setFill(Color.GRAY);
+                                    break;
+                                case "In Progress":
+                                    text.setFill(Color.BLUE);
+                                    break;
+                                case "Achieved":
+                                    text.setFill(Color.GREEN);
+                                    break;
+                                case "Failed":
+                                    text.setFill(Color.RED);
+                                    break;
+                                case "Cancelled":
+                                    text.setFill(Color.ORANGE);
+                                    break;
+                                default:
+                                    text.setFill(Color.BLACK); // Màu mặc định
+                                    break;
+                            }
+                        }
+                    }
+                };
+            }
+        });
+
         myPlans_tableView.setItems(myPlansListData);
+
+        // Cập nhật trạng thái cho mỗi mục trong danh sách
+        myPlansListData.forEach(target -> {
+            String status = planService.calculateStatus(target);
+            try {
+                planService.updatePlanStatus(target.getIdTarget(), status);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void myPlansSelectData() {
@@ -467,6 +536,8 @@ public class TargetController extends SwitchSceneController implements Initializ
         myPlans_unit.setValue(pData.getUnit());
 
         myPlans_progress.setText(String.valueOf(pData.getProgress()));
+
+        planService.checkMidCycleProgress(pData);
     }
 
     public void finishedPlansDisplayCP() {
@@ -508,6 +579,38 @@ public class TargetController extends SwitchSceneController implements Initializ
 
                 if (plan != null) {
                     String status = finishedPlans_status.getSelectionModel().getSelectedItem();
+                    LocalDate today = LocalDate.now();
+                    LocalDate startDate = LocalDate.parse(String.valueOf(plan.getStartDate()));
+                    LocalDate endDate = LocalDate.parse(String.valueOf(plan.getEndDate()));
+
+                    if ("Not Started".equals(status)) {
+                        if (!today.isBefore(startDate)) {
+                            showAlert(Alert.AlertType.WARNING, "Warning Message", "Chỉ có thể cập nhật trạng thái là Not Started trước ngày bắt đầu.");
+                            return;
+                        }
+                    }
+
+                    if ("Achieved".equals(status)) {
+                        if (plan.getProgress() < plan.getTargetNumber()) {
+                            showAlert(Alert.AlertType.WARNING, "Warning Message", "Tiến trình chưa đạt mục tiêu, không thể cập nhật trạng thái là Achieved.");
+                            return;
+                        }
+                    }
+
+                    if ("In Progress".equals(status)) {
+                        if (today.isBefore(startDate)) {
+                            showAlert(Alert.AlertType.WARNING, "Warning Message", "Chưa tới ngày bắt đầu, không thể cập nhật trạng thái là In Progress.");
+                            return;
+                        }
+                    }
+
+                    if ("Failed".equals(status)) {
+                        if (!today.isAfter(endDate)) {
+                            showAlert(Alert.AlertType.WARNING, "Warning Message", "Chưa quá ngày kết thúc, không thể cập nhật trạng thái là Failed.");
+                            return;
+                        }
+                    }
+
                     planService.updatePlanStatus(idTarget, status);
 
                     showAlert(Alert.AlertType.INFORMATION, "Information Message", "Đã cập nhật thành công!");
@@ -556,7 +659,69 @@ public class TargetController extends SwitchSceneController implements Initializ
         finishedPlans_col_unit.setCellValueFactory(new PropertyValueFactory<>("unit"));
         finishedPlans_col_progress.setCellValueFactory(new PropertyValueFactory<>("progress"));
 
+        finishedPlans_col_status.setCellValueFactory(cellData -> {
+            Target target = cellData.getValue();
+            String status = planService.calculateStatus(target);
+            try {
+                planService.updatePlanStatus(target.getIdTarget(), status);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+            return new SimpleStringProperty(status);
+        });
+
+        finishedPlans_col_status.setCellFactory(new Callback<TableColumn<Target, String>, TableCell<Target, String>>() {
+            @Override
+            public TableCell<Target, String> call(TableColumn<Target, String> param) {
+                return new TableCell<Target, String>() {
+                    @Override
+                    protected void updateItem(String status, boolean empty) {
+                        super.updateItem(status, empty);
+
+                        if (empty || status == null) {
+                            setText(null);
+                            setGraphic(null);
+                            setStyle("");
+                        } else {
+                            Text text = new Text(status);
+                            setGraphic(text);
+
+                            switch (status) {
+                                case "Not Started":
+                                    text.setFill(Color.GRAY);
+                                    break;
+                                case "In Progress":
+                                    text.setFill(Color.BLUE);
+                                    break;
+                                case "Achieved":
+                                    text.setFill(Color.GREEN);
+                                    break;
+                                case "Failed":
+                                    text.setFill(Color.RED);
+                                    break;
+                                case "Cancelled":
+                                    text.setFill(Color.ORANGE);
+                                    break;
+                                default:
+                                    text.setFill(Color.BLACK);
+                                    break;
+                            }
+                        }
+                    }
+                };
+            }
+        });
+
         finishedPlans_tableView.setItems(finishedPlansListData);
+
+        finishedPlansListData.forEach(target -> {
+            String status = planService.calculateStatus(target);
+            try {
+                planService.updatePlanStatus(target.getIdTarget(), status);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public void finishedPlansSelectData() {

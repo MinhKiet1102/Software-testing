@@ -7,14 +7,25 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
 
 public class TargetService {
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
 
     public boolean isPlanExist(String planName) throws SQLException {
         String checkPlan = "SELECT targetName FROM target WHERE targetName = ?";
@@ -150,10 +161,10 @@ public class TargetService {
             ResultSet result = prepare.executeQuery();
 
             if (result.next()) {
-                return result.getInt(1); 
+                return result.getInt(1);
             }
         }
-        return 0; 
+        return 0;
     }
 
     public int countAchievedPlans(int userId) throws SQLException {
@@ -241,5 +252,65 @@ public class TargetService {
             }
         }
         return listData;
+    }
+
+    public void checkMidCycleProgress(Target target) {
+        if (target == null) {
+            return;
+        }
+
+        String status = target.getStatus();
+        if ("Failed".equals(status) || "Not Started".equals(status) || "Cancelled".equals(status)) {
+            return;
+        }
+
+        LocalDate startDate;
+        startDate = LocalDate.parse(String.valueOf(target.getStartDate()));
+        LocalDate endDate;
+        endDate = LocalDate.parse(String.valueOf(target.getEndDate()));
+
+        float progress = target.getProgress();
+        float targetNumber = target.getTargetNumber();
+
+        if (startDate == null || endDate == null || targetNumber <= 0) {
+            return;
+        }
+
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate);
+        LocalDate midCycleDate = startDate.plusDays(totalDays / 2);
+
+        LocalDate today = LocalDate.now();
+
+        if (!today.isBefore(midCycleDate)) {
+            float progressPercentage = (progress / targetNumber) * 100;
+
+            if (progressPercentage < 50) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo",
+                        "Bạn chưa đạt 50% mục tiêu, hãy cố gắng hơn!");
+            }
+        }
+    }
+
+    public String calculateStatus(Target target) {
+        String status = target.getStatus();
+        if ("Cancelled".equals(status)) {
+            return "Cancelled";
+        }
+
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = LocalDate.parse(String.valueOf(target.getStartDate()), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate endDate = LocalDate.parse(String.valueOf(target.getEndDate()), DateTimeFormatter.ISO_LOCAL_DATE);
+        double progress = target.getProgress();
+        double goal = target.getTargetNumber();
+
+        if (progress >= goal) {
+            return "Achieved";
+        } else if (now.isAfter(endDate)) {
+            return "Failed";
+        } else if ((now.isEqual(startDate) || now.isAfter(startDate)) && (now.isEqual(endDate) || now.isBefore(endDate))) {
+            return "In Progress";
+        } else {
+            return "Not Started";
+        }
     }
 }
