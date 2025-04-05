@@ -109,6 +109,18 @@ public class SwitchSceneController {
         stage.show();
     }
     
+    public void SwitchToPersonalInfor(ActionEvent event) throws IOException {
+        root=FXMLLoader.load(getClass().getResource("PersonalInfor.fxml"));
+        stage=(Stage)((Node)event.getSource()).getScene().getWindow();
+        stage.setTitle("Health Mangement System");
+        Image icon = new Image(getClass().getResourceAsStream("/com/milkyway/healthmanagement/image/image.jpg"));
+        stage.getIcons().add(icon);
+        stage.setResizable(false);
+        scene=new Scene(root);
+        stage.setScene(scene);
+        stage.show();
+    }
+    
     public void displayUsername() {
         if (User.currentUser != null) {
             String user = User.currentUser.getUsername();

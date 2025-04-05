@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.cell.PropertyValueFactory?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.shape.Line?>
+<?import javafx.scene.text.Font?>
+<?import javafx.scene.text.Text?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.PersonalInforController">
+    <children>
+        <AnchorPane prefHeight="200.0" prefWidth="200.0">
+            <children>
+                <BorderPane layoutX="255.0" layoutY="119.0" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <left>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                            <children>
+                                <AnchorPane layoutX="-14.0" layoutY="59.0" prefHeight="554.4" prefWidth="200.0" stylesheets="@style/main.css" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <FontAwesomeIconView fill="WHITE" glyphName="MEDKIT" layoutX="54.0" layoutY="96.0" size="8EM" />
+                                        <Label layoutX="61.0" layoutY="115.0" text="Xin chào,">
+                                            <font>
+                                                <Font size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <Label fx:id="username" alignment="CENTER" layoutX="5.0" layoutY="146.0" prefHeight="30.0" prefWidth="178.0" text="Tên" textFill="#1bac5a">
+                                            <font>
+                                                <Font name="System Bold" size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <Line endX="75.99998474121094" endY="-1.52587890625E-5" layoutX="100.0" layoutY="193.0" startX="-71.19999694824219" startY="-1.52587890625E-5" stroke="WHITE" />
+                                        <Button layoutX="9.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
+                                            <graphic>
+                                                <FontAwesomeIconView fill="WHITE" glyphName="DASHBOARD" size="1.5EM" text="" />
+                                            </graphic>
+                                        </Button>
+                                        <Button layoutX="9.0" layoutY="280.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToExercisePage" styleClass="nav-btn" stylesheets="@style/main.css" text="Bài Tập">
+                                            <graphic>
+                                                <FontAwesomeIconView fill="WHITE" glyphName="BOOK" size="1.5EM" />
+                                            </graphic>
+                                        </Button>
+                                        <Button layoutX="9.0" layoutY="318.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToMealFood" styleClass="nav-btn" stylesheets="@style/main.css" text="Dinh Dưỡng">
+                                            <graphic>
+                                                <FontAwesomeIconView fill="WHITE" glyphName="APPLE" size="1.5EM" />
+                                            </graphic>
+                                        </Button>
+                                        <Button layoutX="9.0" layoutY="356.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToTarget" styleClass="nav-btn" stylesheets="@style/main.css" text="Mục Tiêu -  Kế Hoạch">
+                                            <graphic>
+                                                <FontAwesomeIconView fill="WHITE" glyphName="BULLSEYE" size="1.5EM" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Arial" size="12.0" />
+                                            </font>
+                                        </Button>
+                                        <Button fx:id="logout_btn" layoutX="14.0" layoutY="514.0" mnemonicParsing="false" onAction="#logout" stylesheets="@style/main.css">
+                                            <graphic>
+                                                <FontAwesomeIconView glyphName="SIGN_OUT" size="1.6EM" />
+                                            </graphic>
+                                            <styleClass>
+                                                <String fx:value="logout-btn" />
+                                                <String fx:value="shadow" />
+                                            </styleClass>
+                                        </Button>
+                                        <Button layoutX="9.0" layoutY="394.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToPersonalInfor" styleClass="nav-btn" stylesheets="@style/main.css" text="Thông tin cá nhân">
+                                            <graphic>
+                                                <FontAwesomeIconView fill="WHITE" glyphName="USER" size="1.5EM" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Arial" size="12.0" />
+                                            </font>
+                                        </Button>
+                                    </children>
+                                    <styleClass>
+                                        <String fx:value="nav-form" />
+                                        <String fx:value="shadow" />
+                                    </styleClass>
+                                </AnchorPane>
+                            </children>
+                        </AnchorPane>
+                    </left>
+                    <top>
+                        <AnchorPane prefHeight="45.0" prefWidth="200.0" styleClass="semi-top-form" stylesheets="@style/main.css" BorderPane.alignment="CENTER">
+                            <children>
+                                <AnchorPane layoutX="187.0" layoutY="-86.0" prefHeight="35.0" prefWidth="1100.0" styleClass="top-form" stylesheets="@style/main.css" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <FontAwesomeIconView glyphName="MEDKIT" layoutX="14.0" layoutY="22.0" size="1.6EM" />
+                                        <Label layoutX="45.0" layoutY="6.0" text="MilkyWay - Health Management">
+                                            <font>
+                                                <Font size="14.0" />
+                                            </font>
+                                        </Label>
+                                        <Button alignment="CENTER" layoutX="1067.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="close" stylesheets="@style/main.css">
+                                            <graphic>
+                                                <FontAwesomeIconView glyphName="CLOSE" />
+                                            </graphic>
+                                        </Button>
+                                        <Button alignment="CENTER" layoutX="1036.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="minimize" stylesheets="@style/main.css">
+                                            <graphic>
+                                                <FontAwesomeIconView glyphName="MINUS" />
+                                            </graphic>
+                                        </Button>
+                                    </children>
+                                </AnchorPane>
+                            </children>
+                        </AnchorPane>
+                    </top>
+                    <center>
+                        <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
+                            <children>
+                                <HBox prefHeight="555.0" prefWidth="894.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                    <children>
+                                        <AnchorPane prefHeight="555.0" prefWidth="324.0" stylesheets="@style/target.css">
+                                            <children>
+                                                <TextField fx:id="newUsername" layoutX="158.0" layoutY="44.0" styleClass="TextField" />
+                                                <Label layoutX="15.0" layoutY="46.0" text="Tên đăng nhập">
+                                                    <font>
+                                                        <Font size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <Button layoutX="227.0" layoutY="78.0" mnemonicParsing="false" onAction="#handleUpdateUserName" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Cập nhật">
+                                                    <font>
+                                                        <Font size="14.0" />
+                                                    </font>
+                                                </Button>
+                                                <Label layoutX="15.0" layoutY="126.0" prefHeight="21.0" prefWidth="127.0" text="Mật khẩu">
+                                                    <font>
+                                                        <Font size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <PasswordField fx:id="newPassword" layoutX="158.0" layoutY="123.0" styleClass="TextField" />
+                                                <Label layoutX="15.0" layoutY="165.0" text="Xác nhận mật khẩu">
+                                                    <font>
+                                                        <Font size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <PasswordField fx:id="newConfirmPassword" layoutX="158.0" layoutY="163.0" styleClass="TextField" />
+                                                <Button layoutX="227.0" layoutY="198.0" mnemonicParsing="false" onAction="#handleUpdatePassword" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Cập nhật" />
+                                                <Label layoutX="15.0" layoutY="234.0" text="Thêm cân nặng:">
+                                                    <font>
+                                                        <Font size="20.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="15.0" layoutY="273.0" text="Ngày thêm">
+                                                    <font>
+                                                        <Font size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <Label layoutX="15.0" layoutY="314.0" text="Cân nặng">
+                                                    <font>
+                                                        <Font size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <DatePicker fx:id="newDateAddWeight" layoutX="131.0" layoutY="270.0" styleClass="TextField" />
+                                                <TextField fx:id="newWeight" layoutX="132.0" layoutY="311.0" prefHeight="25.0" prefWidth="147.0" styleClass="TextField" />
+                                                <Label layoutX="286.0" layoutY="314.0" text="KG">
+                                                    <font>
+                                                        <Font size="15.0" />
+                                                    </font>
+                                                </Label>
+                                                <Button layoutX="227.0" layoutY="347.0" mnemonicParsing="false" onAction="#handleUpdateWeight" prefHeight="35.0" prefWidth="80.0" styleClass="btn" text="Thêm" />
+                                                <Label layoutX="112.0" text="Cài đặt">
+                                                    <font>
+                                                        <Font size="30.0" />
+                                                    </font>
+                                                </Label>
+                                                <TableView fx:id="weightHistoryTable" layoutX="13.0" layoutY="391.0" prefHeight="150.0" prefWidth="298.0">
+                                                    <columns>
+                                                        <TableColumn fx:id="dateColumn" prefWidth="150.0" text="Ngày" />
+                                                        <TableColumn fx:id="weightColumn" minWidth="0.0" prefWidth="139.0" text="Cân nặng" />
+                                                    </columns>
+                                                </TableView>
+                                            </children>
+                                        </AnchorPane>
+                                        <AnchorPane prefHeight="555.0" prefWidth="569.0">
+                                            <children>
+
+                                                
+                                                
+                                                <DatePicker fx:id="datePicker" layoutX="181.0" layoutY="53.0" prefHeight="31.0" prefWidth="226.0" />
+                                                <Label layoutX="14.0" layoutY="55.0" prefHeight="21.0" prefWidth="143.0" styleClass="labels" text="Chọn ngày">
+                                       <font>
+                                          <Font size="18.0" />
+                                       </font></Label>
+                                                <Label layoutX="14.0" layoutY="107.0" prefHeight="30.0" prefWidth="176.0" styleClass="labels" text="Thức ăn đã dùng">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font></Label>
+                                                <Label layoutX="14.0" layoutY="341.0" prefHeight="21.0" prefWidth="143.0" styleClass="labels" text="Bài tập đã tập">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font></Label>
+                                                <Label layoutX="313.0" layoutY="107.0" prefHeight="30.0" prefWidth="236.0" styleClass="labels" text="Tổng lượng calo">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font></Label>
+                                                <Text fx:id="totalEatenCaloriesText" layoutX="423.0" layoutY="326.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" />
+                                                <Label layoutX="316.0" layoutY="340.0" prefHeight="30.0" prefWidth="232.0" styleClass="labels" text="Tổng lượng calo">
+                                       <font>
+                                          <Font size="20.0" />
+                                       </font></Label>
+                                                <Text fx:id="totalBurnedCaloriesText" layoutX="422.0" layoutY="505.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" />
+
+                                                <TableView fx:id="foodEntryTable" layoutX="14.0" layoutY="144.0" prefHeight="181.0" prefWidth="542.0">
+                                                    <columns>
+                                                        <TableColumn fx:id="foodNameColumn" prefWidth="172.0" text="Tên thức ăn" />
+                                                        <TableColumn fx:id="foodQuantityCaloriesColumn" prefWidth="156.0" text="Lượng calo" />
+                                                        <TableColumn fx:id="foodMealColumn" prefWidth="128.0" text="Bữa ăn" />
+                                                        <TableColumn fx:id="deleteFoodColumn" prefWidth="84.0" text="Xóa" />
+                                                    </columns>
+                                                </TableView>
+                                                <TableView fx:id="exerciseTable" layoutX="12.0" layoutY="378.0" prefHeight="162.0" prefWidth="543.0">
+                                                    <columns>
+
+                                                        <TableColumn fx:id="exerciseColumn" prefWidth="159.0" text="Bài tập">
+                                                            <cellValueFactory>
+                                                                <PropertyValueFactory property="exerciseName" />
+                                                            </cellValueFactory>
+                                                        </TableColumn>
+
+                                                        <TableColumn fx:id="intervalColumn" prefWidth="145.0" text="Thời gian">
+                                                            <cellValueFactory>
+                                                                <PropertyValueFactory property="interval" />
+                                                            </cellValueFactory>
+                                                        </TableColumn>
+
+
+                                                        <TableColumn fx:id="caloriesConsumedColumn" prefWidth="140.0" text="Calo tiêu thụ">
+                                                            <cellValueFactory>
+                                                                <PropertyValueFactory property="caloriesConsumed" />
+                                                            </cellValueFactory>
+                                                        </TableColumn>
+
+                                                        <TableColumn fx:id="deleteColumn" prefWidth="97.0" text="Xóa">
+                                                            <cellFactory>
+                                                                <PropertyValueFactory property="deleteButton" />
+                                                            </cellFactory>
+                                                        </TableColumn>
+                                                    </columns>
+                                                </TableView>
+                                    <Label layoutX="246.0" text="Lịch sử">
+                                       <font>
+                                          <Font size="30.0" />
+                                       </font>
+                                    </Label>
+                                    <Line endY="413.0" layoutY="142.0" startY="-142.0" />
+
+
+                                            </children>
+                                        </AnchorPane>
+                                    </children>
+                                </HBox>
+                            </children>
+                        </AnchorPane>
+                    </center>
+                </BorderPane>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>
