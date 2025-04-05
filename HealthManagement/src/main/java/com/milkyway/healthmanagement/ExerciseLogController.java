@@ -1,20 +1,14 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/javafx/FXMLController.java to edit this template
- */
 package com.milkyway.healthmanagement;
 
-
-import com.milkyway.pojo.Exercise;
 import com.milkyway.pojo.Exerciselog;
 import com.milkyway.service.ExerciseLogService;
-import com.milkyway.service.ExerciseService;
 import java.net.URL;
 import java.sql.SQLException;
+import java.time.LocalDate;
+import java.sql.Date;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -25,20 +19,17 @@ import javafx.scene.control.DatePicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableRow;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import com.milkyway.pojo.User;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-/**
- * FXML Controller class
- *
- * @author ASUS
- */
 public class ExerciseLogController extends SwitchSceneController implements Initializable {
 
     @FXML
-    TableView<ExerciseTableRow> tbExercise;
+    private TableView<Exerciselog> tbExercise;
 
     @FXML
     private DatePicker dtpDateOfExercise;
@@ -49,91 +40,86 @@ public class ExerciseLogController extends SwitchSceneController implements Init
     @FXML
     private Label txtTotal;
 
-    private ObservableList<ExerciseTableRow> exerciseData = FXCollections.observableArrayList();
+    private ObservableList<Exerciselog> exerciseData = FXCollections.observableArrayList();
 
     private void loadTableView() {
-        TableColumn colName = new TableColumn("Bài Tập");
-        colName.setCellValueFactory(new PropertyValueFactory<>("exerciseName"));
+        TableColumn<Exerciselog, String> colName = new TableColumn<>("Bài Tập");
+        colName.setCellValueFactory(cellData -> {
+            if (cellData.getValue().getExerciseId() != null && cellData.getValue().getExerciseId().getExerciseName() != null) {
+                return new SimpleStringProperty(cellData.getValue().getExerciseId().getExerciseName());
+            } else {
+                return new SimpleStringProperty("Không có dữ liệu");
+            }
+        });
+
         colName.setPrefWidth(300);
 
-        TableColumn colTime = new TableColumn("Thời Gian");
-        colTime.setCellValueFactory(new PropertyValueFactory<>("exerciseName"));
+        TableColumn<Exerciselog, Integer> colTime = new TableColumn<>("Thời Gian");
+        colTime.setCellValueFactory(new PropertyValueFactory<>("duration"));
         colTime.setPrefWidth(200);
 
-        TableColumn colSumCalo = new TableColumn("Tổng Calo Tiêu Thụ");
-        colSumCalo.setCellValueFactory(new PropertyValueFactory<>("exerciseName"));
-        colSumCalo.setPrefWidth(200);
+        TableColumn<Exerciselog, String> colCalories = new TableColumn<>("Tổng calo tiêu thụ");
+        colCalories.setCellValueFactory(new PropertyValueFactory<>("energyBurn"));
+        colCalories.setPrefWidth(200);
 
-        TableColumn colAction = new TableColumn("Hành Động");
-        colAction.setCellValueFactory(new PropertyValueFactory<>("deleteButton"));
+        TableColumn<Exerciselog, Void> colAction = new TableColumn<>("Hành Động");
         colAction.setPrefWidth(200);
-        colAction.setCellFactory((e -> {
-            Button btn = new Button("Xóa");
-            btn.setOnAction((evt) -> {
-                try {
-                    int id = ((Exercise)((TableRow)((Button)evt.getSource()).getParent().getParent()).getItem()).getIdExercise();
-                    ExerciseLogService els = new ExerciseLogService();
-                    els.deleteExerciseLog(id);
-                    this.showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa thành công!!!");
-                    loadData("");
-                } catch (SQLException ex) {
-                    Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+        colAction.setCellFactory(column -> new TableCell<>() {
+            private final Button btn = new Button("Xóa");
+
+            {
+                btn.setOnAction(evt -> {
+                    Exerciselog log = getTableView().getItems().get(getIndex());
+                    if (log != null) {
+                        ExerciseLogService els = new ExerciseLogService();
+                        try {
+                            els.deleteExerciseLog(log.getIdExLog());
+                        } catch (SQLException ex) {
+                            Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                        showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa thành công!");
+                        Date sqlDateFilter = Date.valueOf(dtpDateOfExercise.getValue());
+                        loadData(User.currentUser.getId(), sqlDateFilter);
+                    }
+                });
+            }
+
+            @Override
+            protected void updateItem(Void item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty) {
+                    setGraphic(null);
+                } else {
+                    setGraphic(btn);
                 }
-            });
-            
-            TableCell cell = new TableCell();
-            cell.setGraphic(btn);
-            return cell;
-        }));
-        this.tbExercise.getColumns().addAll(colName, colTime, colSumCalo, colAction);
+            }
+        });
+
+        tbExercise.getColumns().clear();
+        tbExercise.getColumns().addAll(colName, colTime, colCalories, colAction);
+        tbExercise.setItems(exerciseData);
     }
 
-    public void loadData(String kw) {
-//    try {
-//        // Lấy userId của người đăng nhập
-//        int userId = LoggedInUser.getUserId();
-//
-//        // Gọi service để lấy danh sách bài tập của user
-//        ExerciseLogService els = new ExerciseLogService();
-//        List<Exerciselog> logs = els.getExercisesByUser(userId, kw);
-//
-//        // Chuyển đổi dữ liệu thành dạng ObservableList để hiển thị trên TableView
-//        exerciseData.clear();
-//        for (Exerciselog log : logs) {
-//            Exercise exercise = log.getExerciseId();
-//            String exerciseName = exercise.getExerciseName();
-//            String interval = log.getDuration() + " phút";
-//            String caloriesConsumed = log.getEnergyBurn() + " kcal";
-//            
-//            Button deleteButton = new Button("Xóa");
-//            deleteButton.setOnAction(evt -> {
-//                try {
-//                    els.deleteExerciseLog(log.getIdExLog());
-//                    this.showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa thành công!");
-//                    loadData(kw); // Load lại dữ liệu sau khi xóa
-//                } catch (SQLException ex) {
-//                    Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
-//                }
-//            });
-//
-//            ExerciseTableRow row = new ExerciseTableRow(exerciseName, interval, caloriesConsumed, deleteButton, log);
-//            exerciseData.add(row);
-//        }
-//
-//        // Gán dữ liệu cho TableView
-//        tbExercise.setItems(exerciseData);
-//
-//        // Tính tổng calo tiêu thụ
-//        double totalCalories = logs.stream().mapToDouble(Exerciselog::getEnergyBurn).sum();
-//        txtTotal.setText("Tổng calo tiêu thụ: " + totalCalories + " kcal");
-//
-//    }catch(SQLException ex) {
-//        Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
-//    }
-}
-    
- 
-    
+    private final ExerciseLogService exerciseLogService = new ExerciseLogService();
+
+    public void loadData(int userId, Date selectedDate) {
+
+        try {
+            List<Exerciselog> logs = exerciseLogService.getExerciseLogsByUserAndDate(userId, selectedDate);
+
+            exerciseData.clear();
+            exerciseData.addAll(logs);
+
+            if (logs.isEmpty()) {
+                tbExercise.setPlaceholder(new Label("Không có dữ liệu nào cho ngày " + selectedDate));
+            } else {
+                System.out.println("Tải dữ liệu thành công cho ngày " + selectedDate);
+            }
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi tải dữ liệu: " + e.getMessage());
+        }
+    }
+
     private void showAlert(Alert.AlertType type, String title, String content) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -142,48 +128,31 @@ public class ExerciseLogController extends SwitchSceneController implements Init
         alert.showAndWait();
     }
 
-    public static class ExerciseTableRow {
-
-        private final String exerciseName;
-        private final String interval;
-        private final String caloriesConsumed;
-        private final Button deleteButton;
-        private final Exerciselog userExercise;
-
-        public String getExerciseName() {
-            return exerciseName;
-        }
-
-        public String getInterval() {
-            return interval;
-        }
-
-        public String getCaloriesConsumed() {
-            return caloriesConsumed;
-        }
-
-        public Button getDeleteButton() {
-            return deleteButton;
-        }
-
-        public ExerciseTableRow(String exerciseName, String interval, String caloriesConsumed, Button deleteButton, Exerciselog userExercise) {
-            this.exerciseName = exerciseName;
-            this.interval = interval;
-            this.caloriesConsumed = caloriesConsumed;
-            this.deleteButton = deleteButton;
-            this.userExercise = userExercise;
-        }
-
-        public Exerciselog getUserExercise() {
-            return userExercise;
-        }
-    }
-
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         displayUsername();
         
         this.loadTableView();
-    }
 
+        if (User.currentUser != null) {
+            LocalDate todayLocalDate = LocalDate.now();
+            Date sqlToday = Date.valueOf(todayLocalDate);
+            loadData(User.currentUser.getId(), sqlToday);
+
+            dtpDateOfExercise.valueProperty().addListener((observable, oldValue, newValue) -> {
+                Date sqlDateFilter = null;
+                if (newValue != null) {
+                    sqlDateFilter = Date.valueOf(newValue);
+                }
+                loadData(User.currentUser.getId(), sqlDateFilter);
+            });
+
+            dtpDateOfExercise.setValue(LocalDate.now());
+
+        } else {
+            showAlert(Alert.AlertType.WARNING, "Yêu cầu đăng nhập", "Vui lòng đăng nhập để xem lịch sử.");
+            tbExercise.setPlaceholder(new Label("Bạn cần đăng nhập để xem dữ liệu."));
+            txtTotal.setText("Tổng calo đã ghi nhận: 0.0 kcal");
+        }
+    }
 }

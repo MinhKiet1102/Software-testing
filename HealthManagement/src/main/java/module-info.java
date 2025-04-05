@@ -7,7 +7,7 @@ module com.milkyway.healthmanagement {
     requires java.sql;
     
 
-
+    requires de.jensd.fx.glyphs.fontawesome;
     opens com.milkyway.healthmanagement to javafx.fxml;
     exports com.milkyway.healthmanagement;
     exports com.milkyway.pojo;

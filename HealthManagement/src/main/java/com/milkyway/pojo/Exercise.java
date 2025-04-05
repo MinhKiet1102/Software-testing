@@ -45,7 +45,7 @@ public class Exercise implements Serializable {
     private String imageExercise;
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "caloriesBurnedPerMin")
-    private Float caloriesBurnedPerMin;
+    private double caloriesBurnedPerMin;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
     private Set<Exerciselog> exerciselogSet;
 
@@ -62,7 +62,7 @@ public class Exercise implements Serializable {
     }
 
 
-    public Exercise(Integer idExercise, String exerciseName, String imageExercise, float caloriesBurnedPerMin) {
+    public Exercise(Integer idExercise, String exerciseName, String imageExercise, double caloriesBurnedPerMin) {
         this.idExercise = idExercise;
         this.exerciseName = exerciseName;
         this.imageExercise = imageExercise;
@@ -94,11 +94,11 @@ public class Exercise implements Serializable {
         this.imageExercise = imageExercise;
     }
 
-    public Float getCaloriesBurnedPerMin() {
+    public Double getCaloriesBurnedPerMin() {
         return caloriesBurnedPerMin;
     }
 
-    public void setCaloriesBurnedPerMin(Float caloriesBurnedPerMin) {
+    public void setCaloriesBurnedPerMin(Double caloriesBurnedPerMin) {
         this.caloriesBurnedPerMin = caloriesBurnedPerMin;
     }
 
