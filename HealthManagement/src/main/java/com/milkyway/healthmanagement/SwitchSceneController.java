@@ -122,8 +122,8 @@ public class SwitchSceneController {
     }
     
     public void displayUsername() {
-        if (User.currentUser != null) {
-            String user = User.currentUser.getUsername();
+        if (User.getCurrentUser() != null) {
+            String user = User.getCurrentUser().getUsername();
             username.setText(user.substring(0, 1).toUpperCase() + user.substring(1));
         } else {
             username.setText("Guest");

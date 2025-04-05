@@ -129,7 +129,7 @@ public class ExerciseDetailController extends SwitchSceneController implements I
             exerciseLog.setEffortLevel(effortLevel);
             exerciseLog.setEnergyBurn(caloriesPerMinute * duration);
             exerciseLog.setDuration(duration);
-            exerciseLog.setUserId(User.currentUser);
+            exerciseLog.setUserId(User.getCurrentUser());
 
             ExerciseLogService logService = new ExerciseLogService();
             logService.saveLog(exerciseLog);
