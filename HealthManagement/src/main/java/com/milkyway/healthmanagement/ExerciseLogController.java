@@ -130,7 +130,9 @@ public class ExerciseLogController extends SwitchSceneController implements Init
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        loadTableView();
+        displayUsername();
+        
+        this.loadTableView();
 
         if (User.currentUser != null) {
             LocalDate todayLocalDate = LocalDate.now();

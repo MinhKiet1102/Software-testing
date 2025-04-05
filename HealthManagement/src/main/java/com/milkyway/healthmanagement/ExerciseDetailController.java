@@ -22,7 +22,13 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
-public class ExerciseDetailController implements Initializable {
+
+/**
+ * FXML Controller class
+ *
+ * @author ASUS
+ */
+public class ExerciseDetailController extends SwitchSceneController implements Initializable {
 
     @FXML
     private DatePicker dtpDate;
