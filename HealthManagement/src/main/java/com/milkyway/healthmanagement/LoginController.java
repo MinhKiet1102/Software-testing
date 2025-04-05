@@ -96,7 +96,9 @@ public class LoginController implements Initializable {
                 showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công!");
 
                 si_loginBtn.getScene().getWindow().hide();
+
                 Parent root = FXMLLoader.load(getClass().getResource("home.fxml"));
+
                 Stage stage = new Stage();
                 stage.setTitle("Health Mangement System");
                 Image icon = new Image(getClass().getResourceAsStream("/com/milkyway/healthmanagement/image/image.jpg"));

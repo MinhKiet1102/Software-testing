@@ -1,4 +1,5 @@
 com\milkyway\pojo\MealFoodPK.class
+com\milkyway\healthmanagement\TargetController.class
 com\milkyway\healthmanagement\MealFoodController.class
 com\milkyway\healthmanagement\ExerciseLogController$ExerciseTableRow.class
 com\milkyway\healthmanagement\TargetController.class
@@ -12,6 +13,7 @@ com\milkyway\healthmanagement\ExerciseController.class
 com\milkyway\healthmanagement\HomeController.class
 com\milkyway\pojo\User.class
 com\milkyway\pojo\Exercise.class
+com\milkyway\healthmanagement\HomePageController.class
 com\milkyway\healthmanagement\TargetController$2.class
 com\milkyway\healthmanagement\ExercisePageController.class
 com\milkyway\pojo\JdbcUtils.class
