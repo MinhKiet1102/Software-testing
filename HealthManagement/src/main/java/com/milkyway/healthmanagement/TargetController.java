@@ -9,10 +9,7 @@ import com.milkyway.pojo.User;
 import com.milkyway.service.TargetService;
 import java.net.URL;
 import java.sql.SQLException;
-import java.text.DecimalFormat;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -154,10 +151,10 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     private void animateMoveY(Node node, double toY, double durationMillis) {
         TranslateTransition transition = new TranslateTransition(Duration.millis(durationMillis), node);
-        transition.setToY(toY - node.getLayoutY()); 
+        transition.setToY(toY - node.getLayoutY());
         transition.setInterpolator(Interpolator.EASE_BOTH);
         transition.setOnFinished(e -> {
-            node.setTranslateY(0); 
+            node.setTranslateY(0);
             node.setLayoutY(toY);  // Cập nhật vị trí thật
         });
         transition.play();
@@ -166,14 +163,14 @@ public class TargetController extends SwitchSceneController implements Initializ
     @FXML
     private void showMenu() {
         menu_target_nav.setVisible(true);
-        menu_personal_btn.setLayoutX(ORIGINAL_X); 
-        animateMoveY(menu_personal_btn, EXPANDED_Y, 200); 
+        menu_personal_btn.setLayoutX(ORIGINAL_X);
+        animateMoveY(menu_personal_btn, EXPANDED_Y, 200);
     }
 
     @FXML
     private void hideMenu() {
         menu_target_nav.setVisible(false);
-        animateMoveY(menu_personal_btn, ORIGINAL_Y, 200); 
+        animateMoveY(menu_personal_btn, ORIGINAL_Y, 200);
     }
 
     private ObservableList<Target> myPlansListData = FXCollections.observableArrayList();
@@ -271,21 +268,29 @@ public class TargetController extends SwitchSceneController implements Initializ
                     return;
                 }
             } catch (NumberFormatException e) {
-                showAlert(Alert.AlertType.ERROR, "Lỗi", "Mục tiêu phải là số hợp lệ!");
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Mục tiêu phải là số hợp lệ (sử dụng dấu . cho số thập phân)!");
                 return;
             }
 
-            if (planService.isPlanExist(planName)) {
-                showAlert(Alert.AlertType.ERROR, "Lỗi", "Kế hoạch \"" + planName + "\" đã tồn tại!");
+            if (planService.isPlanExist(planName, startDate, User.getCurrentUser().getId())) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Kế hoạch \"" + planName + "\" đã tồn tại với cùng ngày bắt đầu!");
                 return;
             }
 
+            // Thêm kế hoạch mới
             planService.addPlan(planName, startDate, endDate, targetValue, String.valueOf(myPlans_unit.getSelectionModel().getSelectedItem()), User.getCurrentUser().getId());
+
+            // Lấy kế hoạch vừa thêm
+            Target newPlan = planService.getPlanByName(planName);
 
             showAlert(Alert.AlertType.INFORMATION, "Thành công", "Thêm kế hoạch thành công!");
             myPlansShowData();
             myPlansClearBtn();
 
+            // Kiểm tra và hiển thị cảnh báo nếu chưa đạt 50%
+            if (newPlan != null && "In Progress".equals(newPlan.getStatus())) {
+                planService.checkMidCycleProgress(newPlan);
+            }
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi SQL", "Có lỗi xảy ra khi thêm kế hoạch! Vui lòng thử lại.");
         } catch (Exception e) {
@@ -296,21 +301,31 @@ public class TargetController extends SwitchSceneController implements Initializ
     public void myPlansUpdateBtn() {
         try {
             if (idTarget == 0) {
-                showAlert(Alert.AlertType.ERROR, "Error Message", "Vui lòng chọn mục");
+                showAlert(Alert.AlertType.ERROR, "Error Message", "Vui lòng chọn 1 mục tiêu");
                 return;
             }
 
             Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
             alert.setTitle("Confirmation Message");
             alert.setHeaderText(null);
-            alert.setContentText("Bạn có chắc chắn muốn CẬP NHẬT Kế: " + myPlans_plan.getText());
+            alert.setContentText("Bạn có chắc chắn muốn CẬP NHẬT kế hoạch: " + myPlans_plan.getText());
             Optional<ButtonType> option = alert.showAndWait();
 
             if (option.isPresent() && option.get().equals(ButtonType.OK)) {
                 LocalDate oldEndDate = planService.getOldEndDate(idTarget);
                 String currentD = planService.getDateCreated(idTarget);
                 LocalDate newEndDate = myPlans_endDate.getValue();
-                float targetValue = Float.parseFloat(myPlans_target.getText().trim());
+                float targetValue;
+                try {
+                    targetValue = Float.parseFloat(myPlans_target.getText().trim());
+                    if (targetValue <= 0) {
+                        showAlert(Alert.AlertType.ERROR, "Error Message", "Mục tiêu phải lớn hơn 0!");
+                        return;
+                    }
+                } catch (NumberFormatException e) {
+                    showAlert(Alert.AlertType.ERROR, "Error Message", "Mục tiêu phải là số hợp lệ (sử dụng dấu . cho số thập phân)!");
+                    return;
+                }
 
                 if (newEndDate.isBefore(oldEndDate)) {
                     showAlert(Alert.AlertType.ERROR, "Error Message", "Bạn không được rút ngắn thời gian mục tiêu!");
@@ -386,11 +401,27 @@ public class TargetController extends SwitchSceneController implements Initializ
             return;
         }
 
+        String status = selectedPlan.getStatus();
+        switch (status) {
+            case "Not Started":
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không thể cập nhật tiến độ khi trạng thái là 'Not Started'!");
+                return;
+            case "Achieved":
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không thể cập nhật tiến độ khi trạng thái là 'Achieved'!");
+                return;
+            case "Failed":
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không thể cập nhật tiến độ khi trạng thái là 'Failed'!");
+                return;
+            case "Cancelled":
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không thể cập nhật tiến độ khi trạng thái là 'Cancelled'!");
+                return;
+        }
+
         float newProgress;
         try {
             newProgress = Float.parseFloat(myPlans_progress.getText());
         } catch (NumberFormatException e) {
-            showAlert(Alert.AlertType.ERROR, "Lỗi nhập liệu", "Vui lòng nhập số hợp lệ!");
+            showAlert(Alert.AlertType.ERROR, "Lỗi nhập liệu", "Vui lòng nhập số hợp lệ (sử dụng dấu . cho số thập phân)!");
             return;
         }
 
@@ -459,7 +490,7 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     public ObservableList<Target> myPlansDataList() {
         try {
-            return planService.getPlansForCurrentUser(User.getCurrentUser().getId());
+            return planService.getPlansForCurrentUser(User.getCurrentUser().getId(), false);
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra khi tải dữ liệu kế hoạch!");
             return FXCollections.observableArrayList();
@@ -588,7 +619,7 @@ public class TargetController extends SwitchSceneController implements Initializ
     public void finishedPlansUpdateBtn() {
         try {
             if (finishedPlans_planID.getText().isEmpty() || finishedPlans_status.getSelectionModel().getSelectedItem() == null) {
-                showAlert(Alert.AlertType.ERROR, "Error Message", "Vui lòng chọn 1 mục");
+                showAlert(Alert.AlertType.ERROR, "Error Message", "Vui lòng chọn 1 mục tiêu");
                 return;
             }
 
@@ -664,7 +695,7 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     public ObservableList<Target> finishedPlansDataList() {
         try {
-            return planService.getFinishedPlansDataList(User.getCurrentUser().getId());
+            return planService.getPlansForCurrentUser(User.getCurrentUser().getId(), false);
         } catch (SQLException e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra khi tải dữ liệu kế hoạch!");
             e.printStackTrace();

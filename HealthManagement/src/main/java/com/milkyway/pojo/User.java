@@ -289,15 +289,13 @@ public class User implements Serializable {
     }
 
     public String determineWeightChangeRecommendation() {
-        double bmi = calculateBMI();
-
-        // Xác định phạm vi BMI cho các khuyến nghị
-        double normalWeightLowerThreshold = 18.5;
-
-        if (bmi < normalWeightLowerThreshold) {
+        BigDecimal optimalWeight = calculateOptimalWeight();
+        if (currentWeight.compareTo(optimalWeight) < 0) {
             return "tăng";
-        } else {
+        } else if (currentWeight.compareTo(optimalWeight) > 0) {
             return "giảm";
+        } else {
+            return "duy trì";
         }
     }
 
