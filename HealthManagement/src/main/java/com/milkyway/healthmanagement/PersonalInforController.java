@@ -5,16 +5,13 @@
 package com.milkyway.healthmanagement;
 
 import com.milkyway.pojo.History;
-import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
 import com.milkyway.service.HistoryService;
+import com.milkyway.service.PersonalInforService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -91,7 +88,23 @@ public class PersonalInforController extends SwitchSceneController implements In
     @FXML
     private Text totalEnteredCalories;
 
+    @FXML
+    private TableView<WeightHistoryRow> weightHistoryTable;
+
+    @FXML
+    private TableColumn<WeightHistoryRow, String> dateColumn;
+
+    @FXML
+    private TableColumn<WeightHistoryRow, String> weightColumn;
+
+    @FXML
+    private TableColumn<WeightHistoryRow, String> heightColumn;
+
+    private ObservableList<WeightHistoryRow> weightHistoryData = FXCollections.observableArrayList();
+
     private User signedInUser;
+
+    private PersonalInforService personalInforService = new PersonalInforService();
 
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
@@ -111,33 +124,10 @@ public class PersonalInforController extends SwitchSceneController implements In
             return;
         }
 
-        updateUsername(userId, newusername);
+        personalInforService.updateUsername(userId, newusername);
         newUsername.clear();
         showAlert(Alert.AlertType.INFORMATION, "Thành công", "Thay đổi tên đăng nhập thành công!");
         User.getCurrentUser().setUsername(newusername);
-    }
-
-    public void updateUsername(int userId, String newUsername) throws SQLException {
-        Connection con = JdbcUtils.getConn();
-        if (con == null) {
-            return;
-        }
-
-        String query = "UPDATE user SET username=? WHERE id=?;";
-
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setString(1, newUsername);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } finally {
-            try {
-                con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
     }
 
     public void handleUpdatePassword(ActionEvent event) throws IOException, SQLException {
@@ -151,41 +141,26 @@ public class PersonalInforController extends SwitchSceneController implements In
             return;
         }
 
-        if (!newpassword.equals(newconfirmPassword)) {
+        if (newconfirmPassword.isEmpty()) {
             showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Xác nhận mật khẩu không được để trống!");
             return;
         }
 
-        // Update password
-        updatePassword(userId, newpassword);
+        if (!newpassword.equals(newconfirmPassword)) {
+            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Xác nhận mật khẩu không trùng khớp với mật khẩu!");
+            return;
+        }
+
+        if (newpassword.length() < 8) {
+            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Mật khẩu phải có ít nhất 8 ký tự!");
+            return;
+        }
+
+        personalInforService.updatePassword(userId, newpassword);
         showAlert(Alert.AlertType.INFORMATION, "Thành công", "Cập nhật mật khẩu thành công!");
 
         newPassword.clear();
         newConfirmPassword.clear();
-
-    }
-
-    public void updatePassword(int userId, String newPassword) throws SQLException {
-        Connection con = JdbcUtils.getConn();
-        if (con == null) {
-            return;
-        }
-
-        String query = "UPDATE user SET password=? WHERE id=?;";
-
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setString(1, newPassword);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } finally {
-            try {
-                con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
     }
 
     private void handleDatePickerAction(ActionEvent event) {
@@ -202,9 +177,7 @@ public class PersonalInforController extends SwitchSceneController implements In
             return;
         }
 
-        Instant instant = weightDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
-        Date utilDate = Date.from(instant);
-
+        Date utilDate = Date.from(weightDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
         String dateWeight = newWeight.getText();
         String heightText = newHeight.getText();
 
@@ -213,40 +186,40 @@ public class PersonalInforController extends SwitchSceneController implements In
             return;
         }
 
+        // Lấy giá trị hiện tại từ cơ sở dữ liệu hoặc từ đối tượng User
+        BigDecimal currentWeight = User.getCurrentUser().getCurrentWeight();
+        Integer currentHeight = User.getCurrentUser().getHeight();
+
         // Xử lý cập nhật cân nặng nếu có
-        BigDecimal weightValue = null;
         if (!dateWeight.isEmpty()) {
             try {
-                weightValue = new BigDecimal(dateWeight);
-
+                BigDecimal weightValue = new BigDecimal(dateWeight);
                 if (weightValue.compareTo(BigDecimal.ZERO) <= 0) {
                     showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị trọng số dương khác không.");
                     return;
                 }
-
-                updateWeight(userId, weightValue);
+                personalInforService.updateWeight(userId, weightValue);
                 User.getCurrentUser().setCurrentWeight(weightValue);
+                currentWeight = weightValue;
             } catch (NumberFormatException e) {
-                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị trọng lượng hợp lệ.");
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị trọng lượng hợp lệ (sử dụng dấu . cho số thập phân).");
                 return;
             }
         }
 
         // Xử lý cập nhật chiều cao nếu có
-        Integer heightValue = null;
         if (heightText != null && !heightText.isEmpty()) {
             try {
-                heightValue = Integer.parseInt(heightText);
-
+                Integer heightValue = Integer.parseInt(heightText);
                 if (heightValue <= 0) {
                     showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập chiều cao dương hợp lệ.");
                     return;
                 }
-
-                updateHeight(userId, heightValue);
+                personalInforService.updateHeight(userId, heightValue);
                 User.getCurrentUser().setHeight(heightValue);
+                currentHeight = heightValue;
             } catch (NumberFormatException e) {
-                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị chiều cao hợp lệ.");
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng nhập giá trị chiều cao hợp lệ(Đơn vị đo là cm).");
                 return;
             }
         }
@@ -254,8 +227,8 @@ public class PersonalInforController extends SwitchSceneController implements In
         // Thêm dữ liệu vào bảng history
         History history = new History();
         history.setHistoryDate(utilDate);
-        history.setHistoryWeight(weightValue);
-        history.setHistoryHeight(heightValue);
+        history.setHistoryWeight(currentWeight); // Sử dụng giá trị hiện tại
+        history.setHistoryHeight(currentHeight); // Sử dụng giá trị hiện tại
         history.setUserId(User.getCurrentUser());
 
         HistoryService historyService = new HistoryService();
@@ -264,56 +237,33 @@ public class PersonalInforController extends SwitchSceneController implements In
         // Cập nhật bảng hiển thị
         updateWeightHistoryTable();
 
+        // Cập nhật BMI và các thông tin liên quan
+        updateBMIAndRecommendations();
+
         newWeight.clear();
         newHeight.clear();
 
         showAlert(Alert.AlertType.INFORMATION, "Thành công", "Cập nhật thông tin thành công!");
     }
 
-    public void updateWeight(int userId, BigDecimal newWeight) throws SQLException {
-        Connection con = JdbcUtils.getConn();
-        if (con == null) {
+    private void updateBMIAndRecommendations() {
+        User user = User.getCurrentUser();
+        if (user.getCurrentWeight() == null || user.getHeight() == null) {
+            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Cân nặng hoặc chiều cao chưa được thiết lập.");
             return;
         }
+        double bmi = user.calculateBMI();
+        BigDecimal optimalWeight = user.calculateOptimalWeight();
+        String changeRecommendation = user.determineWeightChangeRecommendation();
 
-        String query = "UPDATE user SET current_weight=? WHERE id=?;";
-
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setBigDecimal(1, newWeight);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } finally {
-            try {
-                con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
-    }
-
-    public void updateHeight(int userId, int newHeight) throws SQLException {
-        Connection con = JdbcUtils.getConn();
-        if (con == null) {
-            return;
-        }
-
-        String query = "UPDATE user SET height=? WHERE id=?;";
-
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-            preparedStatement.setInt(1, newHeight);
-            preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
-        } finally {
-            try {
-                con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
-            }
-        }
+        // Cập nhật UI
+        CurrentBMI.setText(String.valueOf(bmi));
+        CurrentWeight.setText(String.valueOf(user.getCurrentWeight()));
+        ChangeRecommendation.setText(changeRecommendation);
+        WeightChange.setText(user.calculateWeightToLoseOrGain().toString());
+        CaloriesPerDay.setText(String.valueOf(user.calculateCaloriesPerDay()));
+        WeightStatus.setText(user.determineWeightStatus());
+        OptimalWeight.setText(String.valueOf(optimalWeight));
     }
 
 //    private double calculateAndDisplayTotalEatenCalories() {
@@ -384,20 +334,6 @@ public class PersonalInforController extends SwitchSceneController implements In
 
     }
 
-    @FXML
-    private TableView<WeightHistoryRow> weightHistoryTable;
-
-    @FXML
-    private TableColumn<WeightHistoryRow, String> dateColumn;
-
-    @FXML
-    private TableColumn<WeightHistoryRow, String> weightColumn;
-
-    @FXML
-    private TableColumn<WeightHistoryRow, String> heightColumn;
-
-    private ObservableList<WeightHistoryRow> weightHistoryData = FXCollections.observableArrayList();
-
     private void updateWeightHistoryTable() throws SQLException {
         HistoryService history = new HistoryService();
         int userId = User.getCurrentUser().getId();
@@ -408,7 +344,7 @@ public class PersonalInforController extends SwitchSceneController implements In
             WeightHistoryRow row = new WeightHistoryRow(
                     h.getHistoryDate().toString(),
                     String.valueOf(h.getHistoryWeight()),
-                    String.valueOf(h.getHistoryHeight()) // Thêm height
+                    String.valueOf(h.getHistoryHeight()) 
             );
             weightHistoryData.add(row);
         }

@@ -21,7 +21,7 @@ public class App extends Application {
 
 
         scene = new Scene(loadFXML("Login"), 650, 600);
-        stage.setTitle("Health Mangement System");
+        stage.setTitle("Health Management System");
         Image icon = new Image(getClass().getResourceAsStream("/com/milkyway/healthmanagement/image/image.jpg"));
         stage.getIcons().add(icon);
         stage.setResizable(false);
