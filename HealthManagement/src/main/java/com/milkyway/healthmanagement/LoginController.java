@@ -1,8 +1,16 @@
 package com.milkyway.healthmanagement;
 
+import com.milkyway.pojo.History;
+import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
+import com.milkyway.service.HistoryService;
 import com.milkyway.service.LoginService;
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Date;
 import java.util.ResourceBundle;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -79,6 +87,8 @@ public class LoginController implements Initializable {
 
     private Alert alert;
     private final LoginService loginService = new LoginService();
+    private ActionEvent ev;
+    private User createdAccount;
 
     public void loginAccount() {
         try {
@@ -92,7 +102,7 @@ public class LoginController implements Initializable {
 
             User user = loginService.login(username, password);
             if (user != null) {
-                User.currentUser = user;
+                User.setCurrentUser(user);
                 showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Đăng nhập thành công!");
 
                 si_loginBtn.getScene().getWindow().hide();
@@ -100,7 +110,7 @@ public class LoginController implements Initializable {
                 Parent root = FXMLLoader.load(getClass().getResource("home.fxml"));
 
                 Stage stage = new Stage();
-                stage.setTitle("Health Mangement System");
+                stage.setTitle("Health Management System");
                 Image icon = new Image(getClass().getResourceAsStream("/com/milkyway/healthmanagement/image/image.jpg"));
                 stage.getIcons().add(icon);
                 stage.setResizable(false);
@@ -124,6 +134,7 @@ public class LoginController implements Initializable {
             String weight = su_weight.getText();
             String age = su_age.getText();
             String height = su_height.getText();
+            Date registration_date = new Date();
 
             if (username.isEmpty() || password.isEmpty() || email.isEmpty() || gender == null || weight.isEmpty() || age.isEmpty() || height.isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Vui lòng nhập đầy đủ thông tin!");
@@ -135,18 +146,56 @@ public class LoginController implements Initializable {
                 return;
             }
 
-            User newUser = new User(0, username, password, email);
-            boolean success = loginService.register(newUser, gender, weight, age, height);
+            BigDecimal weightValue;
+            Integer ageValue;
+            Integer heightValue;
 
-            if (success) {
-                showAlert(Alert.AlertType.INFORMATION, "Thành công", "Tài khoản đã được tạo!");
-                switchToLoginForm();
-            } else {
-                showAlert(Alert.AlertType.ERROR, "Lỗi", "Tên đăng nhập đã tồn tại!");
+            try {
+                weightValue = new BigDecimal(weight);
+                ageValue = Integer.parseInt(age);
+                heightValue = Integer.parseInt(height);
+            } catch (NumberFormatException e) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Vui lòng nhập đúng định dạng cho cân nặng, tuổi và chiều cao!");
+                return;
             }
+
+            User newUser = new User(0, username, password, email, gender, weightValue, ageValue, heightValue, registration_date);
+
+            loginService.register(newUser);
+            createdAccount = newUser;
+            AccountCreatedSuccessfully(ev);
+            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Tài khoản đã được tạo!");
+            switchToLoginForm();
+
         } catch (Exception e) {
             e.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Có lỗi xảy ra khi đăng ký!");
+        }
+    }
+
+    @FXML
+    public void AccountCreatedSuccessfully(ActionEvent ev) throws IOException, SQLException {
+        if (createdAccount == null) {
+            throw new IllegalStateException("Tài khoản chưa được tạo.");
+        }
+
+        try (Connection con = JdbcUtils.getConn()) {
+            if (con == null) {
+                return;
+            }
+
+            User user = new LoginService().getUserByUsername(createdAccount.getUsername());
+            if (user == null) {
+                throw new IllegalStateException("Không tìm thấy người dùng.");
+            }
+
+            History history = new History();
+            history.setHistoryDate(new Date());
+            history.setHistoryWeight(createdAccount.getCurrentWeight());
+            history.setHistoryHeight(createdAccount.getHeight());
+            history.setUserId(user);
+
+            new HistoryService().save(history);
         }
     }
 
@@ -174,7 +223,7 @@ public class LoginController implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        ObservableList<String> genderList = FXCollections.observableArrayList("Nam", "Nữ", "Khác");
+        ObservableList<String> genderList = FXCollections.observableArrayList("Nam", "Nữ");
         su_gender.setItems(genderList);
     }
 

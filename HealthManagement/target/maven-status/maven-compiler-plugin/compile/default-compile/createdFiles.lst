@@ -10,13 +10,17 @@ com\milkyway\healthmanagement\ExerciseController.class
 com\milkyway\healthmanagement\HomeController.class
 com\milkyway\pojo\User.class
 com\milkyway\pojo\Exercise.class
+com\milkyway\service\HistoryService.class
 com\milkyway\healthmanagement\TargetController$2.class
 com\milkyway\healthmanagement\HomePageController.class
 com\milkyway\healthmanagement\ExercisePageController.class
 com\milkyway\pojo\JdbcUtils.class
 com\milkyway\healthmanagement\App.class
+com\milkyway\healthmanagement\PersonalInforController$WeightHistoryRow.class
 com\milkyway\pojo\Exerciselog.class
+com\milkyway\pojo\History.class
 com\milkyway\pojo\MealFood.class
+com\milkyway\service\PersonalInforService.class
 module-info.class
 com\milkyway\service\ExerciseLogService.class
 com\milkyway\healthmanagement\TargetController$1.class
@@ -28,3 +32,4 @@ com\milkyway\healthmanagement\ExerciseLogController.class
 com\milkyway\pojo\Food.class
 com\milkyway\healthmanagement\ExerciseLogController$1.class
 com\milkyway\healthmanagement\LoginController.class
+com\milkyway\healthmanagement\PersonalInforController.class

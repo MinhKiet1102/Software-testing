@@ -79,7 +79,7 @@ public class ExerciseLogController extends SwitchSceneController implements Init
                         }
                         showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa thành công!");
                         Date sqlDateFilter = Date.valueOf(dtpDateOfExercise.getValue());
-                        loadData(User.currentUser.getId(), sqlDateFilter);
+                        loadData(User.getCurrentUser().getId(), sqlDateFilter);
                     }
                 });
             }
@@ -134,17 +134,17 @@ public class ExerciseLogController extends SwitchSceneController implements Init
         
         this.loadTableView();
 
-        if (User.currentUser != null) {
+        if (User.getCurrentUser() != null) {
             LocalDate todayLocalDate = LocalDate.now();
             Date sqlToday = Date.valueOf(todayLocalDate);
-            loadData(User.currentUser.getId(), sqlToday);
+            loadData(User.getCurrentUser().getId(), sqlToday);
 
             dtpDateOfExercise.valueProperty().addListener((observable, oldValue, newValue) -> {
                 Date sqlDateFilter = null;
                 if (newValue != null) {
                     sqlDateFilter = Date.valueOf(newValue);
                 }
-                loadData(User.currentUser.getId(), sqlDateFilter);
+                loadData(User.getCurrentUser().getId(), sqlDateFilter);
             });
 
             dtpDateOfExercise.setValue(LocalDate.now());

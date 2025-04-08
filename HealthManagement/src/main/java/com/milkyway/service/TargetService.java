@@ -27,12 +27,14 @@ public class TargetService {
         alert.showAndWait();
     }
 
-    public boolean isPlanExist(String planName) throws SQLException {
-        String checkPlan = "SELECT targetName FROM target WHERE targetName = ?";
+    public boolean isPlanExist(String planName, LocalDate startDate, int userId) throws SQLException {
+        String checkPlan = "SELECT COUNT(*) FROM target WHERE targetName = ? AND startDate = ? AND userId = ?";
         try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(checkPlan)) {
             prepare.setString(1, planName);
+            prepare.setString(2, startDate.toString());
+            prepare.setInt(3, userId); // Kiểm tra cùng userId
             ResultSet result = prepare.executeQuery();
-            return result.next();
+            return result.next() && result.getInt(1) > 0;
         }
     }
 
@@ -43,6 +45,10 @@ public class TargetService {
         try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(insertData)) {
             Date date = new Date();
             java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+            // Tính toán trạng thái dựa trên ngày bắt đầu
+            String status = calculateStatus(startDate, endDate, 0.0f, targetValue);
+
             prepare.setString(1, planName);
             prepare.setDate(2, sqlDate);
             prepare.setString(3, String.valueOf(startDate));
@@ -50,11 +56,25 @@ public class TargetService {
             prepare.setFloat(5, targetValue);
             String unitBeforeSpace = unit.split(" ")[0];
             prepare.setString(6, unitBeforeSpace);
-            prepare.setFloat(7, 0.0f);
-            prepare.setString(8, "Not Started");
+            prepare.setFloat(7, 0.0f); // Tiến độ ban đầu là 0
+            prepare.setString(8, status); // Trạng thái được tính toán
             prepare.setInt(9, userId);
 
             prepare.executeUpdate();
+        }
+    }
+
+    public String calculateStatus(LocalDate startDate, LocalDate endDate, float progress, float targetValue) {
+        LocalDate today = LocalDate.now();
+
+        if (progress >= targetValue) {
+            return "Achieved";
+        } else if (today.isBefore(startDate)) {
+            return "Not Started";
+        } else if (today.isAfter(endDate)) {
+            return "Failed";
+        } else {
+            return "In Progress";
         }
     }
 
@@ -107,9 +127,9 @@ public class TargetService {
         }
     }
 
-    public ObservableList<Target> getPlansForCurrentUser(int userId) throws SQLException {
+    public ObservableList<Target> getPlansForCurrentUser(int userId, boolean finishedOnly) throws SQLException {
         ObservableList<Target> listData = FXCollections.observableArrayList();
-        String selectData = "SELECT * FROM target WHERE userId = ?";
+        String selectData = finishedOnly ? "SELECT * FROM target WHERE userId = ? AND status = 'Achieved'" : "SELECT * FROM target WHERE userId = ?";
 
         try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(selectData)) {
             prepare.setInt(1, userId);
@@ -130,9 +150,6 @@ public class TargetService {
 
                 listData.add(pData);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-            throw e;
         }
         return listData;
     }
@@ -228,32 +245,6 @@ public class TargetService {
         return statusList;
     }
 
-    public ObservableList<Target> getFinishedPlansDataList(int userId) throws SQLException {
-        ObservableList<Target> listData = FXCollections.observableArrayList();
-        String selectData = "SELECT * FROM target WHERE userId = ?";
-
-        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(selectData)) {
-            prepare.setInt(1, userId);
-            ResultSet result = prepare.executeQuery();
-
-            while (result.next()) {
-                Target pData = new Target(
-                        result.getInt("idTarget"),
-                        result.getString("targetName"),
-                        result.getDate("dateCreated"),
-                        result.getDate("startDate"),
-                        result.getDate("endDate"),
-                        result.getFloat("targetNumber"),
-                        result.getString("unit"),
-                        result.getFloat("progress"),
-                        result.getString("status")
-                );
-                listData.add(pData);
-            }
-        }
-        return listData;
-    }
-
     public void checkMidCycleProgress(Target target) {
         if (target == null) {
             return;
@@ -289,6 +280,29 @@ public class TargetService {
                         "Bạn chưa đạt 50% mục tiêu, hãy cố gắng hơn!");
             }
         }
+    }
+
+    public Target getPlanByName(String planName) throws SQLException {
+        String selectData = "SELECT * FROM target WHERE targetName = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(selectData)) {
+            prepare.setString(1, planName);
+            ResultSet result = prepare.executeQuery();
+
+            if (result.next()) {
+                return new Target(
+                        result.getInt("idTarget"),
+                        result.getString("targetName"),
+                        result.getDate("dateCreated"),
+                        result.getDate("startDate"),
+                        result.getDate("endDate"),
+                        result.getFloat("targetNumber"),
+                        result.getString("unit"),
+                        result.getFloat("progress"),
+                        result.getString("status")
+                );
+            }
+        }
+        return null;
     }
 
     public String calculateStatus(Target target) {

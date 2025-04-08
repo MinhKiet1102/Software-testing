@@ -38,12 +38,12 @@
                                             </font>
                                         </Label>
                                         <Line endX="75.99998474121094" endY="-1.52587890625E-5" layoutX="100.0" layoutY="193.0" startX="-71.19999694824219" startY="-1.52587890625E-5" stroke="WHITE" />
-                                        <Button layoutX="7.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
+                                        <Button layoutX="9.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
                                             <graphic>
                                                 <FontAwesomeIconView fill="WHITE" glyphName="DASHBOARD" size="1.5EM" text="" />
                                             </graphic>
                                         </Button>
-                                        <Button layoutX="7.0" layoutY="280.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToExercisePage" styleClass="nav-btn" stylesheets="@style/main.css" text="Bài Tập">
+                                        <Button layoutX="9.0" layoutY="280.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToExercisePage" styleClass="nav-btn" stylesheets="@style/main.css" text="Bài Tập">
                                             <graphic>
                                                 <FontAwesomeIconView fill="WHITE" glyphName="BOOK" size="1.5EM" />
                                             </graphic>
@@ -56,6 +56,14 @@
                                         <Button layoutX="9.0" layoutY="356.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToTarget" styleClass="nav-btn" stylesheets="@style/main.css" text="Mục Tiêu -  Kế Hoạch">
                                             <graphic>
                                                 <FontAwesomeIconView fill="WHITE" glyphName="BULLSEYE" size="1.5EM" />
+                                            </graphic>
+                                            <font>
+                                                <Font name="Arial" size="12.0" />
+                                            </font>
+                                        </Button>
+                                        <Button layoutX="9.0" layoutY="394.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToPersonalInfor" styleClass="nav-btn" stylesheets="@style/main.css" text="Thông tin cá nhân">
+                                            <graphic>
+                                                <FontAwesomeIconView fill="WHITE" glyphName="USER" size="1.5EM" />
                                             </graphic>
                                             <font>
                                                 <Font name="Arial" size="12.0" />
@@ -175,10 +183,10 @@
                                 <Label style="-fx-font-weight: bold; -fx-font-size: 14px;" text="Tổng hợp dinh dưỡng so với mục tiêu" />
                                 <TableView fx:id="nutritionSummaryTable">
                                     <columns>
-                                        <TableColumn fx:id="columnType" text="Loại chỉ số" />
-                                        <TableColumn fx:id="columnCurrent" text="Giá trị hiện tại" />
-                                        <TableColumn fx:id="columnGoal" text="Mục tiêu hàng ngày" />
-                                        <TableColumn fx:id="columnRemaining" text="Còn lại" />
+                                        <TableColumn fx:id="columnType" prefWidth="196.0" text="Loại chỉ số" />
+                                        <TableColumn fx:id="columnCurrent" prefWidth="197.0" text="Giá trị hiện tại" />
+                                        <TableColumn fx:id="columnGoal" prefWidth="203.0" text="Mục tiêu hàng ngày" />
+                                        <TableColumn fx:id="columnRemaining" prefWidth="235.0" text="Còn lại" />
                                     </columns>
                                 </TableView>
                             </VBox>
