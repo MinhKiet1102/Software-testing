@@ -1,4 +1,4 @@
-package com.milkyway.service;
+package com.milkyway.services;
 
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Target;
@@ -326,5 +326,29 @@ public class TargetService {
         } else {
             return "Not Started";
         }
+    }
+    public List<Target> getTargetByUserId(int userId, String status) throws SQLException {
+        List<Target> targets = new ArrayList<>();
+        String sql = "SELECT * FROM target WHERE userId = ? AND status = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(sql)) {
+            prepare.setInt(1, userId);
+            prepare.setString(2, status);
+            ResultSet result = prepare.executeQuery();
+            while (result.next()) {
+                Target target = new Target(
+                        result.getInt("idTarget"),
+                        result.getString("targetName"),
+                        result.getDate("dateCreated"),
+                        result.getDate("startDate"),
+                        result.getDate("endDate"),
+                        result.getFloat("targetNumber"),
+                        result.getString("unit"),
+                        result.getFloat("progress"),
+                        result.getString("status")
+                );
+                targets.add(target);
+            }
+        }
+        return targets;
     }
 }

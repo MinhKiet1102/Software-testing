@@ -6,7 +6,7 @@ package com.milkyway.healthmanagement;
 
 import com.milkyway.pojo.Target;
 import com.milkyway.pojo.User;
-import com.milkyway.service.TargetService;
+import com.milkyway.services.TargetService;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -211,14 +211,6 @@ public class TargetController extends SwitchSceneController implements Initializ
     private void setupMenuEvents() {
         menu_target_nav_main.setOnAction(event -> showForm(form_target_main, form_target_sub));
         menu_target_nav_sub.setOnAction(event -> showForm(form_target_sub, form_target_main));
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private String[] listUnits = {"kg (Kilogam)", "g (Gram)", "km (Kilomet)", "m (Mét)", "cm (Centimet)", "h (Giờ)", "min (Phút)", "calories (Năng lượng tiêu thụ)", "reps (Số lần lặp lại bài tập)"};

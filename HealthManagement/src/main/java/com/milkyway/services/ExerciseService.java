@@ -2,7 +2,7 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package com.milkyway.service;
+package com.milkyway.services;
 
 import com.milkyway.pojo.Exercise;
 import com.milkyway.pojo.JdbcUtils;
@@ -17,10 +17,6 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-/**
- *
- * @author ASUS
- */
 public class ExerciseService {
 
     public List<Exercise> getExercise(String kw) throws SQLException {

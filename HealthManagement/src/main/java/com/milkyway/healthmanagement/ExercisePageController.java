@@ -1,7 +1,6 @@
 package com.milkyway.healthmanagement;
-
 import com.milkyway.pojo.Exercise;
-import com.milkyway.service.ExerciseService;
+import com.milkyway.services.ExerciseService;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.SQLException;
@@ -25,6 +24,7 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 
+
 public class ExercisePageController extends SwitchSceneController implements Initializable {
 
     @FXML
@@ -39,7 +39,6 @@ public class ExercisePageController extends SwitchSceneController implements Ini
     @FXML
     private void loadExercise(String kw) throws IOException {
         ExerciseService es = new ExerciseService();
-
         try {
             gridPane.getChildren().clear();
             int col = 0, row = 0;
@@ -123,7 +122,6 @@ public class ExercisePageController extends SwitchSceneController implements Ini
     public void initialize(URL url, ResourceBundle rb) {
         try {
             displayUsername();
-            
             loadExercise(null);
         } catch (IOException ex) {
             Logger.getLogger(ExercisePageController.class.getName()).log(Level.SEVERE, null, ex);

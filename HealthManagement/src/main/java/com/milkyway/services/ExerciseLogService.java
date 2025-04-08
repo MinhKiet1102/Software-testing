@@ -1,9 +1,11 @@
-package com.milkyway.service;
+package com.milkyway.services;
 
+import com.milkyway.healthmanagement.SwitchSceneController;
 import com.milkyway.pojo.Exercise;
 import com.milkyway.pojo.Exerciselog;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
+import javafx.scene.control.Alert.AlertType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -15,23 +17,18 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class ExerciseLogService {
+public class ExerciseLogService extends SwitchSceneController {
 
     public boolean saveLog(Exerciselog log) throws SQLException {
         if (log == null || log.getExerciseId() == null || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
-            System.err.println(log.getDatetime());
-            System.err.println(log.getDuration());
-            System.err.println(log.getEffortLevel());
-            System.err.println(log.getExerciseId());
-            System.err.println(log.getUserId());
-            System.err.println("Lỗi: Dữ liệu Exerciselog không hợp lệ");
+            showAlert(AlertType.ERROR, "Lỗi", "Thông tin không hợp lệ!\n Vui lòng kiểm tra lại thông tin.");
             return false;
         }
 
         String sql = "INSERT INTO exerciselog (effortLevel, duration, datetime, energyBurn, exerciseId, userId) VALUES (?, ?, ?, ?, ?, ?)";
 
         try (Connection conn = JdbcUtils.getConn();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+            PreparedStatement stm = conn.prepareStatement(sql)) {
 
             stm.setString(1, log.getEffortLevel());
             stm.setInt(2, (int)log.getDuration());
@@ -51,7 +48,7 @@ public class ExerciseLogService {
     public void deleteExerciseLog(int logId) throws SQLException {
         String sql = "DELETE FROM exerciselog WHERE idExLog=?";
         try (Connection conn = JdbcUtils.getConn();
-             PreparedStatement stm = conn.prepareStatement(sql)) {
+            PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, logId);
             stm.executeUpdate();
         } catch (SQLException ex) {
@@ -68,7 +65,7 @@ public class ExerciseLogService {
 
         // Xây dựng SQL
         StringBuilder sqlBuilder = new StringBuilder("SELECT el.idExLog, el.effortLevel, el.duration, el.datetime, el.energyBurn, ");
-        sqlBuilder.append("e.idExercise, e.exerciseName, e.caloriesBurnedPerMin, "); // Thêm các cột cần từ Exercise
+        sqlBuilder.append("e.idExercise, e.exerciseName, e.caloriesBurnedPerMin, "); 
         sqlBuilder.append("u.id ");
         sqlBuilder.append("FROM exerciselog el ");
         sqlBuilder.append("JOIN exercise e ON el.exerciseId = e.idExercise ");
@@ -123,20 +120,20 @@ public class ExerciseLogService {
             }
         } finally {
             // Đóng tài nguyên
-             if (rs != null) try { rs.close(); } catch (SQLException e) { /* ignored */ }
-             if (stm != null) try { stm.close(); } catch (SQLException e) { /* ignored */ }
-             if (conn != null) try { conn.close(); } catch (SQLException e) { /* ignored */ }
+            if (rs != null) try { rs.close(); } catch (SQLException e) { }
+            if (stm != null) try { stm.close(); } catch (SQLException e) { }
+            if (conn != null) try { conn.close(); } catch (SQLException e) { }
         }
         return list;
     }
 
      // Hàm tiện ích kiểm tra cột
      private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
-         try {
-             rs.findColumn(columnName);
-             return true;
-         } catch (SQLException sqlex) {
-             return false;
-         }
+        try {
+            rs.findColumn(columnName);
+            return true;
+        } catch (SQLException sqlex) {
+            return false;
+        }
      }
 }

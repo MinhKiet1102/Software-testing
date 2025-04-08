@@ -12,7 +12,6 @@ com\milkyway\pojo\User.class
 com\milkyway\pojo\Exercise.class
 com\milkyway\service\HistoryService.class
 com\milkyway\healthmanagement\TargetController$2.class
-com\milkyway\healthmanagement\HomePageController.class
 com\milkyway\healthmanagement\ExercisePageController.class
 com\milkyway\pojo\JdbcUtils.class
 com\milkyway\healthmanagement\App.class
