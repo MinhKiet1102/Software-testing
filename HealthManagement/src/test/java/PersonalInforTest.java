@@ -8,7 +8,7 @@
  * @author Admin
  */
 import com.milkyway.pojo.JdbcUtils;
-import com.milkyway.service.PersonalInforService;
+import com.milkyway.services.PersonalInforService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

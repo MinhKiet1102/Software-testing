@@ -10,7 +10,8 @@
 import com.milkyway.pojo.History;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
-import com.milkyway.service.HistoryService;
+import com.milkyway.services.HistoryService;
+import com.milkyway.services.HistoryService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;

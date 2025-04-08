@@ -1,7 +1,7 @@
 
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Target;
-import com.milkyway.service.TargetService;
+import com.milkyway.services.TargetService;
 import org.junit.jupiter.api.*;
 import org.mockito.Mock;
 import org.mockito.MockedStatic;

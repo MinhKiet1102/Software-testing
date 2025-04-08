@@ -9,7 +9,7 @@
  */
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
-import com.milkyway.service.LoginService;
+import com.milkyway.services.LoginService;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
