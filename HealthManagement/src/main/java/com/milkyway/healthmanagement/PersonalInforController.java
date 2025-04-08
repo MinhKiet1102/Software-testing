@@ -6,8 +6,8 @@ package com.milkyway.healthmanagement;
 
 import com.milkyway.pojo.History;
 import com.milkyway.pojo.User;
-import com.milkyway.service.HistoryService;
-import com.milkyway.service.PersonalInforService;
+import com.milkyway.services.HistoryService;
+import com.milkyway.services.PersonalInforService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -106,13 +106,6 @@ public class PersonalInforController extends SwitchSceneController implements In
 
     private PersonalInforService personalInforService = new PersonalInforService();
 
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
 
     public void handleUpdateUserName() throws SQLException {
         int userId = User.getCurrentUser().getId();

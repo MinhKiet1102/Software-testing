@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -48,6 +49,7 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
@@ -61,6 +63,7 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
@@ -74,6 +77,7 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
@@ -86,6 +90,7 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
@@ -98,6 +103,7 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
@@ -110,6 +116,7 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 
@@ -148,6 +155,25 @@ public class SwitchSceneController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    
+    public void closeWindow(Button btnCancel) {
+        Stage stage = (Stage) btnCancel.getScene().getWindow();
+        stage.close();
+    }
+    
+    public void minimizeWindow(Button btnMinimize) {
+        Stage stage = (Stage) btnMinimize.getScene().getWindow();
+        stage.setIconified(true);
     }
 
 }
