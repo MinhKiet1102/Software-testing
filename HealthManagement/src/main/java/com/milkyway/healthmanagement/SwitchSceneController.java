@@ -90,6 +90,8 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+
+        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 

@@ -200,6 +200,7 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                 showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được lưu thành công!");
                 closeWindow(btnCancel);
             } else {
+
                 showAlert(Alert.AlertType.ERROR, "Lỗi Lưu", "Không thể lưu nhật ký tập luyện (service trả về false).");
             }
         } catch (Exception e) {

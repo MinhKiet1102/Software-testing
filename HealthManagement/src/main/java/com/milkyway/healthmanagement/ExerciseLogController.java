@@ -44,7 +44,11 @@ public class ExerciseLogController extends SwitchSceneController implements Init
 
     private ObservableList<Exerciselog> exerciseData = FXCollections.observableArrayList();
 
-    private void loadTableView(){
+
+   
+
+    private void loadTableView() {
+
         TableColumn<Exerciselog, String> colName = new TableColumn<>("Mục Tiêu");
         colName.setCellValueFactory(cellData -> {
             if (cellData.getValue().getExerciseId() != null && cellData.getValue().getExerciseId().getExerciseName() != null) {
@@ -55,6 +59,8 @@ public class ExerciseLogController extends SwitchSceneController implements Init
 
         });
         colName.setPrefWidth(300);
+
+
         TableColumn<Exerciselog, Integer> colTime = new TableColumn<>("Thời Gian");
         colTime.setCellValueFactory(new PropertyValueFactory<>("duration"));
         colTime.setPrefWidth(200);
@@ -136,7 +142,10 @@ public class ExerciseLogController extends SwitchSceneController implements Init
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         displayUsername();
-        loadTableView();
+
+
+        this.loadTableView();
+
 
         if (User.getCurrentUser() != null) {
             LocalDate todayLocalDate = LocalDate.now();

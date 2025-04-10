@@ -5,6 +5,8 @@ import com.milkyway.pojo.Exercise;
 import com.milkyway.pojo.Exerciselog;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
+
+import javafx.scene.control.Alert.AlertType;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -20,6 +22,7 @@ public class ExerciseLogService extends SwitchSceneController {
 
     public boolean saveLog(Exerciselog log) throws SQLException {
         if (log == null || log.getExerciseId() == null || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
+   showAlert(AlertType.ERROR, "Lỗi", "Thông tin không hợp lệ!\n Vui lòng kiểm tra lại thông tin.");
             return false;
         }
 
@@ -39,7 +42,9 @@ public class ExerciseLogService extends SwitchSceneController {
             return rowsAffected > 0;
         } catch (SQLException ex) {
             Logger.getLogger(ExerciseLogService.class.getName()).log(Level.SEVERE, "Lỗi lưu ExerciseLog", ex);
-            throw ex; 
+
+         
+            throw ex; // Ném lại lỗi để controller xử lý
         }
     }
 
