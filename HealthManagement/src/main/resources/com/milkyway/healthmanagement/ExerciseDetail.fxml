@@ -1,0 +1,175 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import java.lang.String?>
+<?import java.net.URL?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.DatePicker?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane id="AnchorPane" prefHeight="270.0" prefWidth="700.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.ExerciseDetailController">
+   <children>
+      <VBox layoutX="88.0" layoutY="44.0" prefHeight="280.0" prefWidth="700.0" AnchorPane.bottomAnchor="6.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="TOP_RIGHT" prefHeight="30.0" prefWidth="700.0" stylesheets="@style/main.css">
+               <children>
+                  <Button mnemonicParsing="false" styleClass="minimize" stylesheets="@style/main.css">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="MINUS" size="1.6EM" styleClass="close" />
+                     </graphic>
+                  </Button>
+                  <Button layoutX="679.0" layoutY="10.0" mnemonicParsing="false" styleClass="close" stylesheets="@style/main.css">
+                     <graphic>
+                        <FontAwesomeIconView glyphName="CLOSE" size="1.6EM" styleClass="close" />
+                     </graphic>
+                  </Button>
+               </children>
+               <styleClass>
+                  <String fx:value="top-form" />
+                  <String fx:value="shadow" />
+               </styleClass>
+            </HBox>
+            <HBox prefHeight="292.0" prefWidth="679.0" styleClass="gradient-bg" stylesheets="@style/main.css">
+               <children>
+                  <VBox prefHeight="241.0" prefWidth="342.0">
+                     <children>
+                        <HBox layoutX="20.0" layoutY="20.0" prefHeight="46.0" prefWidth="426.0">
+                           <children>
+                              <Label stylesheets="@style/main.css" text="Thời Gian Tập Luyện:">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                              </Label>
+                              <DatePicker fx:id="dtpDate" styleClass="shadow" stylesheets="@style/main.css">
+                                 <HBox.margin>
+                                    <Insets left="15.0" />
+                                 </HBox.margin>
+                              </DatePicker>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox layoutX="20.0" layoutY="113.0" prefHeight="46.0" prefWidth="426.0">
+                           <children>
+                              <Label stylesheets="@style/main.css" text="Tên bài tập:">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <TextField fx:id="txtExercise" prefHeight="26.0" prefWidth="174.0" styleClass="shadow" stylesheets="@style/main.css">
+                                 <HBox.margin>
+                                    <Insets left="70.0" />
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox fx:id="caloriesBox" layoutX="20.0" layoutY="77.0" prefHeight="46.0" prefWidth="426.0">
+                           <children>
+                              <Label prefHeight="42.0" prefWidth="132.0" stylesheets="@style/main.css" text="Lượng Calo tiêu thụ (Calo/phút)" wrapText="true">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font>
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                              </Label>
+                              <TextField fx:id="txtCaloriesPerMinute" prefHeight="26.0" prefWidth="174.0" styleClass="shadow" stylesheets="@style/main.css">
+                                 <HBox.margin>
+                                    <Insets left="10.0" />
+                                 </HBox.margin>
+                              </TextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+                  <VBox prefHeight="241.0" prefWidth="336.0">
+                     <children>
+                        <HBox prefHeight="46.0" prefWidth="426.0">
+                           <children>
+                              <Label stylesheets="@style/main.css" text="Mức độ luyện tập:">
+                                 <HBox.margin>
+                                    <Insets />
+                                 </HBox.margin>
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font></Label>
+                              <ComboBox fx:id="txtEffort" prefWidth="150.0" styleClass="shadow" stylesheets="@style/main.css">
+                                 <HBox.margin>
+                                    <Insets left="30.0" />
+                                 </HBox.margin>
+                              </ComboBox>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                        <HBox prefHeight="46.0" prefWidth="426.0">
+                           <children>
+                              <Label stylesheets="@style/main.css" text="Thời gian luyện tập">
+                                 <font>
+                                    <Font name="System Bold" size="13.0" />
+                                 </font></Label>
+                              <TextField fx:id="txtDuration" styleClass="shadow" stylesheets="@style/main.css">
+                                 <HBox.margin>
+                                    <Insets left="23.0" />
+                                 </HBox.margin></TextField>
+                           </children>
+                           <VBox.margin>
+                              <Insets left="10.0" top="10.0" />
+                           </VBox.margin>
+                        </HBox>
+                     </children>
+                  </VBox>
+               </children>
+               <VBox.margin>
+                  <Insets left="10.0" right="10.0" top="10.0" />
+               </VBox.margin>
+            </HBox>
+            <HBox alignment="CENTER_RIGHT" prefHeight="120.0" prefWidth="700.0" spacing="10.0">
+               <children>
+                  <Button fx:id="btnSave" mnemonicParsing="false" onAction="#saveExercise" styleClass="border">
+                     <graphic>
+                        <Label text="Lưu" />
+                     </graphic>
+                     <stylesheets>
+                        <URL value="@style/main.css" />
+                        <URL value="@style/exercisedetail.css" />
+                     </stylesheets>
+                  </Button>
+                  <Button fx:id="btnCancel" layoutX="10.0" layoutY="10.0" mnemonicParsing="false" styleClass="border" stylesheets="@style/main.css">
+                     <graphic>
+                        <Label text="Hủy bỏ" />
+                     </graphic>
+                     <HBox.margin>
+                        <Insets right="20.0" />
+                     </HBox.margin>
+                  </Button>
+               </children>
+               <VBox.margin>
+                  <Insets top="10.0" />
+               </VBox.margin>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>

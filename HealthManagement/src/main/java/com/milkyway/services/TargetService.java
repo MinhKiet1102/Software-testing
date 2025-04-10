@@ -1,0 +1,354 @@
+package com.milkyway.services;
+
+import com.milkyway.pojo.JdbcUtils;
+import com.milkyway.pojo.Target;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Alert;
+
+public class TargetService {
+
+    private void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public boolean isPlanExist(String planName, LocalDate startDate, int userId) throws SQLException {
+        String checkPlan = "SELECT COUNT(*) FROM target WHERE targetName = ? AND startDate = ? AND userId = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(checkPlan)) {
+            prepare.setString(1, planName);
+            prepare.setString(2, startDate.toString());
+            prepare.setInt(3, userId); // Kiểm tra cùng userId
+            ResultSet result = prepare.executeQuery();
+            return result.next() && result.getInt(1) > 0;
+        }
+    }
+
+    public void addPlan(String planName, LocalDate startDate, LocalDate endDate, float targetValue, String unit, int userId) throws SQLException {
+        String insertData = "INSERT INTO target (targetName, dateCreated, startDate, endDate, targetNumber, unit, progress, status, userId) "
+                + "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(insertData)) {
+            Date date = new Date();
+            java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+
+            // Tính toán trạng thái dựa trên ngày bắt đầu
+            String status = calculateStatus(startDate, endDate, 0.0f, targetValue);
+
+            prepare.setString(1, planName);
+            prepare.setDate(2, sqlDate);
+            prepare.setString(3, String.valueOf(startDate));
+            prepare.setString(4, String.valueOf(endDate));
+            prepare.setFloat(5, targetValue);
+            String unitBeforeSpace = unit.split(" ")[0];
+            prepare.setString(6, unitBeforeSpace);
+            prepare.setFloat(7, 0.0f); // Tiến độ ban đầu là 0
+            prepare.setString(8, status); // Trạng thái được tính toán
+            prepare.setInt(9, userId);
+
+            prepare.executeUpdate();
+        }
+    }
+
+    public String calculateStatus(LocalDate startDate, LocalDate endDate, float progress, float targetValue) {
+        LocalDate today = LocalDate.now();
+
+        if (progress >= targetValue) {
+            return "Achieved";
+        } else if (today.isBefore(startDate)) {
+            return "Not Started";
+        } else if (today.isAfter(endDate)) {
+            return "Failed";
+        } else {
+            return "In Progress";
+        }
+    }
+
+    public LocalDate getOldEndDate(int idTarget) throws SQLException {
+        String checkData = "SELECT endDate FROM target WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(checkData)) {
+            prepare.setInt(1, idTarget);
+            ResultSet result = prepare.executeQuery();
+            if (result.next()) {
+                return LocalDate.parse(result.getString("endDate").split(" ")[0]);
+            }
+        }
+        return null;
+    }
+
+    public String getDateCreated(int idTarget) throws SQLException {
+        String checkData = "SELECT dateCreated FROM target WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(checkData)) {
+            prepare.setInt(1, idTarget);
+            ResultSet result = prepare.executeQuery();
+            if (result.next()) {
+                return result.getString("dateCreated");
+            }
+        }
+        return null;
+    }
+
+    public void updatePlan(int idTarget, String planName, LocalDate startDate, LocalDate endDate, String dateCreated, float targetValue, String unit) throws SQLException {
+        String updateData = "UPDATE target SET targetName = ?, startDate = ?, endDate = ?, dateCreated = ?, targetNumber = ?, unit = ? WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(updateData)) {
+            prepare.setString(1, planName);
+            prepare.setString(2, String.valueOf(startDate));
+            prepare.setString(3, String.valueOf(endDate));
+            prepare.setString(4, dateCreated);
+            prepare.setFloat(5, targetValue);
+            String unitBeforeSpace = unit.split(" ")[0];
+            prepare.setString(6, unitBeforeSpace);
+            prepare.setInt(7, idTarget);
+
+            prepare.executeUpdate();
+        }
+    }
+
+    public void updatePlanProgress(int idTarget, float newProgress) throws SQLException {
+        String sql = "UPDATE target SET progress = ? WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement stmt = connect.prepareStatement(sql)) {
+            stmt.setFloat(1, newProgress);
+            stmt.setInt(2, idTarget);
+            stmt.executeUpdate();
+        }
+    }
+
+    public ObservableList<Target> getPlansForCurrentUser(int userId, boolean finishedOnly) throws SQLException {
+        ObservableList<Target> listData = FXCollections.observableArrayList();
+        String selectData = finishedOnly ? "SELECT * FROM target WHERE userId = ? AND status = 'Achieved'" : "SELECT * FROM target WHERE userId = ?";
+
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(selectData)) {
+            prepare.setInt(1, userId);
+            ResultSet result = prepare.executeQuery();
+
+            while (result.next()) {
+                Target pData = new Target(
+                        result.getInt("idTarget"),
+                        result.getString("targetName"),
+                        result.getDate("dateCreated"),
+                        result.getDate("startDate"),
+                        result.getDate("endDate"),
+                        result.getFloat("targetNumber"),
+                        result.getString("unit"),
+                        result.getFloat("progress"),
+                        result.getString("status")
+                );
+
+                listData.add(pData);
+            }
+        }
+        return listData;
+    }
+
+    public boolean isPlanExist(int idTarget) throws SQLException {
+        String checkData = "SELECT * FROM target WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(checkData)) {
+            prepare.setInt(1, idTarget);
+            ResultSet result = prepare.executeQuery();
+            return result.next();
+        }
+    }
+
+    public void deletePlan(int idTarget) throws SQLException {
+        String deleteData = "DELETE FROM target WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(deleteData)) {
+            prepare.setInt(1, idTarget);
+            prepare.executeUpdate();
+        }
+    }
+
+    public int countQuantityPlans(int userId) throws SQLException {
+        String sql = "SELECT COUNT(idTarget) FROM target WHERE userId = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(sql)) {
+            prepare.setInt(1, userId);
+            ResultSet result = prepare.executeQuery();
+
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public int countAchievedPlans(int userId) throws SQLException {
+        String sql = "SELECT COUNT(idTarget) FROM target WHERE userId = ? AND status = 'Achieved'";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(sql)) {
+            prepare.setInt(1, userId);
+            ResultSet result = prepare.executeQuery();
+
+            if (result.next()) {
+                return result.getInt(1);
+            }
+        }
+        return 0;
+    }
+
+    public Target getPlanById(int idTarget) throws SQLException {
+        String selectData = "SELECT * FROM target WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(selectData)) {
+            prepare.setInt(1, idTarget);
+            ResultSet result = prepare.executeQuery();
+
+            if (result.next()) {
+                return new Target(
+                        result.getInt("idTarget"),
+                        result.getString("targetName"),
+                        result.getDate("dateCreated"),
+                        result.getDate("startDate"),
+                        result.getDate("endDate"),
+                        result.getFloat("targetNumber"),
+                        result.getString("unit"),
+                        result.getFloat("progress"),
+                        result.getString("status")
+                );
+            }
+        }
+        return null;
+    }
+
+    public void updatePlanStatus(int idTarget, String status) throws SQLException {
+        String updateData = "UPDATE target SET status = ? WHERE idTarget = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(updateData)) {
+            prepare.setString(1, status);
+            prepare.setInt(2, idTarget);
+            prepare.executeUpdate();
+        }
+    }
+
+    public List<String> getStatusList() throws SQLException {
+        List<String> statusList = new ArrayList<>();
+        String sql = "SHOW COLUMNS FROM target LIKE 'status'";
+
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(sql)) {
+            ResultSet result = prepare.executeQuery();
+
+            if (result.next()) {
+                String enumStr = result.getString("Type");
+                enumStr = enumStr.replace("enum(", "").replace(")", "").replace("'", "");
+                statusList.addAll(Arrays.asList(enumStr.split(",")));
+            }
+        }
+        return statusList;
+    }
+
+    public void checkMidCycleProgress(Target target) {
+        if (target == null) {
+            return;
+        }
+
+        String status = target.getStatus();
+        if ("Failed".equals(status) || "Not Started".equals(status) || "Cancelled".equals(status)) {
+            return;
+        }
+
+        LocalDate startDate;
+        startDate = LocalDate.parse(String.valueOf(target.getStartDate()));
+        LocalDate endDate;
+        endDate = LocalDate.parse(String.valueOf(target.getEndDate()));
+
+        float progress = target.getProgress();
+        float targetNumber = target.getTargetNumber();
+
+        if (startDate == null || endDate == null || targetNumber <= 0) {
+            return;
+        }
+
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate);
+        LocalDate midCycleDate = startDate.plusDays(totalDays / 2);
+
+        LocalDate today = LocalDate.now();
+
+        if (!today.isBefore(midCycleDate)) {
+            float progressPercentage = (progress / targetNumber) * 100;
+
+            if (progressPercentage < 50) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo",
+                        "Bạn chưa đạt 50% mục tiêu, hãy cố gắng hơn!");
+            }
+        }
+    }
+
+    public Target getPlanByName(String planName) throws SQLException {
+        String selectData = "SELECT * FROM target WHERE targetName = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(selectData)) {
+            prepare.setString(1, planName);
+            ResultSet result = prepare.executeQuery();
+
+            if (result.next()) {
+                return new Target(
+                        result.getInt("idTarget"),
+                        result.getString("targetName"),
+                        result.getDate("dateCreated"),
+                        result.getDate("startDate"),
+                        result.getDate("endDate"),
+                        result.getFloat("targetNumber"),
+                        result.getString("unit"),
+                        result.getFloat("progress"),
+                        result.getString("status")
+                );
+            }
+        }
+        return null;
+    }
+
+    public String calculateStatus(Target target) {
+        String status = target.getStatus();
+        if ("Cancelled".equals(status)) {
+            return "Cancelled";
+        }
+
+        LocalDate now = LocalDate.now();
+        LocalDate startDate = LocalDate.parse(String.valueOf(target.getStartDate()), DateTimeFormatter.ISO_LOCAL_DATE);
+        LocalDate endDate = LocalDate.parse(String.valueOf(target.getEndDate()), DateTimeFormatter.ISO_LOCAL_DATE);
+        double progress = target.getProgress();
+        double goal = target.getTargetNumber();
+
+        if (progress >= goal) {
+            return "Achieved";
+        } else if (now.isAfter(endDate)) {
+            return "Failed";
+        } else if ((now.isEqual(startDate) || now.isAfter(startDate)) && (now.isEqual(endDate) || now.isBefore(endDate))) {
+            return "In Progress";
+        } else {
+            return "Not Started";
+        }
+    }
+    public List<Target> getTargetByUserId(int userId, String status) throws SQLException {
+        List<Target> targets = new ArrayList<>();
+        String sql = "SELECT * FROM target WHERE userId = ? AND status = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(sql)) {
+            prepare.setInt(1, userId);
+            prepare.setString(2, status);
+            ResultSet result = prepare.executeQuery();
+            while (result.next()) {
+                Target target = new Target(
+                        result.getInt("idTarget"),
+                        result.getString("targetName"),
+                        result.getDate("dateCreated"),
+                        result.getDate("startDate"),
+                        result.getDate("endDate"),
+                        result.getFloat("targetNumber"),
+                        result.getString("unit"),
+                        result.getFloat("progress"),
+                        result.getString("status")
+                );
+                targets.add(target);
+            }
+        }
+        return targets;
+    }
+}

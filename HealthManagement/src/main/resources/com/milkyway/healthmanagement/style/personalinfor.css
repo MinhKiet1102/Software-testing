@@ -1,0 +1,36 @@
+/*
+ * Empty Stylesheet file.
+ */
+
+/* personalInfor.css */
+
+.texts {
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-fill: #333333; /* Màu chữ xám đậm */
+    -fx-text-alignment: center;
+}
+
+.numbers {
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-fill: #0078D7; /* Màu xanh dương để nổi bật */
+    -fx-text-alignment: center;
+}
+
+/* Separator (thanh ngang) */
+.separator {
+    -fx-padding: 5 0 5 0;
+    -fx-background-color: transparent;
+}
+
+.separator .line {
+    -fx-border-width: 1;
+    -fx-border-color: #cccccc;
+}
+
+/* Optional: Hover effect for numbers */
+.numbers:hover {
+    -fx-fill: #005A9E; /* Đậm hơn khi hover */
+}
+
