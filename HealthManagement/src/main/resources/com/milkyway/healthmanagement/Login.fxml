@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Hyperlink?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.text.Font?>
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="651.0" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.LoginController">
+    <children>
+        <AnchorPane prefHeight="600.0" prefWidth="200.0">
+            <children>
+                <BorderPane layoutX="100.0" layoutY="38.0" prefHeight="600.0" prefWidth="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                    <center>
+                        <AnchorPane fx:id="main_form" prefHeight="600.0" prefWidth="200.0" styleClass="bg-form" stylesheets="@style/login.css" BorderPane.alignment="CENTER">
+                            <children>
+                                <AnchorPane fx:id="login_form" layoutX="146.0" layoutY="130.0" prefHeight="340.0" prefWidth="360.0" styleClass="white-form" stylesheets="@style/login.css">
+                                    <children>
+                                        <FontAwesomeIconView fill="#549e6e" glyphName="USER" layoutX="159.0" layoutY="81.0" size="5em" />
+                                        <Label layoutX="133.0" layoutY="99.0" text="Đăng nhập">
+                                            <font>
+                                                <Font name="Tahoma" size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="si_username" layoutX="50.0" layoutY="146.0" onAction="#loginAccount" prefHeight="35.0" prefWidth="260.0" promptText="Tên đăng nhập" styleClass="textfield" stylesheets="@style/login.css" />
+                                        <PasswordField fx:id="si_password" layoutX="50.0" layoutY="193.0" onAction="#loginAccount" prefHeight="35.0" prefWidth="260.0" promptText="Mật khẩu" styleClass="textfield" stylesheets="@style/login.css" />
+                                        <Button fx:id="si_loginBtn" layoutX="95.0" layoutY="242.0" mnemonicParsing="false" onAction="#loginAccount" prefHeight="40.0" prefWidth="170.0" styleClass="login-btn" stylesheets="@style/login.css" text="Đăng nhập" textFill="WHITE" />
+                                        <Label layoutX="81.0" layoutY="303.0" text="Bạn chưa có tài khoản?" />
+                                        <Hyperlink fx:id="si_createAccount" layoutX="204.0" layoutY="300.0" onAction="#switchForm" stylesheets="@style/login.css" text="Tạo tài khoản" />
+                                    </children>
+                                </AnchorPane>
+                                <AnchorPane fx:id="signup_form" layoutX="146.0" layoutY="30.0" prefHeight="518.0" prefWidth="360.0" styleClass="white-form" stylesheets="@style/login.css" visible="false">
+                                    <children>
+                                        <FontAwesomeIconView fill="#549e6e" glyphName="USER_PLUS" layoutX="146.0" layoutY="62.0" size="5em" />
+                                        <Label layoutX="143.0" layoutY="79.0" text="Đăng ký">
+                                            <font>
+                                                <Font name="Tahoma" size="20.0" />
+                                            </font>
+                                        </Label>
+                                        <TextField fx:id="su_username" layoutX="50.0" layoutY="113.0" onAction="#registerAccount" prefHeight="35.0" prefWidth="260.0" promptText="Tên đăng nhập" styleClass="textfield" stylesheets="@style/login.css" />
+                                        <PasswordField fx:id="su_password" layoutX="50.0" layoutY="203.0" onAction="#registerAccount" prefHeight="35.0" prefWidth="260.0" promptText="Mật khẩu" styleClass="textfield" stylesheets="@style/login.css" />
+                                        <TextField fx:id="su_email" layoutX="50.0" layoutY="158.0" onAction="#registerAccount" prefHeight="35.0" prefWidth="260.0" promptText="Email" styleClass="textfield" stylesheets="@style/login.css" />
+                                        <ComboBox fx:id="su_gender" layoutX="50.0" layoutY="248.0" prefHeight="35.0" prefWidth="260.0" promptText="Giới tính" />
+                                        <Button fx:id="su_signupBtn" layoutX="96.0" layoutY="435.0" mnemonicParsing="false" onAction="#registerAccount" prefHeight="40.0" prefWidth="170.0" styleClass="login-btn" stylesheets="@style/login.css" text="Đăng ký" textFill="WHITE" />
+                                        <Hyperlink fx:id="su_alreadyhaveAccount" layoutX="123.0" layoutY="483.0" onAction="#switchForm" stylesheets="@style/login.css" text="Bạn đã có tài khoản?" />
+                              <TextField fx:id="su_age" layoutX="50.0" layoutY="292.0" onAction="#registerAccount" prefHeight="35.0" prefWidth="260.0" promptText="Tuổi" styleClass="textfield" stylesheets="@style/login.css" />
+                              <TextField fx:id="su_weight" layoutX="50.0" layoutY="337.0" onAction="#registerAccount" prefHeight="35.0" prefWidth="260.0" promptText="Cân nặng hiện tại(kg)" styleClass="textfield" stylesheets="@style/login.css" />
+                              <TextField fx:id="su_height" layoutX="50.0" layoutY="382.0" onAction="#registerAccount" prefHeight="35.0" prefWidth="260.0" promptText="Chiều cao(cm)" styleClass="textfield" stylesheets="@style/login.css" />
+                                    </children>
+                                </AnchorPane>
+                            </children>
+                        </AnchorPane>
+                    </center>
+                </BorderPane>
+            </children>
+        </AnchorPane>
+    </children>
+</StackPane>
