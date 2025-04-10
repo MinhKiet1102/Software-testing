@@ -16,7 +16,10 @@
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.MealFoodController">
+
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.MealfoodController">
+
+
     <children>
         <AnchorPane prefHeight="200.0" prefWidth="200.0">
             <children>
@@ -118,24 +121,24 @@
                             <HBox spacing="10">
                                 <Label text="Nhật ký thực phẩm của bạn dành cho:" />
                                 <Button text="◀" />
-                                <DatePicker />
+                                <DatePicker fx:id="consumeDatePicker"/>
                                 <Button text="▶" />
                             </HBox>
             
                             <VBox spacing="5">
                                 <TitledPane expanded="false" text="Bữa Sáng">
                                     <VBox>
-                                        <Button text="Thêm thức ăn" />
-                                        
-                                        <TableView>
+                                        <Button text="Thêm thức ăn" onAction="#handleAddBreakfast"/>
+                                        <Label fx:id="breakfastCaloLabel" text="Tổng calo: 0" />
+                                        <TableView fx:id="breakfastTableView">
                                             <columns>
-                                                <TableColumn text="Tên Thức Ăn" />
-                                                <TableColumn text="Lượng Calo (cal)" />
-                                                <TableColumn text="Carbohydrate (g)" />
-                                                <TableColumn text="Lipid (g)" />
-                                                <TableColumn text="Protein (g)" />
-                                                <TableColumn text="Natri (mg)" />
-                                                <TableColumn text="Đường (g)" />
+                                                <TableColumn fx:id="BnameColumn" text="Tên Thức Ăn" />
+                                                <TableColumn fx:id="BcaloColumn" text="Lượng Calo (cal)" />
+                                                <TableColumn fx:id="BcarbColumn" text="Carbohydrate (g)" />
+                                                <TableColumn fx:id="BlipidColumn" text="Lipid (g)" />
+                                                <TableColumn fx:id="BproColumn" text="Protein (g)" />
+                                                <TableColumn fx:id="BnaColumn" text="Natri (mg)" />
+                                                <TableColumn fx:id="BsugarColumn" text="Đường (g)" />
                                             </columns>
                                         </TableView>
                                     </VBox>
@@ -143,17 +146,17 @@
                 
                                 <TitledPane expanded="false" text="Bữa Trưa">
                                     <VBox>
-                                        <Button text="Thêm thức ăn" />
-                                   
-                                        <TableView>
+                                        <Button text="Thêm thức ăn" onAction="#handleAddLunch"/>
+                                        <Label fx:id="lunchCaloLabel" text="Tổng calo: 0" />
+                                        <TableView fx:id="lunchTableView">
                                             <columns>
-                                                <TableColumn text="Tên Thức Ăn" />
-                                                <TableColumn text="Lượng Calo (cal)" />
-                                                <TableColumn text="Carbohydrate (g)" />
-                                                <TableColumn text="Lipid (g)" />
-                                                <TableColumn text="Protein (g)" />
-                                                <TableColumn text="Natri (mg)" />
-                                                <TableColumn text="Đường (g)" />
+                                                <TableColumn fx:id="LnameColumn" text="Tên Thức Ăn" />
+                                                <TableColumn fx:id="LcaloColumn" text="Lượng Calo (cal)" />
+                                                <TableColumn fx:id="LcarbColumn" text="Carbohydrate (g)" />
+                                                <TableColumn fx:id="LlipidColumn" text="Lipid (g)" />
+                                                <TableColumn fx:id="LproColumn" text="Protein (g)" />
+                                                <TableColumn fx:id="LnaColumn" text="Natri (mg)" />
+                                                <TableColumn fx:id="LsugarColumn" text="Đường (g)" />
                                             </columns>
                                         </TableView>
                                     </VBox>
@@ -161,16 +164,17 @@
                 
                                 <TitledPane expanded="false" text="Bữa Tối">
                                     <VBox>
-                                        <Button text="Thêm thức ăn" />
-                                        <TableView>
+                                        <Button text="Thêm thức ăn" onAction="#handleAddDinner"/>
+                                        <Label fx:id="dinnerCaloLabel" text="Tổng calo: 0" />
+                                        <TableView fx:id="dinnerTableView">
                                             <columns>
-                                                <TableColumn text="Tên Thức Ăn" />
-                                                <TableColumn text="Lượng Calo (cal)" />
-                                                <TableColumn text="Carbohydrate (g)" />
-                                                <TableColumn text="Lipid (g)" />
-                                                <TableColumn text="Protein (g)" />
-                                                <TableColumn text="Natri (mg)" />
-                                                <TableColumn text="Đường (g)" />
+                                                <TableColumn fx:id="DnameColumn" text="Tên Thức Ăn" />
+                                                <TableColumn fx:id="DcaloColumn" text="Lượng Calo (cal)" />
+                                                <TableColumn fx:id="DcarbColumn" text="Carbohydrate (g)" />
+                                                <TableColumn fx:id="DlipidColumn" text="Lipid (g)" />
+                                                <TableColumn fx:id="DproColumn" text="Protein (g)" />
+                                                <TableColumn fx:id="DnaColumn" text="Natri (mg)" />
+                                                <TableColumn fx:id="DsugarColumn" text="Đường (g)" />
                                             </columns>
                                         </TableView>
                                     </VBox>
