@@ -4,31 +4,54 @@
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.layout.HBox?>
 
-<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.AddFoodFormController" prefHeight="600.0" prefWidth="400.0">
+<AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.AddFoodFormController" 
+          prefHeight="600.0" prefWidth="420.0" styleClass="anchor-pane" stylesheets="@style/addFood.css">
     <children>
-        <Label layoutX="50.0" layoutY="30.0" text="Tên thực phẩm:" />
-        <TextField fx:id="nameField" layoutX="150.0" layoutY="25.0" prefWidth="200.0" />
-
-        <Label layoutX="50.0" layoutY="80.0" text="Calo (cal):" />
-        <TextField fx:id="caloField" layoutX="150.0" layoutY="75.0" prefWidth="200.0" />
-
-        <Label layoutX="50.0" layoutY="130.0" text="Carb (g):" />
-        <TextField fx:id="carbField" layoutX="150.0" layoutY="125.0" prefWidth="200.0" />
-
-        <Label layoutX="50.0" layoutY="180.0" text="Lipid (g):" />
-        <TextField fx:id="lipidField" layoutX="150.0" layoutY="175.0" prefWidth="200.0" />
-
-        <Label layoutX="50.0" layoutY="230.0" text="Protein (g):" />
-        <TextField fx:id="proteinField" layoutX="150.0" layoutY="225.0" prefWidth="200.0" />
-
-        <Label layoutX="50.0" layoutY="280.0" text="Natri (mg):" />
-        <TextField fx:id="natriField" layoutX="150.0" layoutY="275.0" prefWidth="200.0" />
-
-        <Label layoutX="50.0" layoutY="330.0" text="Đường (g):" />
-        <TextField fx:id="sugarField" layoutX="150.0" layoutY="325.0" prefWidth="200.0" />
-
-        <Button layoutX="100.0" layoutY="450.0" mnemonicParsing="false" text="Lưu" onAction="#handleSave" />
-        <Button layoutX="250.0" layoutY="450.0" mnemonicParsing="false" text="Hủy" onAction="#handleCancel" />
+        <VBox spacing="15" layoutX="30.0" layoutY="30.0" prefWidth="360.0" styleClass="form-container">
+            <Label text="THÊM THỰC PHẨM MỚI" styleClass="title-label" />
+            
+            <HBox styleClass="form-row">
+                <Label text="Tên thực phẩm:" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="nameField" prefWidth="240.0" promptText="Nhập tên thực phẩm" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Calo (cal):" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="caloField" prefWidth="240.0" promptText="Nhập lượng calo" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Carb (g):" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="carbField" prefWidth="240.0" promptText="Nhập lượng carb" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Lipid (g):" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="lipidField" prefWidth="240.0" promptText="Nhập lượng lipid" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Protein (g):" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="proteinField" prefWidth="240.0" promptText="Nhập lượng protein" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Natri (mg):" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="natriField" prefWidth="240.0" promptText="Nhập lượng natri" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Đường (g):" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="sugarField" prefWidth="240.0" promptText="Nhập lượng đường" />
+            </HBox>
+            
+            <HBox spacing="30" alignment="CENTER" styleClass="buttons-container">
+                <Button text="Lưu" onAction="#handleSave" prefWidth="100" />
+                <Button text="Hủy" onAction="#handleCancel" prefWidth="100" styleClass="cancel-button" />
+            </HBox>
+        </VBox>
     </children>
 </AnchorPane>
