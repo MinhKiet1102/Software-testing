@@ -1,161 +1,356 @@
 package com.milkyway.healthmanagement;
 
-import com.milkyway.pojo.FoodItem;
-import com.milkyway.services.FoodItemService;
-
+import com.milkyway.pojo.Food;
+import com.milkyway.pojo.JdbcUtils;
+import com.milkyway.pojo.Meal;
+import com.milkyway.pojo.User;
+import com.milkyway.services.MealService;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.Date;
 import java.util.ResourceBundle;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
+/**
+ * Controller for the add food form
+ */
 public class AddFoodFormController implements Initializable {
-
+    
     @FXML
     private TextField nameField;
+    
     @FXML
     private TextField caloField;
+    
     @FXML
     private TextField carbField;
+    
     @FXML
     private TextField lipidField;
+    
     @FXML
     private TextField proteinField;
+    
     @FXML
     private TextField natriField;
+    
     @FXML
     private TextField sugarField;
-
-    @FXML
-    private void handleSave() {
+    
+    private String mealType;
+    private User currentUser;
+    private LocalDate selectedDate;
+    private MealfoodController mealController;
+    private Connection conn;
+    private MealService mealService;
+    
+    /**
+     * Initializes the controller
+     */
+    @Override
+    public void initialize(URL url, ResourceBundle rb) {
         try {
-            // 📌 1. Kiểm tra các ô không được để trống
-            if (nameField.getText().isEmpty() || caloField.getText().isEmpty() || carbField.getText().isEmpty()
-                    || lipidField.getText().isEmpty() || proteinField.getText().isEmpty()
-                    || natriField.getText().isEmpty() || sugarField.getText().isEmpty()) {
-
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Cảnh báo");
-                alert.setHeaderText(null);
-                alert.setContentText("Vui lòng nhập đầy đủ thông tin dinh dưỡng!");
-                alert.showAndWait();
-                return;
-            }
-
-            // 📌 2. Kiểm tra định dạng số
-          
-            double carb, fat, protein, sugar,calo, sodium;
-
-            try {
-                calo = Double.parseDouble(caloField.getText());
-                carb = Double.parseDouble(carbField.getText());
-                fat = Double.parseDouble(lipidField.getText());
-                protein = Double.parseDouble(proteinField.getText());
-                sodium = Double.parseDouble(natriField.getText());
-                sugar = Double.parseDouble(sugarField.getText());
-            } catch (NumberFormatException e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Lỗi nhập liệu");
-                alert.setHeaderText(null);
-                alert.setContentText("Vui lòng nhập đúng định dạng số cho các ô dinh dưỡng!");
-                alert.showAndWait();
-                return;
-            }
-
-            // 📌 3. Kiểm tra giá trị hợp lý (không âm, không quá lớn)
-            if (calo < 0 || carb < 0 || fat < 0 || protein < 0 || sodium < 0 || sugar < 0) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Cảnh báo");
-                alert.setHeaderText(null);
-                alert.setContentText("Không được nhập số âm!");
-                alert.showAndWait();
-                return;
-            }
-
-            if (calo < 10) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Cảnh báo");
-                alert.setHeaderText(null);
-                alert.setContentText("Lượng calo quá thấp, vui lòng kiểm tra lại!");
-                alert.showAndWait();
-                return;
-            }
-
-            if (calo > 5000 || carb > 1000 || fat > 500 || protein > 500 || sodium > 6000 || sugar > 300) {
-                Alert alert = new Alert(Alert.AlertType.WARNING);
-                alert.setTitle("Cảnh báo");
-                alert.setHeaderText(null);
-                alert.setContentText("Giá trị dinh dưỡng vượt mức hợp lý! Vui lòng kiểm tra lại.");
-                alert.showAndWait();
-                return;
-            }
-
-            // 📌 4. Tạo đối tượng FoodItem
-            String name = nameField.getText().trim();
-            FoodItem newItem = new FoodItem(name, calo, carb, fat, protein, sodium, sugar);
-
-            // 📌 5. Gửi dữ liệu cho listener (controller cha)
-            if (listener != null) {
-                listener.onFoodSubmitted(newItem);
-            }
-
-            // 📌 6. Hiện thông báo lưu thành công
-            Alert alert = new Alert(Alert.AlertType.INFORMATION);
-            alert.setTitle("Thông báo");
-            alert.setHeaderText(null);
-            alert.setContentText("Lưu thực phẩm thành công!");
-            alert.showAndWait();
-
-            // 📌 7. Đóng cửa sổ form
-            closeWindow();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Lỗi");
-            alert.setHeaderText(null);
-            alert.setContentText("Có lỗi xảy ra, vui lòng thử lại!");
-            alert.showAndWait();
+            conn = JdbcUtils.getConn();
+            mealService = new MealService(conn);
+        } catch (SQLException ex) {
+            System.err.println("Lỗi khi khởi tạo AddFoodFormController: " + ex.getMessage());
+            showAlert("Lỗi", "Không thể kết nối đến cơ sở dữ liệu: " + ex.getMessage(), Alert.AlertType.ERROR);
         }
     }
-
+    
+    /**
+     * Handle the save button action
+     */
     @FXML
-    private void handleCancel() {
+    private void handleSave(ActionEvent event) {
+        if (!validateInputs()) {
+            return;
+        }
+        
+        try {
+            // Save food to database
+            int foodId = saveFoodToDatabase();
+            if (foodId <= 0) {
+                showAlert("Lỗi", "Không thể lưu thức ăn mới vào cơ sở dữ liệu", Alert.AlertType.ERROR);
+                return;
+            }
+            
+            // Get or create a meal for the current date and meal type
+            int mealId = getOrCreateMeal();
+            if (mealId <= 0) {
+                showAlert("Lỗi", "Không thể tạo bữa ăn", Alert.AlertType.ERROR);
+                return;
+            }
+            
+            // Add food to meal
+            mealService.addFoodToMeal(mealId, foodId, 100, "g"); // Default quantity = 100, unit = g
+            
+            // Show success message
+            showAlert("Thành công", "Thức ăn đã được thêm vào " + getMealTypeInVietnamese(mealType), Alert.AlertType.INFORMATION);
+            
+            // Refresh the main view
+            if (mealController != null) {
+                mealController.loadMealData();
+            }
+            
+            // Close the window
+            closeWindow();
+            
+        } catch (SQLException ex) {
+            System.err.println("Lỗi khi lưu thức ăn: " + ex.getMessage());
+            showAlert("Lỗi cơ sở dữ liệu", "Không thể lưu thức ăn: " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+    
+    /**
+     * Handle the cancel button action
+     */
+    @FXML
+    private void handleCancel(ActionEvent event) {
         closeWindow();
     }
-
+    
+    /**
+     * Validate form inputs
+     * 
+     * @return true if inputs are valid, false otherwise
+     */
+    private boolean validateInputs() {
+        // Check if name is provided
+        if (nameField.getText().trim().isEmpty()) {
+            showAlert("Lỗi nhập liệu", "Vui lòng nhập tên thức ăn", Alert.AlertType.ERROR);
+            nameField.requestFocus();
+            return false;
+        }
+        
+        // Check if calorie is provided and valid
+        try {
+            double calories = Double.parseDouble(caloField.getText().trim());
+            if (calories < 0) {
+                showAlert("Lỗi nhập liệu", "Lượng calo không thể âm", Alert.AlertType.ERROR);
+                caloField.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showAlert("Lỗi nhập liệu", "Lượng calo phải là một số", Alert.AlertType.ERROR);
+            caloField.requestFocus();
+            return false;
+        }
+        
+        // Optional fields: carb, lipid, protein, natri, sugar
+        // If provided, they must be valid numbers
+        if (!validateOptionalNumberField(carbField, "Carbohydrate")) return false;
+        if (!validateOptionalNumberField(lipidField, "Lipid")) return false;
+        if (!validateOptionalNumberField(proteinField, "Protein")) return false;
+        if (!validateOptionalNumberField(natriField, "Natri")) return false;
+        if (!validateOptionalNumberField(sugarField, "Đường")) return false;
+        
+        return true;
+    }
+    
+    /**
+     * Validate an optional number field
+     * 
+     * @param field The field to validate
+     * @param fieldName The name of the field for error messages
+     * @return true if valid, false otherwise
+     */
+    private boolean validateOptionalNumberField(TextField field, String fieldName) {
+        if (!field.getText().trim().isEmpty()) {
+            try {
+                double value = Double.parseDouble(field.getText().trim());
+                if (value < 0) {
+                    showAlert("Lỗi nhập liệu", fieldName + " không thể âm", Alert.AlertType.ERROR);
+                    field.requestFocus();
+                    return false;
+                }
+            } catch (NumberFormatException e) {
+                showAlert("Lỗi nhập liệu", fieldName + " phải là một số", Alert.AlertType.ERROR);
+                field.requestFocus();
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Save the food to the database
+     * 
+     * @return The ID of the newly created food, or -1 if an error occurred
+     */
+    private int saveFoodToDatabase() throws SQLException {
+        String sql = "INSERT INTO food (foodName, calories, protein, carb, fat, sodium, sugar) VALUES (?, ?, ?, ?, ?, ?, ?)";
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            stmt.setString(1, nameField.getText().trim());
+            stmt.setDouble(2, Double.parseDouble(caloField.getText().trim()));
+            
+            // Set optional fields, or null if not provided
+            if (!proteinField.getText().trim().isEmpty()) {
+                stmt.setDouble(3, Double.parseDouble(proteinField.getText().trim()));
+            } else {
+                stmt.setNull(3, java.sql.Types.DOUBLE);
+            }
+            
+            if (!carbField.getText().trim().isEmpty()) {
+                stmt.setDouble(4, Double.parseDouble(carbField.getText().trim()));
+            } else {
+                stmt.setNull(4, java.sql.Types.DOUBLE);
+            }
+            
+            if (!lipidField.getText().trim().isEmpty()) {
+                stmt.setDouble(5, Double.parseDouble(lipidField.getText().trim()));
+            } else {
+                stmt.setNull(5, java.sql.Types.DOUBLE);
+            }
+            
+            // Add sodium field
+            if (!natriField.getText().trim().isEmpty()) {
+                stmt.setDouble(6, Double.parseDouble(natriField.getText().trim()));
+            } else {
+                stmt.setNull(6, java.sql.Types.DOUBLE);
+            }
+            
+            // Add sugar field
+            if (!sugarField.getText().trim().isEmpty()) {
+                stmt.setDouble(7, Double.parseDouble(sugarField.getText().trim()));
+            } else {
+                stmt.setNull(7, java.sql.Types.DOUBLE);
+            }
+            
+            int affectedRows = stmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Tạo thức ăn thất bại, không có dòng nào được thêm");
+            }
+            
+            try (ResultSet generatedKeys = stmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Tạo thức ăn thất bại, không lấy được ID");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Get existing meal or create a new one for the selected date and meal type
+     * 
+     * @return The meal ID
+     */
+    private int getOrCreateMeal() throws SQLException {
+        // First check if a meal for this date and type already exists
+        String checkSql = "SELECT idMeal FROM meal WHERE userId = ? AND DATE(dateOfMeal) = ? AND nameMeal = ?";
+        
+        Date date = Date.from(selectedDate.atStartOfDay(ZoneId.systemDefault()).toInstant());
+        java.sql.Date sqlDate = new java.sql.Date(date.getTime());
+        
+        try (PreparedStatement checkStmt = conn.prepareStatement(checkSql)) {
+            checkStmt.setInt(1, currentUser.getId());
+            checkStmt.setDate(2, sqlDate);
+            checkStmt.setString(3, mealType);
+            
+            try (ResultSet rs = checkStmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("idMeal");
+                }
+            }
+        }
+        
+        // If no meal exists, create a new one
+        String createSql = "INSERT INTO meal (nameMeal, totalCalories, dateOfMeal, userId) VALUES (?, 0, ?, ?)";
+        
+        try (PreparedStatement createStmt = conn.prepareStatement(createSql, Statement.RETURN_GENERATED_KEYS)) {
+            createStmt.setString(1, mealType);
+            createStmt.setTimestamp(2, new java.sql.Timestamp(date.getTime()));
+            createStmt.setInt(3, currentUser.getId());
+            
+            int affectedRows = createStmt.executeUpdate();
+            if (affectedRows == 0) {
+                throw new SQLException("Tạo bữa ăn thất bại, không có dòng nào được thêm");
+            }
+            
+            try (ResultSet generatedKeys = createStmt.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1);
+                } else {
+                    throw new SQLException("Tạo bữa ăn thất bại, không lấy được ID");
+                }
+            }
+        }
+    }
+    
+    /**
+     * Close the form window
+     */
     private void closeWindow() {
         Stage stage = (Stage) nameField.getScene().getWindow();
         stage.close();
     }
-    private FoodSubmitListener listener;
-
-    public void setListener(FoodSubmitListener listener) {
-        this.listener = listener;
-
+    
+    /**
+     * Show an alert dialog
+     */
+    private void showAlert(String title, String content, Alert.AlertType type) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        alert.showAndWait();
     }
-
-    public interface FoodSubmitListener {
-
-        void onFoodSubmitted(FoodItem item);
+    
+    /**
+     * Get Vietnamese name for meal type
+     */
+    private String getMealTypeInVietnamese(String mealType) {
+        switch(mealType) {
+            case "Breakfast":
+                return "bữa sáng";
+            case "Lunch":
+                return "bữa trưa";
+            case "Dinner":
+                return "bữa tối";
+            default:
+                return mealType;
+        }
     }
-
-    private String mealType;
-
+    
+    /**
+     * Set the meal type
+     */
     public void setMealType(String mealType) {
         this.mealType = mealType;
     }
-
-    @Override
-    public void initialize(URL url, ResourceBundle rb) {
-        nameField.setPromptText("Ví dụ: Cơm trắng");
-        caloField.setPromptText("calo (vd: 200)");
-        carbField.setPromptText("carb (g)");
-        lipidField.setPromptText("fat (g)");
-        proteinField.setPromptText("protein (g)");
-        natriField.setPromptText("natri (mg)");
-        sugarField.setPromptText("đường (g)");
+    
+    /**
+     * Set the current user
+     */
+    public void setCurrentUser(User currentUser) {
+        this.currentUser = currentUser;
+    }
+    
+    /**
+     * Set the selected date
+     */
+    public void setSelectedDate(LocalDate selectedDate) {
+        this.selectedDate = selectedDate;
+    }
+    
+    /**
+     * Set the meal controller for refreshing data
+     */
+    public void setMealController(MealfoodController mealController) {
+        this.mealController = mealController;
     }
 }

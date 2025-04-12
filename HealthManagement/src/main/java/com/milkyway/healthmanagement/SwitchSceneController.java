@@ -77,7 +77,12 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
-        stage.initStyle(StageStyle.UNDECORATED);
+        
+        // Tránh gọi initStyle khi stage đã hiển thị
+        if (!stage.isShowing()) {
+            stage.initStyle(StageStyle.UNDECORATED);
+        }
+        
         stage.show();
     }
 
@@ -90,8 +95,6 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
-
-        stage.initStyle(StageStyle.UNDECORATED);
         stage.show();
     }
 

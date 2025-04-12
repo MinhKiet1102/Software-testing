@@ -53,6 +53,10 @@ public class Food implements Serializable {
     private Double carb;
     @Column(name = "fat")
     private Double fat;
+    @Column(name = "sodium")
+    private Double sodium;
+    @Column(name = "sugar")
+    private Double sugar;
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "food")
     private Set<MealFood> mealFoodSet;
 
@@ -117,6 +121,23 @@ public class Food implements Serializable {
         this.fat = fat;
     }
 
+    public Double getSodium() {
+        return sodium;
+    }
+
+    public void setSodium(Double sodium) {
+        this.sodium = sodium;
+    }
+
+    public Double getSugar() {
+        return sugar;
+    }
+
+    public void setSugar(Double sugar) {
+        this.sugar = sugar;
+    }
+
+    
     public Set<MealFood> getMealFoodSet() {
         return mealFoodSet;
     }
