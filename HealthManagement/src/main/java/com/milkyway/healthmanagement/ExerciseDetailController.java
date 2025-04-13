@@ -8,12 +8,14 @@ import com.milkyway.services.ExerciseService;
 import java.net.URL;
 import java.sql.Date;
 import java.time.LocalDate;
+import java.util.Optional;
 import java.util.ResourceBundle;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
@@ -51,6 +53,12 @@ public class ExerciseDetailController extends SwitchSceneController implements I
 
     @FXML
     private Button btnSave;
+    
+    @FXML
+    private Button btnMinimize;
+    
+    @FXML
+    private Button btnClose;
 
     private ExerciseService exerciseService = new ExerciseService();
     private Exercise exercise;
@@ -63,7 +71,11 @@ public class ExerciseDetailController extends SwitchSceneController implements I
         dtpDate.setValue(LocalDate.now());
         caloriesBox.setVisible(false);
 
-        btnCancel.setOnAction(event -> closeWindow(btnCancel));
+        btnCancel.setOnAction(event -> handleCancel(event));
+        
+        // Thêm sự kiện cho nút minimize và close
+        btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
+        btnClose.setOnAction(event -> closeWindow(btnClose));
 
         // Khi click vào txtExercise, nếu đang thêm mới thì hiện ô nhập calo
         txtExercise.setOnMouseClicked((MouseEvent event) -> {
@@ -71,6 +83,50 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                 caloriesBox.setVisible(true);
             }
         });
+    }
+    
+    /**
+     * Hiển thị hộp thoại xác nhận
+     * @param title Tiêu đề của hộp thoại
+     * @param content Nội dung cần xác nhận
+     * @return true nếu người dùng đồng ý, false nếu người dùng hủy bỏ
+     */
+    private boolean showConfirmationDialog(String title, String content) {
+        Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(content);
+        Optional<ButtonType> result = alert.showAndWait();
+        return result.isPresent() && result.get() == ButtonType.OK;
+    }
+    
+    /**
+     * Xử lý sự kiện nút minimize
+     * @param event event được kích hoạt
+     */
+    @FXML
+    public void handleMinimize(ActionEvent event) {
+        minimizeWindow(btnMinimize);
+    }
+    
+    /**
+     * Xử lý sự kiện nút đóng
+     * @param event event được kích hoạt
+     */
+    @FXML
+    public void handleClose(ActionEvent event) {
+        closeWindow(btnClose);
+    }
+
+    /**
+     * Handle the cancel button click
+     * @param event The action event
+     */
+    @FXML
+    private void handleCancel(ActionEvent event) {
+        if (showConfirmationDialog("Xác nhận hủy bỏ", "Bạn có chắc chắn muốn hủy bỏ thay đổi?")) {
+            closeWindow(btnCancel);
+        }
     }
 
     public void setExercise(Exercise exercise) {
@@ -93,6 +149,11 @@ public class ExerciseDetailController extends SwitchSceneController implements I
 
     @FXML
     private void saveExercise(ActionEvent event) {
+        // Yêu cầu xác nhận trước khi lưu
+        if (!showConfirmationDialog("Xác nhận lưu", "Bạn có chắc chắn muốn lưu thông tin này?")) {
+            return; // Người dùng đã hủy bỏ việc lưu
+        }
+        
         try {
             double caloriesPerMinute = exercise.getCaloriesBurnedPerMin();
             //kiểm tra exerciseName có chứa kí tự đặc biệt hay không, exerciseName được phép sử dụng tiếng Việt và khoảng trắng

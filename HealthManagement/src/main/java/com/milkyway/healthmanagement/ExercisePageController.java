@@ -107,7 +107,7 @@ public class ExercisePageController extends SwitchSceneController implements Ini
 
         // Tạo cửa sổ mới (Stage)
         Stage stage = new Stage();
-        stage.setScene(new Scene(root, 700, 225));
+        stage.setScene(new Scene(root, 700, 320));
 
         ExerciseDetailController controller = loader.getController();
         controller.setExercise(exercise);

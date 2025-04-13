@@ -2,6 +2,7 @@ package com.milkyway.services;
 
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Target;
+import com.milkyway.pojo.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,6 +14,15 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
@@ -245,6 +255,105 @@ public class TargetService {
         return statusList;
     }
 
+    private boolean sendEmail(String emailTo, String subject, String messageContent) {
+        final String username = "kiet7784@gmail.com";
+        final String password = "cipm rvrt rhso zhsr";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailTo));
+            message.setSubject(subject);
+            message.setText(messageContent);
+
+            Transport.send(message);
+            System.out.println("Email đã được gửi đến " + emailTo);
+            return true;
+        } catch (MessagingException e) {
+            System.err.println("Lỗi khi gửi email: " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean checkMidCycleProgressAndSendEmail(Target target, User user) {
+        if (target == null || user == null) {
+            return false;
+        }
+
+        String status = target.getStatus();
+        if ("Failed".equals(status) || "Not Started".equals(status) || "Cancelled".equals(status)) {
+            return false;
+        }
+
+        LocalDate startDate;
+        startDate = LocalDate.parse(String.valueOf(target.getStartDate()));
+        LocalDate endDate;
+        endDate = LocalDate.parse(String.valueOf(target.getEndDate()));
+
+        float progress = target.getProgress();
+        float targetNumber = target.getTargetNumber();
+
+        if (startDate == null || endDate == null || targetNumber <= 0) {
+            return false;
+        }
+
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate);
+        LocalDate midCycleDate = startDate.plusDays(totalDays / 2);
+
+        LocalDate today = LocalDate.now();
+
+        if (!today.isBefore(midCycleDate)) {
+            float progressPercentage = (progress / targetNumber) * 100;
+
+            if (progressPercentage < 50) {
+                String email = user.getEmail();
+                boolean emailSent = false;
+                
+                if (email != null && !email.isEmpty()) {
+                    // Định dạng ngày theo dd/MM/yyyy
+                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                    String formattedStartDate = startDate.format(formatter);
+                    String formattedEndDate = endDate.format(formatter);
+                    String formattedToday = today.format(formatter);
+                    
+                    String subject = "Cảnh báo: Tiến độ mục tiêu thấp";
+                    String content = "Kính gửi " + user.getUsername() + ",\n\n"
+                            + "Hệ thống Health Management nhận thấy mục tiêu \"" + target.getTargetName() 
+                            + "\" của bạn hiện mới đạt " + String.format("%.1f", progressPercentage) + "% ("
+                            + progress + " " + target.getUnit() + " / " + targetNumber + " " + target.getUnit() + "), "
+                            + "trong khi thời gian thực hiện đã trôi qua hơn 50%.\n\n"
+                            + "Thời gian bắt đầu: " + formattedStartDate + "\n"
+                            + "Thời gian kết thúc: " + formattedEndDate + "\n"
+                            + "Thời gian hiện tại: " + formattedToday + "\n\n"
+                            + "Vui lòng đăng nhập vào ứng dụng Health Management để kiểm tra và cập nhật tiến độ "
+                            + "nhằm đảm bảo đạt được mục tiêu đã đề ra.\n\n"
+                            + "Trân trọng,\n"
+                            + "Đội ngũ Health Management";
+
+                    emailSent = sendEmail(email, subject, content);
+                }
+                
+                // Không hiển thị cảnh báo khi gửi email thành công
+                return emailSent;
+            }
+        }
+        return false;
+    }
+
     public void checkMidCycleProgress(Target target) {
         if (target == null) {
             return;
@@ -327,6 +436,7 @@ public class TargetService {
             return "Not Started";
         }
     }
+
     public List<Target> getTargetByUserId(int userId, String status) throws SQLException {
         List<Target> targets = new ArrayList<>();
         String sql = "SELECT * FROM target WHERE userId = ? AND status = ?";
