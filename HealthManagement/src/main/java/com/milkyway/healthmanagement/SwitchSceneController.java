@@ -75,6 +75,8 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        
+        // Tránh gọi initStyle khi stage đã hiển thị
         if (!stage.isShowing()) {
             stage.initStyle(StageStyle.UNDECORATED);
         }
