@@ -1,0 +1,166 @@
+ID	Test Case Description	Test Case Procedure	Expected Output	Test date	Result	Note
+
+1. Kiểm tra hiển thị và điều hướng
+TC1.1	Kiểm tra hiển thị danh sách bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"	- Hiển thị danh sách các bài tập dưới dạng lưới
+- Hiển thị nút "+" để thêm bài tập mới
+- Hiển thị ô tìm kiếm			
+
+TC1.2	Kiểm tra tìm kiếm bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Nhập từ khóa vào ô tìm kiếm	- Hiển thị các bài tập phù hợp với từ khóa
+- Nếu không có kết quả, hiển thị lưới trống			Kiểm tra việc tìm kiếm với các từ khóa khác nhau (tên bài tập đầy đủ, một phần của tên)
+
+TC1.3	Kiểm tra điều hướng đến chi tiết bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào một bài tập trong danh sách	Mở form chi tiết bài tập với thông tin của bài tập đã chọn			
+
+2. Kiểm tra thêm bài tập mới
+TC2.1	Thêm bài tập mới hợp lệ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Nhập thông tin hợp lệ:
+   - Tên bài tập: "Chạy bộ"
+   - Calo tiêu thụ: "5.5"
+   - Thời gian: "30"
+   - Mức độ nỗ lực: "Vừa"
+   - Ngày: Ngày hiện tại
+5: Nhấn "Lưu"	- Hiển thị thông báo thành công
+- Bài tập mới xuất hiện trong danh sách bài tập
+- Bản ghi mới được thêm vào cơ sở dữ liệu			Kiểm tra việc tạo bài tập mới, đảm bảo tất cả các trường được lưu chính xác
+
+TC2.2	Thêm bài tập với tên chứa ký tự đặc biệt	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Nhập thông tin:
+   - Tên bài tập: "Chạy bộ@123!"
+   - Các trường khác hợp lệ
+5: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Tên bài tập không được chứa kí tự đặc biệt!"			
+
+TC2.3	Thêm bài tập với tên trống	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Để trống tên bài tập, nhập các trường khác hợp lệ
+5: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Tên bài tập không được để trống!"			
+
+TC2.4	Thêm bài tập với thời gian không phải số	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Nhập thông tin:
+   - Tên bài tập hợp lệ
+   - Thời gian: "abc"
+   - Các trường khác hợp lệ
+5: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Thời gian phải là số!"			
+
+TC2.5	Thêm bài tập với thời gian trống	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Để trống thời gian, nhập các trường khác hợp lệ
+5: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Thời gian không được để trống!"			
+
+TC2.6	Thêm bài tập không chọn mức độ nỗ lực	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Không chọn mức độ nỗ lực, nhập các trường khác hợp lệ
+5: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Mức độ nỗ lực không được để trống!"			
+
+TC2.7	Thêm bài tập với ngày trong tương lai	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Chọn ngày trong tương lai
+5: Nhập các trường khác hợp lệ
+6: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Ngày không được chọn trong tương lai!"			
+
+TC2.8	Thêm bài tập với lượng calo tiêu thụ không phải số	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Nhập thông tin:
+   - Lượng calo tiêu thụ: "xyz"
+   - Các trường khác hợp lệ
+5: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Lượng calo tiêu thụ phải là số!"			
+
+TC2.9	Thêm bài tập với lượng calo tiêu thụ trống	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào nút "+"
+4: Để trống lượng calo tiêu thụ, nhập các trường khác hợp lệ
+5: Nhấn "Lưu"	Hiển thị thông báo lỗi: "Lượng calo tiêu thụ không được để trống!"			
+
+3. Kiểm tra ghi nhật ký bài tập đã có
+TC3.1	Ghi nhật ký bài tập đã có với thông tin hợp lệ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào một bài tập có sẵn
+4: Nhập thông tin hợp lệ:
+   - Thời gian: "45"
+   - Mức độ nỗ lực: "Nặng"
+   - Ngày: Ngày hôm qua
+5: Nhấn "Lưu"	- Hiển thị thông báo thành công
+- Bản ghi mới được thêm vào cơ sở dữ liệu
+- Tổng calo đã đốt được tính toán chính xác (calo/phút * thời gian)			
+
+TC3.2	Hủy ghi nhật ký bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Click vào một bài tập có sẵn
+4: Nhập một số thông tin
+5: Nhấn "Hủy bỏ"
+6: Xác nhận hủy bỏ	Form chi tiết bài tập đóng lại, không có thay đổi nào được lưu vào cơ sở dữ liệu			
+
+4. Kiểm tra lịch sử bài tập
+TC4.1	Xem lịch sử bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Lịch sử Bài Tập"	- Hiển thị bảng danh sách các bài tập đã thực hiện
+- Hiển thị các cột: Mục tiêu, Thời gian, Tổng calo tiêu thụ, Hành động			
+
+TC4.2	Lọc lịch sử bài tập theo ngày	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Lịch sử Bài Tập"
+3: Chọn một ngày cụ thể trên DatePicker	Hiển thị chỉ các bài tập đã thực hiện vào ngày đã chọn			
+
+TC4.3	Tìm kiếm trong lịch sử bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Lịch sử Bài Tập"
+3: Nhập từ khóa vào ô tìm kiếm	Hiển thị các bản ghi phù hợp với từ khóa tìm kiếm			Kiểm tra tìm kiếm theo tên bài tập
+
+TC4.4	Xóa bản ghi lịch sử bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Lịch sử Bài Tập"
+3: Nhấn nút "Xóa" bên cạnh một bản ghi
+4: Xác nhận xóa	- Bản ghi được xóa khỏi bảng
+- Tổng calo tiêu thụ được cập nhật
+- Bản ghi bị xóa khỏi cơ sở dữ liệu			
+
+TC4.5	Hủy xóa bản ghi lịch sử bài tập	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Lịch sử Bài Tập"
+3: Nhấn nút "Xóa" bên cạnh một bản ghi
+4: Hủy bỏ xác nhận xóa	Bản ghi vẫn còn trong bảng và cơ sở dữ liệu, không có thay đổi nào được thực hiện			
+
+5. Kiểm tra tích hợp với các tính năng khác
+TC5.1	Kiểm tra hiển thị biểu đồ bài tập trên trang chủ	1: Đăng nhập vào hệ thống
+2: Chuyển đến trang chủ (Home)	- Biểu đồ tròn hiển thị tỷ lệ các bài tập đã thực hiện
+- Khi di chuột qua các phần của biểu đồ, hiển thị thông tin chi tiết (tooltip)			Kiểm tra xem biểu đồ có được cập nhật sau khi thêm/xóa bài tập không
+
+TC5.2	Kiểm tra tổng lượng calo đã đốt	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Lịch sử Bài Tập"	- Tổng lượng calo đã đốt được hiển thị chính xác
+- Công thức: tổng của (thời gian * calo/phút) cho tất cả các bài tập trong ngày đã chọn			
+
+TC5.3	Kiểm tra ảnh hưởng đến mục tiêu calo	1: Đăng nhập vào hệ thống
+2: Thêm mục tiêu về lượng calo đốt cháy
+3: Ghi nhật ký bài tập
+4: Kiểm tra tiến độ của mục tiêu	Tiến độ của mục tiêu liên quan đến lượng calo được cập nhật sau khi ghi nhật ký bài tập			Kiểm tra mối liên hệ giữa module bài tập và module mục tiêu
+
+6. Kiểm tra hiệu suất và ổn định
+TC6.1	Kiểm tra tải danh sách lớn bài tập	1: Đăng nhập vào hệ thống với tài khoản có nhiều bài tập (>30)
+2: Chuyển đến tab "Bài Tập"	Danh sách bài tập được tải và hiển thị đầy đủ, không bị treo hoặc lỗi			
+
+TC6.2	Kiểm tra thêm nhiều bài tập liên tiếp	1: Đăng nhập vào hệ thống
+2: Thêm liên tiếp 10 bài tập khác nhau	Tất cả 10 bài tập đều được thêm thành công, hệ thống vẫn hoạt động ổn định			
+
+TC6.3	Kiểm tra khả năng phục hồi sau lỗi	1: Đăng nhập vào hệ thống
+2: Thử gây lỗi (ví dụ: nhập giá trị quá lớn cho calo)
+3: Phục hồi từ lỗi và tiếp tục sử dụng	Hệ thống hiển thị thông báo lỗi phù hợp và cho phép người dùng tiếp tục sử dụng mà không bị crash			
+
+7. Kiểm tra giao diện người dùng
+TC7.1	Kiểm tra tính đáp ứng của giao diện	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Bài Tập"
+3: Thay đổi kích thước cửa sổ	Giao diện điều chỉnh phù hợp với kích thước cửa sổ, không bị che khuất thông tin quan trọng			
+
+TC7.2	Kiểm tra tính nhất quán của giao diện	1: Đăng nhập vào hệ thống
+2: Kiểm tra các thành phần giao diện trong tab "Bài Tập" và "Lịch sử Bài Tập"	Các thành phần giao diện (nút, bảng, biểu mẫu) có thiết kế và hành vi nhất quán trong toàn bộ ứng dụng			
+
+TC7.3	Kiểm tra hiển thị thông báo lỗi và thành công	1: Đăng nhập vào hệ thống
+2: Thực hiện các hành động gây ra thông báo (lưu thành công, lỗi xác nhận, v.v.)	Thông báo được hiển thị rõ ràng, ở vị trí hợp lý, và có thể dễ dàng đóng lại			

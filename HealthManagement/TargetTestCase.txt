@@ -1,0 +1,242 @@
+ID	Test Case Description	Test Case Procedure	Expected Output	Test date	Result	Note
+
+1. Kiểm tra chuyển đổi giữa các tab và hiển thị dữ liệu
+TC1.1	Kiểm tra chuyển đổi giữa tab "Kế hoạch hiện tại" và "Kế hoạch đã hoàn thành"	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu"
+3: Nhấn vào nút "Kế hoạch hiện tại"
+4: Nhấn vào nút "Kế hoạch đã hoàn thành"	- Tab "Kế hoạch hiện tại" hiển thị khi nhấn vào nút tương ứng
+- Tab "Kế hoạch đã hoàn thành" hiển thị khi nhấn vào nút tương ứng			Kiểm tra chức năng chuyển đổi giữa các màn hình của tính năng mục tiêu
+
+TC1.2	Kiểm tra hiển thị dữ liệu trong tab "Kế hoạch hiện tại"	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu"
+3: Nhấn vào nút "Kế hoạch hiện tại"	- Hiển thị bảng danh sách các kế hoạch hiện tại
+- Hiển thị các cột: Kế hoạch, Ngày tạo, Ngày bắt đầu, Ngày kết thúc, Mục tiêu, Đơn vị, Tiến độ, Trạng thái
+- Hiển thị các nút chức năng: Thêm, Cập nhật, Xóa, Cập nhật tiến độ			
+
+TC1.3	Kiểm tra hiển thị dữ liệu trong tab "Kế hoạch đã hoàn thành"	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu"
+3: Nhấn vào nút "Kế hoạch đã hoàn thành"	- Hiển thị bảng danh sách các kế hoạch đã hoàn thành
+- Hiển thị các cột: ID, Kế hoạch, Ngày bắt đầu, Ngày kết thúc, Trạng thái, Mục tiêu, Đơn vị, Tiến độ
+- Hiển thị tổng số kế hoạch và số kế hoạch đã hoàn thành thành công			
+
+2. Kiểm tra thêm kế hoạch mới
+TC2.1	Thêm kế hoạch mới với thông tin hợp lệ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Nhập thông tin hợp lệ:
+   - Kế hoạch: "Giảm cân"
+   - Ngày bắt đầu: Ngày hiện tại
+   - Ngày kết thúc: 30 ngày sau ngày hiện tại
+   - Mục tiêu: "5"
+   - Đơn vị: "kg (Kilogram)"
+4: Nhấn "Thêm"	- Hiển thị thông báo "Thêm kế hoạch thành công!"
+- Kế hoạch mới xuất hiện trong danh sách với trạng thái "Not Started" hoặc "In Progress" tùy thuộc vào ngày bắt đầu
+- Kế hoạch được lưu vào cơ sở dữ liệu			Kiểm tra việc thêm kế hoạch mới với tất cả các trường hợp lệ
+
+TC2.2	Thêm kế hoạch với thông tin trống	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Để trống tất cả các trường
+4: Nhấn "Thêm"	Hiển thị thông báo lỗi "Vui lòng điền đầy đủ thông tin!"			
+
+TC2.3	Thêm kế hoạch với ngày kết thúc trước ngày bắt đầu	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Nhập thông tin:
+   - Kế hoạch: "Giảm cân"
+   - Ngày bắt đầu: 15/04/2025
+   - Ngày kết thúc: 10/04/2025
+   - Các trường khác hợp lệ
+4: Nhấn "Thêm"	Hiển thị thông báo lỗi "Ngày kết thúc phải sau ngày bắt đầu!"			
+
+TC2.4	Thêm kế hoạch với ngày bắt đầu trong quá khứ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Nhập thông tin:
+   - Kế hoạch: "Giảm cân"
+   - Ngày bắt đầu: 01/01/2025 (ngày trong quá khứ)
+   - Các trường khác hợp lệ
+4: Nhấn "Thêm"	Hiển thị thông báo lỗi "Ngày bắt đầu không được ở quá khứ!"			
+
+TC2.5	Thêm kế hoạch với giá trị mục tiêu không hợp lệ (âm hoặc zero)	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Nhập thông tin:
+   - Kế hoạch: "Giảm cân"
+   - Mục tiêu: "-5" hoặc "0"
+   - Các trường khác hợp lệ
+4: Nhấn "Thêm"	Hiển thị thông báo lỗi "Mục tiêu phải lớn hơn 0!"			
+
+TC2.6	Thêm kế hoạch với giá trị mục tiêu không phải số	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Nhập thông tin:
+   - Kế hoạch: "Giảm cân"
+   - Mục tiêu: "abc"
+   - Các trường khác hợp lệ
+4: Nhấn "Thêm"	Hiển thị thông báo lỗi "Mục tiêu phải là số hợp lệ (sử dụng dấu . cho số thập phân)!"			
+
+TC2.7	Thêm kế hoạch trùng tên với ngày bắt đầu giống nhau	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Thêm một kế hoạch
+4: Thêm kế hoạch khác với tên và ngày bắt đầu giống hệt kế hoạch đã thêm	Hiển thị thông báo lỗi "Kế hoạch "X" đã tồn tại với cùng ngày bắt đầu!"			Kiểm tra ràng buộc không cho phép trùng lặp tên kế hoạch và ngày bắt đầu
+
+3. Kiểm tra chức năng cập nhật kế hoạch
+TC3.1	Cập nhật kế hoạch với thông tin hợp lệ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch từ danh sách
+4: Chỉnh sửa thông tin (ví dụ: thay đổi ngày kết thúc, tăng mục tiêu)
+5: Nhấn "Cập nhật"	- Hiển thị thông báo "Đã cập nhật thành công!"
+- Kế hoạch được cập nhật trong danh sách và cơ sở dữ liệu			Kiểm tra việc cập nhật các trường cho phép của kế hoạch
+
+TC3.2	Cập nhật kế hoạch mà không chọn kế hoạch nào	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Không chọn kế hoạch nào
+4: Nhấn "Cập nhật"	Hiển thị thông báo lỗi "Vui lòng chọn 1 mục tiêu"			
+
+TC3.3	Cập nhật kế hoạch với ngày kết thúc ngắn hơn ngày kết thúc cũ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch từ danh sách
+4: Thay đổi ngày kết thúc thành ngày sớm hơn ngày kết thúc cũ
+5: Nhấn "Cập nhật"	Hiển thị thông báo lỗi "Bạn không được rút ngắn thời gian mục tiêu!"			
+
+TC3.4	Cập nhật kế hoạch với mục tiêu không hợp lệ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch từ danh sách
+4: Thay đổi mục tiêu thành giá trị không hợp lệ (ví dụ: -10)
+5: Nhấn "Cập nhật"	Hiển thị thông báo lỗi "Mục tiêu phải lớn hơn 0!"			
+
+TC3.5	Hủy bỏ cập nhật kế hoạch	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch từ danh sách
+4: Thay đổi một số thông tin
+5: Nhấn "Cập nhật"
+6: Chọn "Cancel" trong hộp thoại xác nhận	Hộp thoại xác nhận đóng lại, không có thay đổi nào được lưu			
+
+4. Kiểm tra chức năng xóa kế hoạch
+TC4.1	Xóa kế hoạch thành công	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch từ danh sách
+4: Nhấn "Xóa"
+5: Xác nhận xóa	- Hiển thị thông báo "Đã xóa thành công!"
+- Kế hoạch bị xóa khỏi danh sách và cơ sở dữ liệu			
+
+TC4.2	Xóa kế hoạch mà không chọn kế hoạch nào	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Không chọn kế hoạch nào
+4: Nhấn "Xóa"	Hiển thị thông báo lỗi "Vui lòng chọn mục đầu tiên"			
+
+TC4.3	Hủy bỏ xóa kế hoạch	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch từ danh sách
+4: Nhấn "Xóa"
+5: Chọn "Cancel" trong hộp thoại xác nhận	Kế hoạch vẫn còn trong danh sách và cơ sở dữ liệu, hiển thị thông báo "Cancelled!"			
+
+5. Kiểm tra chức năng cập nhật tiến độ
+TC5.1	Cập nhật tiến độ thành công	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch có trạng thái "In Progress"
+4: Nhập giá trị tiến độ hợp lệ (ví dụ: 2.5)
+5: Nhấn "Cập nhật tiến độ"	- Hiển thị thông báo "Tiến độ đã được cập nhật!"
+- Giá trị tiến độ và phần trăm hoàn thành được cập nhật			Kiểm tra việc cập nhật tiến độ cho kế hoạch đang thực hiện
+
+TC5.2	Cập nhật tiến độ mà không chọn kế hoạch nào	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Không chọn kế hoạch nào
+4: Nhấn "Cập nhật tiến độ"	Hiển thị thông báo cảnh báo "Vui lòng chọn kế hoạch!"			
+
+TC5.3	Cập nhật tiến độ cho kế hoạch có trạng thái không phải "In Progress"	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch có trạng thái "Not Started"
+4: Nhập giá trị tiến độ
+5: Nhấn "Cập nhật tiến độ"	Hiển thị thông báo cảnh báo "Không thể cập nhật tiến độ khi trạng thái là 'Not Started'!"			Kiểm tra các trạng thái khác: "Achieved", "Failed", "Cancelled"
+
+TC5.4	Cập nhật tiến độ với giá trị không hợp lệ	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch có trạng thái "In Progress"
+4: Nhập giá trị tiến độ không hợp lệ (ví dụ: "abc")
+5: Nhấn "Cập nhật tiến độ"	Hiển thị thông báo lỗi "Vui lòng nhập số hợp lệ (sử dụng dấu . cho số thập phân)!"			
+
+TC5.5	Cập nhật tiến độ với giá trị vượt quá mục tiêu	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch có mục tiêu là 5
+4: Nhập giá trị tiến độ là 6
+5: Nhấn "Cập nhật tiến độ"	Hiển thị thông báo cảnh báo "Tiến độ không thể lớn hơn mục tiêu!"			
+
+6. Kiểm tra trạng thái kế hoạch
+TC6.1	Kiểm tra tự động cập nhật trạng thái "Not Started"	1: Đăng nhập vào hệ thống
+2: Thêm kế hoạch với ngày bắt đầu trong tương lai
+3: Xem trạng thái kế hoạch	Trạng thái kế hoạch là "Not Started" và hiển thị màu xám			
+
+TC6.2	Kiểm tra tự động cập nhật trạng thái "In Progress"	1: Đăng nhập vào hệ thống
+2: Thêm kế hoạch với ngày bắt đầu là ngày hiện tại
+3: Xem trạng thái kế hoạch	Trạng thái kế hoạch là "In Progress" và hiển thị màu xanh dương			
+
+TC6.3	Kiểm tra tự động cập nhật trạng thái "Achieved"	1: Đăng nhập vào hệ thống
+2: Chọn kế hoạch đang thực hiện
+3: Cập nhật tiến độ đạt 100% mục tiêu
+4: Xem trạng thái kế hoạch	Trạng thái kế hoạch được cập nhật thành "Achieved" và hiển thị màu xanh lá			
+
+TC6.4	Kiểm tra tự động cập nhật trạng thái "Failed"	1: Đăng nhập vào hệ thống
+2: Đợi một kế hoạch đến ngày kết thúc mà không đạt mục tiêu
+3: Đăng nhập lại vào hệ thống ngày hôm sau
+4: Xem trạng thái kế hoạch	Trạng thái kế hoạch được cập nhật thành "Failed" và hiển thị màu đỏ			
+
+TC6.5	Kiểm tra cập nhật trạng thái thủ công	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch đã hoàn thành"
+3: Chọn một kế hoạch từ danh sách
+4: Chọn trạng thái mới từ dropdown
+5: Nhấn "Cập nhật"	Kế hoạch được cập nhật với trạng thái mới			Kiểm tra các ràng buộc khi cập nhật trạng thái thủ công
+
+TC6.6	Kiểm tra cập nhật trạng thái thành "Achieved" khi chưa đạt mục tiêu	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch đã hoàn thành"
+3: Chọn kế hoạch chưa đạt mục tiêu
+4: Chọn trạng thái "Achieved"
+5: Nhấn "Cập nhật"	Hiển thị thông báo cảnh báo "Tiến trình chưa đạt mục tiêu, không thể cập nhật trạng thái là Achieved."			
+
+TC6.7	Kiểm tra hiển thị phần trăm hoàn thành	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch
+4: Xem giá trị phần trăm hiển thị	Phần trăm hoàn thành được hiển thị chính xác theo công thức: (Tiến độ / Mục tiêu) * 100%			Kiểm tra cả khi tiến độ = 0, tiến độ < mục tiêu và tiến độ = mục tiêu
+
+7. Kiểm tra thống kê kế hoạch
+TC7.1	Kiểm tra hiển thị tổng số kế hoạch	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch đã hoàn thành"
+3: Xem giá trị "Tổng số kế hoạch:"	Hiển thị đúng tổng số kế hoạch của người dùng hiện tại			
+
+TC7.2	Kiểm tra hiển thị số kế hoạch đã hoàn thành	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch đã hoàn thành"
+3: Xem giá trị "Số kế hoạch đã hoàn thành:"	Hiển thị đúng số kế hoạch có trạng thái "Achieved" của người dùng hiện tại			
+
+TC7.3	Kiểm tra hiển thị kế hoạch trên trang chủ	1: Đăng nhập vào hệ thống
+2: Chuyển đến trang chủ (Home)
+3: Xem bảng mục tiêu	Chỉ hiển thị các kế hoạch có trạng thái "In Progress" và hiển thị tiến độ phần trăm			
+
+8. Kiểm tra tính năng làm mới và xóa biểu mẫu
+TC8.1	Kiểm tra nút "Làm mới" khi đang chọn một kế hoạch	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Chọn một kế hoạch từ danh sách
+4: Nhấn "Làm mới"	- Tất cả các trường biểu mẫu được xóa trắng
+- Không có kế hoạch nào được chọn trong bảng
+- Phần trăm hoàn thành hiển thị "0%"			
+
+TC8.2	Kiểm tra tự động làm mới biểu mẫu sau khi thêm/cập nhật/xóa	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu" > "Kế hoạch hiện tại"
+3: Thêm/Cập nhật/Xóa một kế hoạch	Biểu mẫu được tự động làm mới và trống sau khi thao tác hoàn tất			
+
+9. Kiểm tra cảnh báo giữa chu kỳ
+TC9.1	Kiểm tra cảnh báo khi tiến độ dưới 50% vào giữa chu kỳ	1: Đăng nhập vào hệ thống
+2: Thêm kế hoạch mới với ngày bắt đầu là ngày hiện tại và ngày kết thúc là 20 ngày sau
+3: Đợi đến ngày thứ 10 (giữa chu kỳ)
+4: Đăng nhập và chọn kế hoạch có tiến độ < 50% mục tiêu	Hiển thị cảnh báo về tiến độ dưới 50% tại điểm giữa chu kỳ			
+
+10. Kiểm tra giao diện người dùng
+TC10.1	Kiểm tra màu sắc trạng thái	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu"
+3: Xem các kế hoạch có trạng thái khác nhau	- "Not Started": màu xám
+- "In Progress": màu xanh dương
+- "Achieved": màu xanh lá
+- "Failed": màu đỏ
+- "Cancelled": màu cam			
+
+TC10.2	Kiểm tra đáp ứng của giao diện	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu"
+3: Thay đổi kích thước cửa sổ	Giao diện điều chỉnh phù hợp với kích thước cửa sổ, không bị che khuất thông tin quan trọng			
+
+TC10.3	Kiểm tra xác nhận các hành động quan trọng	1: Đăng nhập vào hệ thống
+2: Chuyển đến tab "Mục tiêu"
+3: Thực hiện các hành động quan trọng (cập nhật, xóa)	Hộp thoại xác nhận xuất hiện trước khi thực hiện các hành động quan trọng			

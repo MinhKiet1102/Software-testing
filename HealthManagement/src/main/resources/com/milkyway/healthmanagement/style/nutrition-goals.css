@@ -1,0 +1,183 @@
+/* CSS cho giao diện Chỉnh sửa mục tiêu dinh dưỡng */
+
+/* Biến màu chính */
+* {
+    -primary-color: #1bac5a;
+    -primary-light: #e6f7ed;
+    -primary-dark: #158f4a;
+    -secondary-color: #0b5ed7;
+    -text-color: #333333;
+    -light-grey: #f5f5f5;
+    -mid-grey: #e0e0e0;
+    -border-color: #cccccc;
+}
+
+.root {
+    -fx-background-color: -light-grey;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: -text-color;
+}
+
+.text-field {
+    -fx-padding: 8px;
+    -fx-background-color: white;
+    -fx-background-radius: 5px;
+    -fx-border-color: -border-color;
+    -fx-border-radius: 5px;
+    -fx-border-width: 1px;
+    -fx-font-size: 13px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.05), 2, 0, 0, 1);
+    -fx-transition: border-color 0.2s, background-color 0.2s;
+}
+
+.text-field:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: -primary-light;
+}
+
+.button {
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 5px;
+    -fx-text-fill: -text-color;
+    -fx-font-size: 13px;
+    -fx-background-color: -mid-grey;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 2, 0, 0, 1);
+    -fx-transition: background-color 0.2s;
+}
+
+.button:hover {
+    -fx-background-color: derive(-mid-grey, -10%);
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 3, 0, 0, 2);
+}
+
+.button.primary-button {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button.primary-button:hover {
+    -fx-background-color: -primary-dark;
+}
+
+/* Header styles */
+.nutrition-header {
+    -fx-font-weight: bold;
+    -fx-font-size: 20px;
+    -fx-text-fill: -primary-color;
+    -fx-padding: 0 0 10px 0;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 1, 0, 0, 1);
+}
+
+/* Style cho GridPane */
+.grid-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 8px;
+    -fx-padding: 20px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.15), 8, 0, 0, 2);
+    -fx-border-color: rgba(0,0,0,0.05);
+    -fx-border-radius: 8px;
+    -fx-border-width: 1px;
+}
+
+/* Style cho các nhãn loại dinh dưỡng */
+.nutrition-label {
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+}
+
+/* Style cho đơn vị đo */
+.unit-label {
+    -fx-font-style: italic;
+    -fx-text-fill: #666666;
+    -fx-padding: 0 0 0 5px;
+}
+
+/* Custom styles cho từng loại dinh dưỡng */
+#caloriesField, #caloriesLabel {
+    -fx-border-color: derive(-primary-color, 30%);
+}
+
+#caloriesField:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: derive(-primary-light, 5%);
+}
+
+#carbsField, #carbsLabel {
+    -fx-border-color: derive(#ff9800, 30%);
+}
+
+#carbsField:focused {
+    -fx-border-color: #ff9800;
+    -fx-background-color: derive(#fff3e0, 5%);
+}
+
+#proteinField, #proteinLabel {
+    -fx-border-color: derive(#2196f3, 30%);
+}
+
+#proteinField:focused {
+    -fx-border-color: #2196f3;
+    -fx-background-color: derive(#e3f2fd, 5%);
+}
+
+#fatField, #fatLabel {
+    -fx-border-color: derive(#f44336, 30%);
+}
+
+#fatField:focused {
+    -fx-border-color: #f44336;
+    -fx-background-color: derive(#ffebee, 5%);
+}
+
+#sodiumField, #sodiumLabel {
+    -fx-border-color: derive(#9c27b0, 30%);
+}
+
+#sodiumField:focused {
+    -fx-border-color: #9c27b0;
+    -fx-background-color: derive(#f3e5f5, 5%);
+}
+
+#sugarField, #sugarLabel {
+    -fx-border-color: derive(#e91e63, 30%);
+}
+
+#sugarField:focused {
+    -fx-border-color: #e91e63;
+    -fx-background-color: derive(#fce4ec, 5%);
+}
+
+/* Style cho nút trong HBox */
+.button-container {
+    -fx-spacing: 10px;
+    -fx-padding: 15px 0 0 0;
+}
+
+/* Animation effects */
+.text-field:hover {
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 3, 0, 0, 1);
+}
+
+/* Responsive design */
+@media screen and (max-width: 600px) {
+    .grid-pane {
+        -fx-padding: 10px;
+    }
+    
+    .text-field {
+        -fx-padding: 5px;
+        -fx-font-size: 12px;
+    }
+    
+    .button {
+        -fx-padding: 5px 10px;
+        -fx-font-size: 12px;
+    }
+}
+

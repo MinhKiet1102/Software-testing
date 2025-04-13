@@ -2,6 +2,205 @@
  * Empty Stylesheet file.
  */
 
-.mainFxmlClass {
+/* CSS cho ExerciseDetail.fxml */
 
+/* Biến màu chính cho giao diện */
+* {
+    -primary-color: #1bac5a;
+    -primary-light: #e6f7ed;
+    -primary-dark: #158f4a;
+    -secondary-color: #0b5ed7;
+    -text-color: #333333;
+    -light-grey: #f5f5f5;
+    -mid-grey: #e0e0e0;
+    -border-color: #cccccc;
+}
+
+/* Định dạng chung cho giao diện chính */
+.mainFxmlClass {
+    -fx-background-color: #f8f9fa;
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+/* Cải thiện đường viền cho các nút */
+.border {
+    -fx-background-color: #1bac5a;
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-border-color: #0b8043;
+    -fx-border-width: 1px;
+    -fx-padding: 7px 15px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 3, 0, 0, 1);
+}
+
+.border:hover {
+    -fx-background-color: #158f4a;
+}
+
+.border .label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+}
+
+/* Định dạng cho gradient background */
+.gradient-bg {
+    -fx-background-color: linear-gradient(to bottom right, #ffffff, #f0f7ff);
+    -fx-background-radius: 8px;
+    -fx-border-radius: 8px;
+    -fx-border-color: #e0e6ed;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.1), 8, 0.0, 0, 2);
+    -fx-padding: 15px;
+}
+
+/* Cải thiện style cho DatePicker */
+.date-picker {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4px;
+}
+
+.date-picker:focused {
+    -fx-border-color: -primary-color;
+}
+
+.date-picker .arrow-button {
+    -fx-background-color: -primary-color;
+    -fx-background-radius: 0 4px 4px 0;
+}
+
+.date-picker .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+.date-picker .cell {
+    -fx-background-color: white;
+    -fx-text-fill: -text-color;
+}
+
+.date-picker .cell:hover {
+    -fx-background-color: -primary-light;
+}
+
+.date-picker .cell:focused {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+}
+
+/* Style cho TextField */
+.text-field {
+    -fx-padding: 8px;
+    -fx-background-color: white;
+    -fx-background-radius: 4px;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused {
+    -fx-border-color: -primary-color;
+    -fx-background-color: -fx-focus-color, white;
+}
+
+/* Style cho ComboBox */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #cccccc;
+    -fx-border-radius: 4px;
+    -fx-background-radius: 4px;
+    -fx-padding: 0;
+}
+
+.combo-box:focused {
+    -fx-border-color: -primary-color;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: -primary-color;
+    -fx-background-radius: 0 4px 4px 0;
+}
+
+.combo-box .arrow-button .arrow {
+    -fx-background-color: white;
+}
+
+.combo-box .list-cell {
+    -fx-padding: 6px 8px;
+    -fx-text-fill: -text-color;
+}
+
+/* Style cho danh sách dropbox */
+.combo-box-popup .list-view {
+    -fx-background-color: white;
+    -fx-border-color: -primary-color;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.2), 7, 0.0, 0, 2);
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-padding: 6px 8px;
+    -fx-text-fill: -text-color;
+}
+
+.combo-box-popup .list-view .list-cell:hover {
+    -fx-background-color: -primary-light;
+}
+
+.combo-box-popup .list-view .list-cell:focused {
+    -fx-background-color: -primary-color;
+    -fx-text-fill: white;
+}
+
+/* Style cho nhãn */
+.label {
+    -fx-font-size: 13px;
+    -fx-text-fill: #2c3e50;
+}
+
+/* Style đặc biệt cho phần calories */
+#caloriesBox {
+    -fx-border-color: transparent transparent -primary-light transparent;
+    -fx-border-width: 0 0 1px 0;
+    -fx-padding: 0 0 5px 0;
+}
+
+/* Cải thiện style cho nút đóng và thu nhỏ */
+.close, .minimize {
+    -fx-background-color: transparent;
+    -fx-cursor: hand;
+}
+
+.close:hover {
+    -fx-background-color: #ff5252;
+}
+
+.minimize:hover {
+    -fx-background-color: #ffea00;
+}
+
+.close FontAwesomeIconView, .minimize FontAwesomeIconView {
+    -fx-fill: #333333;
+}
+
+.close:hover FontAwesomeIconView {
+    -fx-fill: white;
+}
+
+/* Định dạng cho container chứa nút */
+.button-container {
+    -fx-alignment: center-right;
+    -fx-spacing: 10;
+    -fx-padding: 10px;
+    -fx-background-color: transparent;
+}
+
+/* Định dạng cho nhãn trên nút */
+.button-label {
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
 }

@@ -1,3 +1,5 @@
+package test;
+
 
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Target;
