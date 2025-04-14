@@ -25,6 +25,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -87,6 +88,12 @@ public class PersonalInforController extends SwitchSceneController implements In
 
     @FXML
     private Text totalEnteredCalories;
+
+    @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnMinimize;
 
     @FXML
     private TableView<WeightHistoryRow> weightHistoryTable;
@@ -292,8 +299,10 @@ public class PersonalInforController extends SwitchSceneController implements In
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            displayUsername();
 
+            btnClose.setOnAction(event -> closeWindow(btnClose));
+            btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
+            displayUsername();
             newDateAddWeight.setValue(LocalDate.now());
 
             signedInUser = User.getCurrentUser();

@@ -19,6 +19,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 
@@ -29,6 +30,12 @@ public class AddFoodFormController implements Initializable {
     
     @FXML
     private TextField nameField;
+    
+    @FXML
+    private TextField quantityField;
+    
+    @FXML
+    private ComboBox<String> unitComboBox;
     
     @FXML
     private TextField caloField;
@@ -63,6 +70,71 @@ public class AddFoodFormController implements Initializable {
         try {
             conn = JdbcUtils.getConn();
             mealService = new MealService(conn);
+            
+            // Thiết lập giá trị mặc định
+            quantityField.setText("100");
+            
+            // Thiết lập các giá trị cho ComboBox đơn vị
+            unitComboBox.getItems().addAll("g", "ml", "piece", "serving");
+            unitComboBox.setValue("g");
+            
+            // Thiết lập các TextFormatter để chỉ cho phép nhập số
+            quantityField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            caloField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            carbField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            lipidField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            proteinField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            natriField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            sugarField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
         } catch (SQLException ex) {
             System.err.println("Lỗi khi khởi tạo AddFoodFormController: " + ex.getMessage());
             showAlert("Lỗi", "Không thể kết nối đến cơ sở dữ liệu: " + ex.getMessage(), Alert.AlertType.ERROR);
@@ -93,8 +165,12 @@ public class AddFoodFormController implements Initializable {
                 return;
             }
             
+            // Lấy giá trị số lượng và đơn vị từ form
+            int quantity = Integer.parseInt(quantityField.getText().trim());
+            String unit = unitComboBox.getValue();
+            
             // Add food to meal
-            mealService.addFoodToMeal(mealId, foodId, 100, "g"); // Default quantity = 100, unit = g
+            mealService.addFoodToMeal(mealId, foodId, quantity, unit);
             
             // Show success message
             showAlert("Thành công", "Thức ăn đã được thêm vào " + getMealTypeInVietnamese(mealType), Alert.AlertType.INFORMATION);
@@ -131,6 +207,27 @@ public class AddFoodFormController implements Initializable {
         if (nameField.getText().trim().isEmpty()) {
             showAlert("Lỗi nhập liệu", "Vui lòng nhập tên thức ăn", Alert.AlertType.ERROR);
             nameField.requestFocus();
+            return false;
+        }
+        
+        // Check if quantity is provided and valid
+        try {
+            int quantity = Integer.parseInt(quantityField.getText().trim());
+            if (quantity <= 0) {
+                showAlert("Lỗi nhập liệu", "Số lượng phải lớn hơn 0", Alert.AlertType.ERROR);
+                quantityField.requestFocus();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            showAlert("Lỗi nhập liệu", "Số lượng phải là một số nguyên", Alert.AlertType.ERROR);
+            quantityField.requestFocus();
+            return false;
+        }
+        
+        // Check if unit is selected
+        if (unitComboBox.getValue() == null || unitComboBox.getValue().trim().isEmpty()) {
+            showAlert("Lỗi nhập liệu", "Vui lòng chọn đơn vị", Alert.AlertType.ERROR);
+            unitComboBox.requestFocus();
             return false;
         }
         

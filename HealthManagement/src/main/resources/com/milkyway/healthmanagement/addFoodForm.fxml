@@ -3,12 +3,13 @@
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.TextField?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.HBox?>
 
 <AnchorPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.AddFoodFormController" 
-          prefHeight="600.0" prefWidth="420.0" styleClass="anchor-pane" stylesheets="@style/addFood.css">
+          prefHeight="680.0" prefWidth="420.0" styleClass="anchor-pane" stylesheets="@style/addFood.css">
     <children>
         <VBox spacing="15" layoutX="30.0" layoutY="30.0" prefWidth="360.0" styleClass="form-container">
             <Label text="THÊM THỰC PHẨM MỚI" styleClass="title-label" />
@@ -16,6 +17,16 @@
             <HBox styleClass="form-row">
                 <Label text="Tên thực phẩm:" prefWidth="120.0" styleClass="form-label" />
                 <TextField fx:id="nameField" prefWidth="240.0" promptText="Nhập tên thực phẩm" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Số lượng:" prefWidth="120.0" styleClass="form-label" />
+                <TextField fx:id="quantityField" prefWidth="240.0" promptText="Nhập số lượng" />
+            </HBox>
+            
+            <HBox styleClass="form-row">
+                <Label text="Đơn vị:" prefWidth="120.0" styleClass="form-label" />
+                <ComboBox fx:id="unitComboBox" prefWidth="240.0" promptText="Chọn đơn vị" />
             </HBox>
             
             <HBox styleClass="form-row">

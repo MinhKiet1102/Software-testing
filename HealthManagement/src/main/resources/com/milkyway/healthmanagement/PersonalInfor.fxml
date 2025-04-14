@@ -101,12 +101,12 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Button alignment="CENTER" layoutX="1067.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="close" stylesheets="@style/main.css">
+                                        <Button fx:id="btnClose" alignment="CENTER" layoutX="1067.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="close" stylesheets="@style/main.css">
                                             <graphic>
                                                 <FontAwesomeIconView glyphName="CLOSE" />
                                             </graphic>
                                         </Button>
-                                        <Button alignment="CENTER" layoutX="1036.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="minimize" stylesheets="@style/main.css">
+                                        <Button fx:id="btnMinimize" alignment="CENTER" layoutX="1036.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="minimize" stylesheets="@style/main.css">
                                             <graphic>
                                                 <FontAwesomeIconView glyphName="MINUS" />
                                             </graphic>
