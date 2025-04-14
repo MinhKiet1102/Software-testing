@@ -92,7 +92,6 @@ public class ExerciseDetailController extends SwitchSceneController implements I
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
     }
-
     @FXML
     public void handleMinimize(ActionEvent event) {
         minimizeWindow(btnMinimize);
@@ -102,7 +101,6 @@ public class ExerciseDetailController extends SwitchSceneController implements I
     public void handleClose(ActionEvent event) {
         closeWindow(btnClose);
     }
-    
     @FXML
     private void handleCancel(ActionEvent event) {
         if (showConfirmationDialog("Xác nhận hủy bỏ", "Bạn có chắc chắn muốn hủy bỏ thay đổi?")) {
