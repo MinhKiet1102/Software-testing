@@ -29,6 +29,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class ExerciseLogController extends SwitchSceneController implements Initializable {
+    @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnMinimize;
 
     @FXML
     private TableView<Exerciselog> tbExercise;
@@ -135,6 +140,8 @@ public class ExerciseLogController extends SwitchSceneController implements Init
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        btnClose.setOnAction(event -> closeWindow(btnClose));
+        btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
         displayUsername();
         loadTableView();
 

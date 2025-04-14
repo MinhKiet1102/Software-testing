@@ -84,13 +84,6 @@ public class ExerciseDetailController extends SwitchSceneController implements I
             }
         });
     }
-    
-    /**
-     * Hiển thị hộp thoại xác nhận
-     * @param title Tiêu đề của hộp thoại
-     * @param content Nội dung cần xác nhận
-     * @return true nếu người dùng đồng ý, false nếu người dùng hủy bỏ
-     */
     private boolean showConfirmationDialog(String title, String content) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
         alert.setTitle(title);
@@ -99,29 +92,15 @@ public class ExerciseDetailController extends SwitchSceneController implements I
         Optional<ButtonType> result = alert.showAndWait();
         return result.isPresent() && result.get() == ButtonType.OK;
     }
-    
-    /**
-     * Xử lý sự kiện nút minimize
-     * @param event event được kích hoạt
-     */
     @FXML
     public void handleMinimize(ActionEvent event) {
         minimizeWindow(btnMinimize);
     }
     
-    /**
-     * Xử lý sự kiện nút đóng
-     * @param event event được kích hoạt
-     */
     @FXML
     public void handleClose(ActionEvent event) {
         closeWindow(btnClose);
     }
-
-    /**
-     * Handle the cancel button click
-     * @param event The action event
-     */
     @FXML
     private void handleCancel(ActionEvent event) {
         if (showConfirmationDialog("Xác nhận hủy bỏ", "Bạn có chắc chắn muốn hủy bỏ thay đổi?")) {
@@ -234,6 +213,8 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                 newExercise.setExerciseName(exerciseName);
                 newExercise.setCaloriesBurnedPerMin(caloriesPerMinute);
                 newExercise.setImageExercise("");
+                // Thiết lập người dùng hiện tại cho bài tập mới
+                newExercise.setUserId(User.getCurrentUser());
 
                 exerciseService.saveExercise(newExercise);
 

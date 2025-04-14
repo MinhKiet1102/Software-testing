@@ -21,7 +21,7 @@ import javafx.scene.image.ImageView;
  * @author ASUS
  */
 public class ExerciseController extends SwitchSceneController implements Initializable {
-        @FXML
+    @FXML
     private ImageView imageExercise;
 
     @FXML

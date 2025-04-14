@@ -81,6 +81,12 @@ public class TargetController extends SwitchSceneController implements Initializ
     private TextField myPlans_progress;
 
     @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnMinimize;
+
+    @FXML
     private TableColumn<Target, String> myPlans_col_plan;
 
     @FXML
@@ -819,6 +825,9 @@ public class TargetController extends SwitchSceneController implements Initializ
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+
+            btnClose.setOnAction(event -> closeWindow(btnClose));
+            btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
 
             setupMenuEvents();
 

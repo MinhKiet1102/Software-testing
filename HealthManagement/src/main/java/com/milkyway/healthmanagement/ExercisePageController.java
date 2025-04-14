@@ -1,5 +1,6 @@
 package com.milkyway.healthmanagement;
 import com.milkyway.pojo.Exercise;
+import com.milkyway.pojo.User;
 import com.milkyway.services.ExerciseService;
 import java.io.IOException;
 import java.net.URL;
@@ -26,6 +27,12 @@ import javafx.stage.Stage;
 
 
 public class ExercisePageController extends SwitchSceneController implements Initializable {
+
+    @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnMinimize;
 
     @FXML
     private GridPane gridPane;
@@ -73,32 +80,35 @@ public class ExercisePageController extends SwitchSceneController implements Ini
     }
 
     private void addAddButtonToGrid(int col, int row) {
-        // Tạo Button chứa dấu cộng
-        Button addButton = new Button();
-        FontAwesomeIconView icon = new FontAwesomeIconView(FontAwesomeIcon.PLUS);
-        icon.setSize("24px");
-        addButton.setGraphic(icon);
-        addButton.setPrefSize(150, 150); // Kích thước giống các ô bài tập
-        addButton.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: #B0B0B0; -fx-border-width: 2px; -fx-border-radius: 10px;");
+        // Chỉ hiển thị nút thêm mới nếu người dùng đã đăng nhập
+        if (User.getCurrentUser() != null) {
+            // Tạo Button chứa dấu cộng
+            Button addButton = new Button();
+            FontAwesomeIconView icon = new FontAwesomeIconView(FontAwesomeIcon.PLUS);
+            icon.setSize("24px");
+            addButton.setGraphic(icon);
+            addButton.setPrefSize(150, 150); // Kích thước giống các ô bài tập
+            addButton.setStyle("-fx-background-color: #E0E0E0; -fx-border-color: #B0B0B0; -fx-border-width: 2px; -fx-border-radius: 10px;");
 
-        addButton.setOnAction(event -> {
-            try {
-                switchToExerciseDetail(null); // Truyền `null` khi thêm mới bài tập
-            } catch (IOException ex) {
-                Logger.getLogger(ExercisePageController.class.getName()).log(Level.SEVERE, null, ex);
+            addButton.setOnAction(event -> {
+                try {
+                    switchToExerciseDetail(null); // Truyền `null` khi thêm mới bài tập
+                } catch (IOException ex) {
+                    Logger.getLogger(ExercisePageController.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            });
+
+            AnchorPane addPane = new AnchorPane(addButton);
+            AnchorPane.setTopAnchor(addButton, 10.0);
+            AnchorPane.setLeftAnchor(addButton, 10.0);
+
+            if (col == 4) {
+                col = 0;
+                row++;
             }
-        });
-
-        AnchorPane addPane = new AnchorPane(addButton);
-        AnchorPane.setTopAnchor(addButton, 10.0);
-        AnchorPane.setLeftAnchor(addButton, 10.0);
-
-        if (col == 4) {
-            col = 0;
-            row++;
+            gridPane.add(addPane, ++col, row);
+            GridPane.setMargin(addPane, new Insets(10));
         }
-        gridPane.add(addPane, ++col, row);
-        GridPane.setMargin(addPane, new Insets(10));
     }
 
     private void switchToExerciseDetail(Exercise exercise) throws IOException {
@@ -120,6 +130,8 @@ public class ExercisePageController extends SwitchSceneController implements Ini
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {
+        btnClose.setOnAction(event -> closeWindow(btnClose));
+        btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
         try {
             displayUsername();
             loadExercise(null);

@@ -6,6 +6,7 @@ package com.milkyway.services;
 
 import com.milkyway.pojo.Exercise;
 import com.milkyway.pojo.JdbcUtils;
+import com.milkyway.pojo.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -22,18 +23,44 @@ public class ExerciseService {
     public List<Exercise> getExercise(String kw) throws SQLException {
         List<Exercise> results = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
-            String sql = "SELECT * FROM exercise";
-            if (kw != null && !kw.isEmpty()) {
-                sql += " WHERE exerciseName like concat ('%', ?, '%')";
+            // Cập nhật SQL để chỉ lấy bài tập mặc định (userId IS NULL) hoặc bài tập của người dùng hiện tại
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM exercise WHERE (userId IS NULL");
+            
+            // Nếu có người dùng đăng nhập, thêm điều kiện để lấy bài tập của họ
+            if (User.getCurrentUser() != null) {
+                sqlBuilder.append(" OR userId = ?");
             }
-            PreparedStatement stm = conn.prepareCall(sql);
+            sqlBuilder.append(")");
+            
+            // Thêm điều kiện tìm kiếm theo tên nếu có
             if (kw != null && !kw.isEmpty()) {
-                stm.setString(1, kw);
+                sqlBuilder.append(" AND exerciseName LIKE CONCAT('%', ?, '%')");
+            }
+            
+            PreparedStatement stm = conn.prepareCall(sqlBuilder.toString());
+            
+            int paramIndex = 1;
+            
+            // Nếu có người dùng đăng nhập, thiết lập tham số userId
+            if (User.getCurrentUser() != null) {
+                stm.setInt(paramIndex++, User.getCurrentUser().getId());
+            }
+            
+            // Nếu có từ khóa tìm kiếm, thiết lập tham số
+            if (kw != null && !kw.isEmpty()) {
+                stm.setString(paramIndex, kw);
             }
 
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Exercise e = new Exercise(rs.getInt("idExercise"), rs.getString("exerciseName"), rs.getString("imageExercise"), rs.getFloat("caloriesBurnedPerMin"));
+                
+                // Thiết lập userId nếu có
+                if (rs.getObject("userId") != null) {
+                    User user = new User(rs.getInt("userId"));
+                    e.setUserId(user);
+                }
+                
                 results.add(e);
             }
 
@@ -42,10 +69,16 @@ public class ExerciseService {
     }
 
     public boolean saveExercise(Exercise exercise) {
-        String sql = "INSERT INTO exercise (exerciseName, caloriesBurnedPerMin) VALUES (?, ?)";
+        String sql = "INSERT INTO exercise (exerciseName, caloriesBurnedPerMin, userId) VALUES (?, ?, ?)";
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             stm.setString(1, exercise.getExerciseName());
             stm.setDouble(2, exercise.getCaloriesBurnedPerMin());
+            
+            if (exercise.getUserId() != null) {
+                stm.setInt(3, exercise.getUserId().getId());
+            } else {
+                stm.setNull(3, java.sql.Types.INTEGER); // Bài tập mặc định
+            }
 
             int affectedRows = stm.executeUpdate();
             if (affectedRows > 0) {

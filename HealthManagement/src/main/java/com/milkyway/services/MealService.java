@@ -25,15 +25,7 @@ public class MealService {
     public MealService(Connection conn) {
         this.conn = conn;
     }
-    
-    /**
-     * Get all meals for a specific user on a specific date
-     *
-     * @param userId the ID of the user
-     * @param date the date of meals
-     * @return a list of meals with their associated foods
-     * @throws SQLException if a database error occurs
-     */
+
     public List<Meal> getMealsByUserAndDate(int userId, Date date) throws SQLException {
         List<Meal> meals = new ArrayList<>();
         
@@ -92,12 +84,6 @@ public class MealService {
         }
     }
     
-    /**
-     * Load the food items associated with a meal
-     *
-     * @param meal the meal to load foods for
-     * @throws SQLException if a database error occurs
-     */
     private void loadMealFoods(Meal meal) throws SQLException {
         try {
             System.out.println("Loading foods for meal ID: " + meal.getIdMeal());
@@ -157,14 +143,7 @@ public class MealService {
             throw new SQLException("Error loading meal foods: " + e.getMessage(), e);
         }
     }
-    
-    /**
-     * Get a meal by its ID
-     *
-     * @param mealId the ID of the meal
-     * @return the meal or null if not found
-     * @throws SQLException if a database error occurs
-     */
+
     public Meal getMealById(int mealId) throws SQLException {
         Meal meal = null;
         
@@ -202,13 +181,7 @@ public class MealService {
         }
     }
     
-    /**
-     * Save a new meal to the database
-     *
-     * @param meal the meal to save
-     * @return the saved meal with its ID
-     * @throws SQLException if a database error occurs
-     */
+
     public Meal saveMeal(Meal meal) throws SQLException {
         try {
             String sql = "INSERT INTO meal (nameMeal, totalCalories, dateOfMeal, userId) " +
@@ -236,16 +209,7 @@ public class MealService {
             throw new SQLException("Error saving meal: " + e.getMessage(), e);
         }
     }
-    
-    /**
-     * Add a food item to a meal
-     *
-     * @param mealId the ID of the meal
-     * @param foodId the ID of the food
-     * @param quantity the quantity of food
-     * @param unit the unit of measurement (g, ml, piece)
-     * @throws SQLException if a database error occurs
-     */
+
     public void addFoodToMeal(int mealId, int foodId, int quantity, String unit) throws SQLException {
         try {
             // First get the food to calculate calories
@@ -287,12 +251,7 @@ public class MealService {
         }
     }
     
-    /**
-     * Xóa một món ăn khỏi bữa ăn
-     *
-     * @param mealFoodId ID của món ăn trong bữa ăn cần xóa
-     * @throws SQLException nếu có lỗi xảy ra khi thao tác với cơ sở dữ liệu
-     */
+
     public void deleteMealFood(int mealFoodId) throws SQLException {
         try {
             // Trước tiên, lấy thông tin về món ăn để tính toán lại calo
@@ -346,13 +305,7 @@ public class MealService {
         }
     }
     
-    /**
-     * Xóa một món ăn khỏi bữa ăn theo mealId và foodId
-     *
-     * @param mealId ID của bữa ăn
-     * @param foodId ID của thức ăn
-     * @throws SQLException nếu có lỗi xảy ra khi thao tác với cơ sở dữ liệu
-     */
+
     public void deleteMealFood(int mealId, int foodId) throws SQLException {
         try {
             // Trước tiên, lấy thông tin về món ăn để tính toán lại calo
@@ -406,13 +359,149 @@ public class MealService {
         }
     }
     
-    /**
-     * Get a food item by ID
-     *
-     * @param foodId the ID of the food
-     * @return the food or null if not found
-     * @throws SQLException if a database error occurs
-     */
+
+    public void updateMealFood(int mealId, int foodId, int quantity, String unit) throws SQLException {
+        try {
+            // Lấy thông tin món ăn để tính lại calories
+            String foodSql = "SELECT calories FROM food WHERE idFood = ?";
+            double foodCalories = 0;
+            
+            try (PreparedStatement foodStmt = conn.prepareStatement(foodSql)) {
+                foodStmt.setInt(1, foodId);
+                try (ResultSet foodRs = foodStmt.executeQuery()) {
+                    if (foodRs.next()) {
+                        foodCalories = foodRs.getDouble("calories");
+                    }
+                }
+            }
+            
+            // Lấy số lượng cũ để tính sự chênh lệch calories
+            String oldQuantitySql = "SELECT quantity FROM meal_food WHERE mealId = ? AND foodId = ?";
+            int oldQuantity = 0;
+            
+            try (PreparedStatement oldStmt = conn.prepareStatement(oldQuantitySql)) {
+                oldStmt.setInt(1, mealId);
+                oldStmt.setInt(2, foodId);
+                try (ResultSet oldRs = oldStmt.executeQuery()) {
+                    if (oldRs.next()) {
+                        oldQuantity = oldRs.getInt("quantity");
+                    }
+                }
+            }
+            
+            // Tính sự chênh lệch calories
+            double caloriesDifference = (quantity - oldQuantity) * foodCalories;
+            
+            // Cập nhật thông tin món ăn trong bữa ăn
+            String updateSql = "UPDATE meal_food SET quantity = ?, unit = ? WHERE mealId = ? AND foodId = ?";
+            
+            try (PreparedStatement stmt = conn.prepareStatement(updateSql)) {
+                stmt.setInt(1, quantity);
+                stmt.setString(2, unit);
+                stmt.setInt(3, mealId);
+                stmt.setInt(4, foodId);
+                
+                stmt.executeUpdate();
+            }
+            
+            // Cập nhật tổng calories của bữa ăn
+            String updateCalSql = "UPDATE meal SET totalCalories = totalCalories + ? WHERE idMeal = ?";
+            
+            try (PreparedStatement calStmt = conn.prepareStatement(updateCalSql)) {
+                calStmt.setDouble(1, caloriesDifference);
+                calStmt.setInt(2, mealId);
+                
+                calStmt.executeUpdate();
+            }
+        } catch (Exception e) {
+            System.err.println("Error in updateMealFood: " + e.getMessage());
+            e.printStackTrace();
+            throw new SQLException("Error updating meal food: " + e.getMessage(), e);
+        }
+    }
+    
+    public void updateMealFoodComplete(int mealId, int foodId, String foodName, int quantity, String unit,
+                                     double calories, double carb, double protein, double fat, 
+                                     double sodium, double sugar) throws SQLException {
+        try {
+            // Lấy thông tin món ăn để tính lại calories
+            String oldQuantitySql = "SELECT quantity FROM meal_food WHERE mealId = ? AND foodId = ?";
+            double oldQuantity = 0;
+            double oldCaloriesPerUnit = 0;
+            
+            try (PreparedStatement oldStmt = conn.prepareStatement(oldQuantitySql)) {
+                oldStmt.setInt(1, mealId);
+                oldStmt.setInt(2, foodId);
+                try (ResultSet oldRs = oldStmt.executeQuery()) {
+                    if (oldRs.next()) {
+                        oldQuantity = oldRs.getInt("quantity");
+                    }
+                }
+            }
+            
+            // Lấy lượng calo cũ trên một đơn vị
+            String oldFoodSql = "SELECT calories FROM food WHERE idFood = ?";
+            try (PreparedStatement oldFoodStmt = conn.prepareStatement(oldFoodSql)) {
+                oldFoodStmt.setInt(1, foodId);
+                try (ResultSet oldFoodRs = oldFoodStmt.executeQuery()) {
+                    if (oldFoodRs.next()) {
+                        oldCaloriesPerUnit = oldFoodRs.getDouble("calories");
+                    }
+                }
+            }
+            
+            // Tính tổng lượng calo cũ
+            double oldTotalCalories = oldQuantity * oldCaloriesPerUnit;
+            // Tính tổng lượng calo mới
+            double newTotalCalories = quantity * calories;
+            // Tính sự chênh lệch calories
+            double caloriesDifference = newTotalCalories - oldTotalCalories;
+            
+            // Cập nhật thông tin thức ăn
+            String updateFoodSql = "UPDATE food SET foodName = ?, calories = ?, carb = ?, protein = ?, fat = ?, sodium = ?, sugar = ? WHERE idFood = ?";
+            
+            try (PreparedStatement updateFoodStmt = conn.prepareStatement(updateFoodSql)) {
+                updateFoodStmt.setString(1, foodName);
+                updateFoodStmt.setDouble(2, calories);
+                updateFoodStmt.setDouble(3, carb);
+                updateFoodStmt.setDouble(4, protein);
+                updateFoodStmt.setDouble(5, fat);
+                updateFoodStmt.setDouble(6, sodium);
+                updateFoodStmt.setDouble(7, sugar);
+                updateFoodStmt.setInt(8, foodId);
+                
+                updateFoodStmt.executeUpdate();
+            }
+            
+            // Cập nhật thông tin món ăn trong bữa ăn
+            String updateMealFoodSql = "UPDATE meal_food SET quantity = ?, unit = ? WHERE mealId = ? AND foodId = ?";
+            
+            try (PreparedStatement updateMealFoodStmt = conn.prepareStatement(updateMealFoodSql)) {
+                updateMealFoodStmt.setInt(1, quantity);
+                updateMealFoodStmt.setString(2, unit);
+                updateMealFoodStmt.setInt(3, mealId);
+                updateMealFoodStmt.setInt(4, foodId);
+                
+                updateMealFoodStmt.executeUpdate();
+            }
+            
+            // Cập nhật tổng calories của bữa ăn
+            String updateCalSql = "UPDATE meal SET totalCalories = totalCalories + ? WHERE idMeal = ?";
+            
+            try (PreparedStatement calStmt = conn.prepareStatement(updateCalSql)) {
+                calStmt.setDouble(1, caloriesDifference);
+                calStmt.setInt(2, mealId);
+                
+                calStmt.executeUpdate();
+            }
+        } catch (Exception e) {
+            System.err.println("Error in updateMealFoodComplete: " + e.getMessage());
+            e.printStackTrace();
+            throw new SQLException("Error updating meal food: " + e.getMessage(), e);
+        }
+    }
+    
+
     private Food getFoodById(int foodId) throws SQLException {
         Food food = null;
         
