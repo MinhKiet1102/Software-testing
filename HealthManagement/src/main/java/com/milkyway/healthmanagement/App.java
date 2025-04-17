@@ -17,10 +17,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        //ẩn thanh Windows Control Button
-        // stage.initStyle(StageStyle.UNDECORATED);
-
-
         scene = new Scene(loadFXML("Login"), 650, 600);
         stage.setAlwaysOnTop(false);
         stage.setTitle("Health Mangement System");

@@ -33,6 +33,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -53,6 +54,9 @@ public class MealfoodController extends SwitchSceneController implements Initial
     
     @FXML
     private TableColumn<MealFood, String> BnameColumn, LnameColumn, DnameColumn;
+
+    @FXML
+    private TableColumn<MealFood, String> BquantityColumn, LquantityColumn, DquantityColumn;
     
     @FXML
     private TableColumn<MealFood, Number> BcaloColumn, BcarbColumn, BlipidColumn, BproColumn, BnaColumn, BsugarColumn;
@@ -67,6 +71,9 @@ public class MealfoodController extends SwitchSceneController implements Initial
     private TableColumn<MealFood, Void> BactionColumn, LactionColumn, DactionColumn;
     
     @FXML
+    private TableColumn<MealFood, String> BtotalCaloColumn, LtotalCaloColumn, DtotalCaloColumn;
+    
+    @FXML
     private Label breakfastCaloLabel, lunchCaloLabel, dinnerCaloLabel;
     
     @FXML
@@ -78,6 +85,12 @@ public class MealfoodController extends SwitchSceneController implements Initial
     @FXML
     private TableColumn<NutritionSummary, Number> columnCurrent, columnGoal, columnRemaining;
     
+    @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnMinimize;
+
     private User currentUser;
     private LocalDate selectedDate;
     private MealService mealService;
@@ -91,6 +104,8 @@ public class MealfoodController extends SwitchSceneController implements Initial
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
+            btnClose.setOnAction(event -> closeWindow(btnClose));
+            btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
             Connection conn = JdbcUtils.getConn();
             mealService = new MealService(conn);
             nutritionGoalService = new NutritionGoalService(conn);
@@ -155,6 +170,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
     private void setupTableColumns() {
         // Setup breakfast columns
         setupColumn(BnameColumn, "Tên Thức Ăn", 150);
+        setupColumn(BquantityColumn, "Số lượng/Đơn vị", 100);
         setupColumn(BcaloColumn, "Lượng Calo (cal)", 150);
         setupColumn(BcarbColumn, "Carbohydrate (g)", 120);
         setupColumn(BlipidColumn, "Lipid (g)", 100);
@@ -163,6 +179,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
         setupColumn(BsugarColumn, "Đường (g)", 100);
         
         BnameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFood().getFoodName()));
+        BquantityColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQuantity() + " " + cellData.getValue().getUnit()));
         BcaloColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getCalories()));
         BcarbColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getCarb() != null ? cellData.getValue().getFood().getCarb() : 0));
         BlipidColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getFat() != null ? cellData.getValue().getFood().getFat() : 0));
@@ -172,8 +189,20 @@ public class MealfoodController extends SwitchSceneController implements Initial
         
         setupActionColumn(BactionColumn, "Breakfast");
         
+        // Thiết lập cột tổng calo cho bữa sáng
+        if (BtotalCaloColumn != null) {
+            setupColumn(BtotalCaloColumn, "Tổng Lượng Calo", 150);
+            BtotalCaloColumn.setCellValueFactory(cellData -> {
+                if (cellData.getValue() != null && cellData.getValue().getMeal() != null) {
+                    return new SimpleStringProperty(String.format("%.1f cal", cellData.getValue().getMeal().getTotalCalories()));
+                }
+                return new SimpleStringProperty("0.0 cal");
+            });
+        }
+        
         // Setup lunch columns
         setupColumn(LnameColumn, "Tên Thức Ăn", 150);
+        setupColumn(LquantityColumn, "Số lượng/Đơn vị", 100);
         setupColumn(LcaloColumn, "Lượng Calo (cal)", 150);
         setupColumn(LcarbColumn, "Carbohydrate (g)", 120);
         setupColumn(LlipidColumn, "Lipid (g)", 100);
@@ -182,6 +211,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
         setupColumn(LsugarColumn, "Đường (g)", 100);
         
         LnameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFood().getFoodName()));
+        LquantityColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQuantity() + " " + cellData.getValue().getUnit()));
         LcaloColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getCalories()));
         LcarbColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getCarb() != null ? cellData.getValue().getFood().getCarb() : 0));
         LlipidColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getFat() != null ? cellData.getValue().getFood().getFat() : 0));
@@ -191,8 +221,20 @@ public class MealfoodController extends SwitchSceneController implements Initial
         
         setupActionColumn(LactionColumn, "Lunch");
         
+        // Thiết lập cột tổng calo cho bữa trưa
+        if (LtotalCaloColumn != null) {
+            setupColumn(LtotalCaloColumn, "Tổng Lượng Calo", 150);
+            LtotalCaloColumn.setCellValueFactory(cellData -> {
+                if (cellData.getValue() != null && cellData.getValue().getMeal() != null) {
+                    return new SimpleStringProperty(String.format("%.1f cal", cellData.getValue().getMeal().getTotalCalories()));
+                }
+                return new SimpleStringProperty("0.0 cal");
+            });
+        }
+        
         // Setup dinner columns
         setupColumn(DnameColumn, "Tên Thức Ăn", 150);
+        setupColumn(DquantityColumn, "Số lượng/Đơn vị", 100);
         setupColumn(DcaloColumn, "Lượng Calo (cal)", 150);
         setupColumn(DcarbColumn, "Carbohydrate (g)", 120);
         setupColumn(DlipidColumn, "Lipid (g)", 100);
@@ -201,6 +243,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
         setupColumn(DsugarColumn, "Đường (g)", 100);
         
         DnameColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getFood().getFoodName()));
+        DquantityColumn.setCellValueFactory(cellData -> new SimpleStringProperty(cellData.getValue().getQuantity() + " " + cellData.getValue().getUnit()));
         DcaloColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getCalories()));
         DcarbColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getCarb() != null ? cellData.getValue().getFood().getCarb() : 0));
         DlipidColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getFat() != null ? cellData.getValue().getFood().getFat() : 0));
@@ -209,6 +252,17 @@ public class MealfoodController extends SwitchSceneController implements Initial
         DsugarColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getSugar() != null ? cellData.getValue().getFood().getSugar() : 0));
         
         setupActionColumn(DactionColumn, "Dinner");
+        
+        // Thiết lập cột tổng calo cho bữa tối
+        if (DtotalCaloColumn != null) {
+            setupColumn(DtotalCaloColumn, "Tổng Lượng Calo", 150);
+            DtotalCaloColumn.setCellValueFactory(cellData -> {
+                if (cellData.getValue() != null && cellData.getValue().getMeal() != null) {
+                    return new SimpleStringProperty(String.format("%.1f cal", cellData.getValue().getMeal().getTotalCalories()));
+                }
+                return new SimpleStringProperty("0.0 cal");
+            });
+        }
         
         // Setup nutrition summary columns
         if (nutritionSummaryTable != null) {
@@ -232,19 +286,31 @@ public class MealfoodController extends SwitchSceneController implements Initial
     }
     
     private void setupActionColumn(TableColumn<MealFood, Void> column, String mealType) {
-        setupColumn(column, "Hành động", 100);
+        setupColumn(column, "Hành động", 150); // Tăng kích thước cột để chứa 2 nút
         
         column.setCellFactory(col -> {
             return new javafx.scene.control.TableCell<MealFood, Void>() {
                 private final Button deleteButton = new Button("Xóa");
+                private final Button editButton = new Button("Sửa");
+                private final javafx.scene.layout.HBox buttonsBox = new javafx.scene.layout.HBox(5); // HBox để chứa 2 nút
                 
                 {
                     deleteButton.getStyleClass().add("delete-btn");
                     deleteButton.setMinWidth(60);
                     
+                    editButton.getStyleClass().add("edit-btn");
+                    editButton.setMinWidth(60);
+                    
+                    buttonsBox.getChildren().addAll(editButton, deleteButton);
+                    
                     deleteButton.setOnAction(event -> {
                         MealFood mealFood = getTableView().getItems().get(getIndex());
                         handleDeleteFood(mealFood, mealType);
+                    });
+                    
+                    editButton.setOnAction(event -> {
+                        MealFood mealFood = getTableView().getItems().get(getIndex());
+                        handleEditFood(mealFood, mealType);
                     });
                 }
                 
@@ -254,7 +320,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
                     if (empty) {
                         setGraphic(null);
                     } else {
-                        setGraphic(deleteButton);
+                        setGraphic(buttonsBox);
                     }
                 }
             };
@@ -290,6 +356,243 @@ public class MealfoodController extends SwitchSceneController implements Initial
         } catch (SQLException ex) {
             System.err.println("Error deleting meal food: " + ex.getMessage());
             showAlert("Lỗi", "Không thể xóa thức ăn: " + ex.getMessage(), Alert.AlertType.ERROR);
+        }
+    }
+    
+    /**
+     * Chỉnh sửa thông tin của món ăn
+     * 
+     * @param mealFood Đối tượng MealFood cần chỉnh sửa
+     * @param mealType Loại bữa ăn (Breakfast, Lunch, Dinner)
+     */
+    private void handleEditFood(MealFood mealFood, String mealType) {
+        try {
+            Dialog<Map<String, Object>> dialog = new Dialog<>();
+            dialog.setTitle("Chỉnh sửa thức ăn");
+            dialog.setHeaderText("Chỉnh sửa " + mealFood.getFood().getFoodName() + " trong " + getMealTypeInVietnamese(mealType));
+            
+            ButtonType saveButtonType = new ButtonType("Lưu", ButtonType.OK.getButtonData());
+            dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+            
+            GridPane grid = new GridPane();
+            grid.setHgap(10);
+            grid.setVgap(10);
+            grid.setPadding(new javafx.geometry.Insets(20, 150, 10, 10));
+            
+            // Tạo TextField cho tên món ăn
+            TextField nameField = new TextField(mealFood.getFood().getFoodName());
+            
+            // Tạo TextField cho số lượng
+            TextField quantityField = new TextField(String.valueOf(mealFood.getQuantity()));
+            quantityField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            // Tạo ComboBox cho đơn vị
+            ComboBox<String> unitComboBox = new ComboBox<>();
+            unitComboBox.getItems().addAll("g", "ml", "phần", "quả");
+            unitComboBox.setValue(mealFood.getUnit());
+            
+            // Tạo TextField cho calories
+            TextField caloriesField = new TextField(String.valueOf(mealFood.getFood().getCalories()));
+            caloriesField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            // Tạo TextField cho carbohydrates
+            TextField carbField = new TextField(mealFood.getFood().getCarb() != null ? 
+                                             String.valueOf(mealFood.getFood().getCarb()) : "0");
+            carbField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            // Tạo TextField cho protein
+            TextField proteinField = new TextField(mealFood.getFood().getProtein() != null ? 
+                                               String.valueOf(mealFood.getFood().getProtein()) : "0");
+            proteinField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            // Tạo TextField cho chất béo
+            TextField fatField = new TextField(mealFood.getFood().getFat() != null ? 
+                                           String.valueOf(mealFood.getFood().getFat()) : "0");
+            fatField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            // Tạo TextField cho natri
+            TextField sodiumField = new TextField(mealFood.getFood().getSodium() != null ? 
+                                             String.valueOf(mealFood.getFood().getSodium()) : "0");
+            sodiumField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            // Tạo TextField cho đường
+            TextField sugarField = new TextField(mealFood.getFood().getSugar() != null ? 
+                                            String.valueOf(mealFood.getFood().getSugar()) : "0");
+            sugarField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+                String newText = change.getControlNewText();
+                if (newText.matches("^\\d*\\.?\\d*$")) {
+                    return change;
+                }
+                return null;
+            }));
+            
+            // Thêm các trường vào grid
+            int rowIndex = 0;
+            
+            grid.add(new Label("Tên thức ăn:"), 0, rowIndex);
+            grid.add(nameField, 1, rowIndex++);
+            
+            grid.add(new Label("Số lượng:"), 0, rowIndex);
+            grid.add(quantityField, 1, rowIndex++);
+            
+            grid.add(new Label("Đơn vị:"), 0, rowIndex);
+            grid.add(unitComboBox, 1, rowIndex++);
+            
+            grid.add(new Label("Lượng calo (cal):"), 0, rowIndex);
+            grid.add(caloriesField, 1, rowIndex++);
+            
+            grid.add(new Label("Carbohydrate (g):"), 0, rowIndex);
+            grid.add(carbField, 1, rowIndex++);
+            
+            grid.add(new Label("Protein (g):"), 0, rowIndex);
+            grid.add(proteinField, 1, rowIndex++);
+            
+            grid.add(new Label("Chất béo (g):"), 0, rowIndex);
+            grid.add(fatField, 1, rowIndex++);
+            
+            grid.add(new Label("Natri (mg):"), 0, rowIndex);
+            grid.add(sodiumField, 1, rowIndex++);
+            
+            grid.add(new Label("Đường (g):"), 0, rowIndex);
+            grid.add(sugarField, 1, rowIndex++);
+            
+            dialog.getDialogPane().setContent(grid);
+            
+            dialog.setResultConverter(dialogButton -> {
+                if (dialogButton == saveButtonType) {
+                    Map<String, Object> results = new HashMap<>();
+                    
+                    // Kiểm tra trường tên thức ăn có trống không
+                    String foodName = nameField.getText().trim();
+                    if (foodName.isEmpty()) {
+                        showAlert("Lỗi", "Tên thức ăn không được để trống", Alert.AlertType.ERROR);
+                        return null;
+                    }
+                    
+                    // Kiểm tra trường số lượng có trống không
+                    String quantityText = quantityField.getText().trim();
+                    if (quantityText.isEmpty()) {
+                        showAlert("Lỗi", "Số lượng không được để trống", Alert.AlertType.ERROR);
+                        return null;
+                    }
+                    
+                    // Kiểm tra các trường khác có trống không
+                    if (caloriesField.getText().trim().isEmpty()) {
+                        showAlert("Lỗi", "Lượng calo không được để trống", Alert.AlertType.ERROR);
+                        return null;
+                    }
+                    
+                    try {
+                        int quantity = Integer.parseInt(quantityText);
+                        if (quantity <= 0) {
+                            showAlert("Lỗi", "Số lượng phải lớn hơn 0", Alert.AlertType.ERROR);
+                            return null;
+                        }
+                        
+                        Double calories = Double.parseDouble(caloriesField.getText().trim());
+                        Double carb = Double.parseDouble(carbField.getText().trim());
+                        Double protein = Double.parseDouble(proteinField.getText().trim());
+                        Double fat = Double.parseDouble(fatField.getText().trim());
+                        Double sodium = Double.parseDouble(sodiumField.getText().trim());
+                        Double sugar = Double.parseDouble(sugarField.getText().trim());
+                        
+                        // Kiểm tra giá trị của calo và các dinh dưỡng khác
+                        if (calories < 0) {
+                            showAlert("Lỗi", "Lượng calo không thể âm", Alert.AlertType.ERROR);
+                            return null;
+                        }
+                        
+                        if (carb < 0 || protein < 0 || fat < 0 || sodium < 0 || sugar < 0) {
+                            showAlert("Lỗi", "Các giá trị dinh dưỡng không thể âm", Alert.AlertType.ERROR);
+                            return null;
+                        }
+                        
+                        // Lưu tất cả các giá trị vào map results
+                        results.put("foodName", foodName);
+                        results.put("quantity", quantity);
+                        results.put("unit", unitComboBox.getValue());
+                        results.put("calories", calories);
+                        results.put("carb", carb);
+                        results.put("protein", protein);
+                        results.put("fat", fat);
+                        results.put("sodium", sodium);
+                        results.put("sugar", sugar);
+                        
+                        return results;
+                    } catch (NumberFormatException e) {
+                        showAlert("Lỗi", "Vui lòng nhập số hợp lệ cho tất cả các trường số", Alert.AlertType.ERROR);
+                        return null;
+                    }
+                }
+                return null;
+            });
+            
+            Optional<Map<String, Object>> result = dialog.showAndWait();
+            
+            if (result.isPresent()) {
+                Map<String, Object> values = result.get();
+                String newFoodName = (String) values.get("foodName");
+                int newQuantity = (int) values.get("quantity");
+                String newUnit = (String) values.get("unit");
+                double newCalories = (double) values.get("calories");
+                double newCarb = (double) values.get("carb");
+                double newProtein = (double) values.get("protein");
+                double newFat = (double) values.get("fat");
+                double newSodium = (double) values.get("sodium");
+                double newSugar = (double) values.get("sugar");
+                
+                // Cập nhật thông tin món ăn
+                int mealId = mealFood.getMealFoodPK().getMealId();
+                int foodId = mealFood.getMealFoodPK().getFoodId();
+                
+                // Cập nhật thông tin trong cơ sở dữ liệu
+                mealService.updateMealFoodComplete(mealId, foodId, newFoodName, newQuantity, newUnit, 
+                                              newCalories, newCarb, newProtein, newFat, newSodium, newSugar);
+                
+                // Làm mới dữ liệu
+                loadMealData();
+                
+                showAlert("Thành công", "Đã cập nhật thông tin thức ăn trong " + getMealTypeInVietnamese(mealType), Alert.AlertType.INFORMATION);
+            }
+        } catch (SQLException ex) {
+            System.err.println("Error updating meal food: " + ex.getMessage());
+            showAlert("Lỗi", "Không thể cập nhật thông tin thức ăn: " + ex.getMessage(), Alert.AlertType.ERROR);
         }
     }
     

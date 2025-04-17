@@ -3,24 +3,21 @@
 <?import de.jensd.fx.glyphs.fontawesome.FontAwesomeIconView?>
 <?import java.lang.String?>
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.chart.PieChart?>
+<?import javafx.scene.chart.CategoryAxis?>
+<?import javafx.scene.chart.LineChart?>
+<?import javafx.scene.chart.NumberAxis?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.TableColumn?>
-<?import javafx.scene.control.TableView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.ColumnConstraints?>
-<?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.shape.Line?>
 <?import javafx.scene.text.Font?>
 
-<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.ExercisePageController">
+<StackPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="600.0" prefWidth="1100.0" stylesheets="@style/main.css" xmlns="http://javafx.com/javafx/23.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.milkyway.healthmanagement.ActivityChartController">
     <children>
         <AnchorPane prefHeight="200.0" prefWidth="200.0">
             <children>
@@ -43,6 +40,7 @@
                                         </Label>
                                         <Line endX="75.99998474121094" endY="-1.52587890625E-5" layoutX="100.0" layoutY="193.0" startX="-71.19999694824219" startY="-1.52587890625E-5" stroke="WHITE" />
                                         <Button layoutX="9.0" layoutY="241.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToHome" styleClass="nav-btn" stylesheets="@style/main.css" text="Tổng Quan">
+
                                             <graphic>
                                                 <FontAwesomeIconView fill="WHITE" glyphName="DASHBOARD" size="1.5EM" />
                                             </graphic>
@@ -53,6 +51,7 @@
                                             </graphic>
                                         </Button>
                                         <Button layoutX="9.0" layoutY="318.0" minHeight="38.0" minWidth="189.0" mnemonicParsing="false" onAction="#SwitchToMealFood" styleClass="nav-btn" stylesheets="@style/main.css" text="Dinh Dưỡng">
+
                                             <graphic>
                                                 <FontAwesomeIconView fill="WHITE" glyphName="APPLE" size="1.5EM" />
                                             </graphic>
@@ -74,6 +73,7 @@
                                             </font>
                                         </Button>
                                         <Button fx:id="logout_btn" layoutX="14.0" layoutY="514.0" mnemonicParsing="false" onAction="#logout" stylesheets="@style/main.css">
+
                                             <graphic>
                                                 <FontAwesomeIconView glyphName="SIGN_OUT" size="1.6EM" />
                                             </graphic>
@@ -120,126 +120,6 @@
                     <center>
                         <AnchorPane prefHeight="200.0" prefWidth="200.0" BorderPane.alignment="CENTER">
                             <children>
-                                <AnchorPane layoutX="210.0" layoutY="61.0" prefHeight="554.4" prefWidth="895.2" visible="false" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                    <children>
-                                        <AnchorPane layoutX="14.0" layoutY="14.0" prefHeight="254.0" prefWidth="867.0" stylesheets="@style/main.css">
-                                            <styleClass>
-                                                <String fx:value="white-bg" />
-                                                <String fx:value="shadow" />
-                                            </styleClass>
-                                            <children>
-                                                <TableView layoutX="51.0" layoutY="14.0" prefHeight="254.4" prefWidth="867.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-                                                    <columns>
-                                                        <TableColumn prefWidth="111.19996356964111" text="Bữa Ăn" />
-                                                        <TableColumn prefWidth="288.80003356933594" text="Chi Tiết Bữa Ăn" />
-                                                        <TableColumn minWidth="0.0" prefWidth="128.0" text="Tổng Lượng Calo" />
-                                                        <TableColumn minWidth="0.0" prefWidth="105.5999755859375" text="Protein" />
-                                                        <TableColumn minWidth="0.0" prefWidth="110.39990234375" text="Chất Béo" />
-                                                        <TableColumn minWidth="0.0" prefWidth="121.60002441406255" text="Carbohydrate" />
-                                                    </columns>
-                                                </TableView>
-                                            </children>
-                                        </AnchorPane>
-                                        <AnchorPane layoutX="14.0" layoutY="285.0" prefHeight="254.0" prefWidth="867.0" stylesheets="@style/main.css">
-                                            <children>
-                                                <PieChart layoutX="323.0" layoutY="44.0" prefHeight="210.0" prefWidth="250.0" title="Tổng Hợp Bài Tập" titleSide="BOTTOM" AnchorPane.bottomAnchor="1.0" AnchorPane.leftAnchor="323.0" AnchorPane.rightAnchor="294.0" AnchorPane.topAnchor="44.0" />
-                                                <PieChart layoutX="21.0" layoutY="44.8" prefHeight="209.0" prefWidth="250.0" stylesheets="@style/main.css" title="Tổng Hợp Dinh Dưỡng" titleSide="BOTTOM" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="30.0" AnchorPane.rightAnchor="587.0" AnchorPane.topAnchor="45.0" />
-                                                <Line endX="10.2000732421875" endY="142.800048828125" layoutX="578.0" layoutY="92.0" startX="10.2000732421875" startY="-58.0" />
-                                                <Label layoutX="14.0" layoutY="6.0" text="Tổng Kết">
-                                                    <font>
-                                                        <Font size="16.0" />
-                                                    </font>
-                                                </Label>
-                                                <AnchorPane layoutX="611.2" layoutY="27.0" prefHeight="254.0" prefWidth="683.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="611.0" AnchorPane.rightAnchor="18.0" AnchorPane.topAnchor="0.0">
-                                                    <children>
-                                                        <Label layoutX="31.0" layoutY="11.2" prefHeight="26.0" prefWidth="208.0" text="Mục Tiêu" AnchorPane.topAnchor="11.0">
-                                                            <font>
-                                                                <Font name="System Bold" size="16.0" />
-                                                            </font>
-                                                        </Label>
-                                                        <VBox alignment="CENTER" layoutX="4.8" layoutY="42.4" prefHeight="202.0" prefWidth="230.0" spacing="10.0" stylesheets="@style/main.css" AnchorPane.bottomAnchor="10.0" AnchorPane.leftAnchor="5.0" AnchorPane.rightAnchor="3.0" AnchorPane.topAnchor="42.0">
-                                                            <children>
-                                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                                                                    <children>
-                                                                        <Label text="Năng Lượng:">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                        <Label prefHeight="18.0" prefWidth="46.0" text="Giá trị">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                    </children>
-                                                                    <VBox.margin>
-                                                                        <Insets left="10.0" />
-                                                                    </VBox.margin>
-                                                                </HBox>
-                                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                                                                    <children>
-                                                                        <Label text="Protein:">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                        <Label prefHeight="18.0" prefWidth="46.0" text="Giá trị">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                    </children>
-                                                                    <VBox.margin>
-                                                                        <Insets left="10.0" />
-                                                                    </VBox.margin>
-                                                                </HBox>
-                                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                                                                    <children>
-                                                                        <Label text="Chất Béo:">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                        <Label prefHeight="18.0" prefWidth="46.0" text="Giá trị">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                    </children>
-                                                                    <VBox.margin>
-                                                                        <Insets left="10.0" />
-                                                                    </VBox.margin>
-                                                                </HBox>
-                                                                <HBox alignment="CENTER_LEFT" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
-                                                                    <children>
-                                                                        <Label text="Carbohydrate:">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                        <Label prefHeight="18.0" prefWidth="46.0" text="Giá trị">
-                                                                            <font>
-                                                                                <Font size="14.0" />
-                                                                            </font>
-                                                                        </Label>
-                                                                    </children>
-                                                                    <VBox.margin>
-                                                                        <Insets left="10.0" />
-                                                                    </VBox.margin>
-                                                                </HBox>
-                                                            </children>
-                                                        </VBox>
-                                                        <FontAwesomeIconView glyphName="BULLSEYE" layoutX="6.0" layoutY="31.0" size="1.6EM" />
-                                                    </children>
-                                                </AnchorPane>
-                                            </children>
-                                            <styleClass>
-                                                <String fx:value="white-bg" />
-                                                <String fx:value="shadow" />
-                                            </styleClass>
-                                        </AnchorPane>
-                                    </children>
-                                </AnchorPane>
                                 <VBox layoutX="138.0" layoutY="94.0" prefHeight="554.4" prefWidth="895.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                     <children>
                                         <HBox prefHeight="91.0" prefWidth="895.0">
@@ -293,22 +173,66 @@
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <HBox fx:id="exerciseListContent" prefHeight="411.0" prefWidth="895.0" styleClass="shadow" stylesheets="@style/main.css">
-                                            <children>
-                                                <ScrollPane fx:id="scrollPanel" prefHeight="411.0" prefWidth="894.0">
-                                                    <content>
-                                                        <GridPane fx:id="gridPane" prefHeight="11.0" prefWidth="25.0">
-                                                            <columnConstraints>
-                                                                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                                                            </columnConstraints>
-                                                        </GridPane>
-                                                    </content>
-                                                </ScrollPane>
-                                            </children>
+                                        <AnchorPane prefHeight="411.0" prefWidth="895.0" styleClass="white-bg" stylesheets="@style/main.css">
                                             <VBox.margin>
                                                 <Insets left="10.0" right="10.0" />
                                             </VBox.margin>
-                                        </HBox>
+                                            <styleClass>
+                                                <String fx:value="white-bg" />
+                                                <String fx:value="shadow" />
+                                            </styleClass>
+                                            <children>
+                                                <LineChart fx:id="activityLineChart" animated="false" layoutX="14.0" layoutY="65.0" prefHeight="330.0" prefWidth="867.0" title="Thống Kê Hoạt Động Tập Luyện" AnchorPane.bottomAnchor="16.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="65.0">
+                                                    <xAxis>
+                                                        <CategoryAxis fx:id="xAxis" label="Ngày" side="BOTTOM" />
+                                                    </xAxis>
+                                                    <yAxis>
+                                                        <NumberAxis fx:id="yAxis" label="Giá trị" side="LEFT" />
+                                                    </yAxis>
+                                                </LineChart>
+                                                <HBox alignment="CENTER" layoutX="201.0" layoutY="14.0" prefHeight="40.0" prefWidth="493.0" spacing="30.0" AnchorPane.leftAnchor="201.0" AnchorPane.rightAnchor="201.0" AnchorPane.topAnchor="14.0">
+                                                    <children>
+                                                        <Button fx:id="btn7Days" mnemonicParsing="false" onAction="#filter7Days" prefHeight="30.0" prefWidth="140.0" styleClass="filter-btn" stylesheets="@style/main.css" text="7 Ngày Gần Nhất">
+                                                            <styleClass>
+                                                                <String fx:value="nav-btn" />
+                                                                <String fx:value="gradient-bg" />
+                                                                <String fx:value="shadow" />
+                                                            </styleClass>
+                                                        </Button>
+                                                        <Button fx:id="btn1Month" mnemonicParsing="false" onAction="#filter1Month" prefHeight="30.0" prefWidth="140.0" styleClass="filter-btn" stylesheets="@style/main.css" text="1 Tháng Gần Nhất">
+                                                            <styleClass>
+                                                                <String fx:value="nav-btn" />
+                                                                <String fx:value="shadow" />
+                                                                <String fx:value="gradient-bg" />
+                                                            </styleClass>
+                                                        </Button>
+                                                        <Button fx:id="btn3Months" mnemonicParsing="false" onAction="#filter3Months" prefHeight="30.0" prefWidth="140.0" styleClass="filter-btn" stylesheets="@style/main.css" text="3 Tháng Gần Nhất">
+                                                            <styleClass>
+                                                                <String fx:value="nav-btn" />
+                                                                <String fx:value="shadow" />
+                                                                <String fx:value="gradient-bg" />
+                                                            </styleClass>
+                                                        </Button>
+                                                    </children>
+                                                </HBox>
+                                                <HBox alignment="CENTER" layoutX="228.0" layoutY="402.0" prefHeight="20.0" prefWidth="438.0" spacing="40.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="228.0" AnchorPane.rightAnchor="228.0">
+                                                    <children>
+                                                        <HBox alignment="CENTER" spacing="5.0">
+                                                            <children>
+                                                                <Line endX="20.0" stroke="#1bac5a" strokeWidth="3.0" />
+                                                                <Label text="Tổng số phút tập" />
+                                                            </children>
+                                                        </HBox>
+                                                        <HBox alignment="CENTER" spacing="5.0">
+                                                            <children>
+                                                                <Line endX="20.0" stroke="#ff5757" strokeWidth="3.0" />
+                                                                <Label text="Tổng số calo tiêu thụ" />
+                                                            </children>
+                                                        </HBox>
+                                                    </children>
+                                                </HBox>
+                                            </children>
+                                        </AnchorPane>
                                     </children>
                                 </VBox>
                             </children>
