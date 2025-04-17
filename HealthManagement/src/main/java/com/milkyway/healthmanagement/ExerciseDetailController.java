@@ -64,6 +64,9 @@ public class ExerciseDetailController extends SwitchSceneController implements I
     private Exercise exercise;
     private boolean isAddingNew = false;
 
+    // ID của bản ghi log nếu đang chỉnh sửa
+    private Integer exerciseLogId = null;
+
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         txtEffort.getItems().addAll("Nhẹ", "Vừa", "Nặng");
@@ -101,6 +104,7 @@ public class ExerciseDetailController extends SwitchSceneController implements I
     public void handleClose(ActionEvent event) {
         closeWindow(btnClose);
     }
+
     @FXML
     private void handleCancel(ActionEvent event) {
         if (showConfirmationDialog("Xác nhận hủy bỏ", "Bạn có chắc chắn muốn hủy bỏ thay đổi?")) {
@@ -123,6 +127,30 @@ public class ExerciseDetailController extends SwitchSceneController implements I
             txtExercise.setEditable(false);
             txtCaloriesPerMinute.setText(String.valueOf(exercise.getCaloriesBurnedPerMin()));
             caloriesBox.setVisible(false);
+        }
+    }
+
+    /**
+     * Thiết lập dữ liệu cho form từ bản ghi log hiện có
+     * @param log Bản ghi log cần chỉnh sửa
+     */
+    public void setExerciseLogData(Exerciselog log) {
+        if (log != null) {
+            // Lưu ID của log để cập nhật thay vì tạo mới
+            this.exerciseLogId = log.getIdExLog();
+            
+            // Thiết lập dữ liệu vào các trường
+            txtDuration.setText(String.valueOf(log.getDuration()));
+            
+            if (log.getEffortLevel() != null && !log.getEffortLevel().isEmpty()) {
+                txtEffort.setValue(log.getEffortLevel());
+            }
+            
+            // Thiết lập ngày
+            if (log.getDatetime() != null) {
+                LocalDate localDate = log.getDatetime().toLocalDate();
+                dtpDate.setValue(localDate);
+            }
         }
     }
 
@@ -225,25 +253,51 @@ public class ExerciseDetailController extends SwitchSceneController implements I
             //tính toán caloriesBurned và chỉ lấy tối đa 2 chữ số thập phân
             double caloriesBurned = duration * caloriesPerMinute;
             caloriesBurned = Math.round(caloriesBurned * 100.0) / 100.0;
-            // Tạo ExerciseLog dựa trên exercise
-            Exerciselog exerciseLog = new Exerciselog();
-            exerciseLog.setDatetime(date);
-            exerciseLog.setExerciseId(exercise);
-            exerciseLog.setEffortLevel(effortLevel);
-            exerciseLog.setEnergyBurn(caloriesBurned);
-            exerciseLog.setDuration(duration);
-            exerciseLog.setUserId(User.getCurrentUser());
             
             ExerciseLogService logService = new ExerciseLogService();
+            boolean logSaved;
             
-            boolean logSaved = logService.saveLog(exerciseLog);
-
-            if (logSaved) {
-                showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được lưu thành công!");
-                closeWindow(btnCancel);
+            if (exerciseLogId != null) {
+                // Đang trong chế độ chỉnh sửa - cập nhật bản ghi hiện có
+                Exerciselog exerciseLog = new Exerciselog();
+                exerciseLog.setIdExLog(exerciseLogId);
+                exerciseLog.setDatetime(date);
+                exerciseLog.setExerciseId(exercise);
+                exerciseLog.setEffortLevel(effortLevel);
+                exerciseLog.setEnergyBurn(caloriesBurned);
+                exerciseLog.setDuration(duration);
+                exerciseLog.setUserId(User.getCurrentUser());
+                
+                // Cập nhật bản ghi log cũ
+                logSaved = logService.updateLog(exerciseLog);
+                if (logSaved) {
+                    showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được cập nhật thành công!");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Lỗi Cập Nhật", "Không thể cập nhật nhật ký tập luyện.");
+                    return;
+                }
             } else {
-                showAlert(Alert.AlertType.ERROR, "Lỗi Lưu", "Không thể lưu nhật ký tập luyện (service trả về false).");
+                // Tạo bản ghi mới nếu không phải đang chỉnh sửa
+                Exerciselog exerciseLog = new Exerciselog();
+                exerciseLog.setDatetime(date);
+                exerciseLog.setExerciseId(exercise);
+                exerciseLog.setEffortLevel(effortLevel);
+                exerciseLog.setEnergyBurn(caloriesBurned);
+                exerciseLog.setDuration(duration);
+                exerciseLog.setUserId(User.getCurrentUser());
+                
+                logSaved = logService.saveLog(exerciseLog);
+                if (logSaved) {
+                    showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được lưu thành công!");
+                } else {
+                    showAlert(Alert.AlertType.ERROR, "Lỗi Lưu", "Không thể lưu nhật ký tập luyện (service trả về false).");
+                    return;
+                }
             }
+            
+            // Đóng cửa sổ sau khi lưu thành công
+            closeWindow(btnCancel);
+            
         } catch (Exception e) {
             System.err.println("Lỗi khi lưu dữ liệu: " + e.getMessage());
             e.printStackTrace();

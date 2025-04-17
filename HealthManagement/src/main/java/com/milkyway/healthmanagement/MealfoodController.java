@@ -71,6 +71,9 @@ public class MealfoodController extends SwitchSceneController implements Initial
     private TableColumn<MealFood, Void> BactionColumn, LactionColumn, DactionColumn;
     
     @FXML
+    private TableColumn<MealFood, String> BtotalCaloColumn, LtotalCaloColumn, DtotalCaloColumn;
+    
+    @FXML
     private Label breakfastCaloLabel, lunchCaloLabel, dinnerCaloLabel;
     
     @FXML
@@ -186,6 +189,17 @@ public class MealfoodController extends SwitchSceneController implements Initial
         
         setupActionColumn(BactionColumn, "Breakfast");
         
+        // Thiết lập cột tổng calo cho bữa sáng
+        if (BtotalCaloColumn != null) {
+            setupColumn(BtotalCaloColumn, "Tổng Lượng Calo", 150);
+            BtotalCaloColumn.setCellValueFactory(cellData -> {
+                if (cellData.getValue() != null && cellData.getValue().getMeal() != null) {
+                    return new SimpleStringProperty(String.format("%.1f cal", cellData.getValue().getMeal().getTotalCalories()));
+                }
+                return new SimpleStringProperty("0.0 cal");
+            });
+        }
+        
         // Setup lunch columns
         setupColumn(LnameColumn, "Tên Thức Ăn", 150);
         setupColumn(LquantityColumn, "Số lượng/Đơn vị", 100);
@@ -207,6 +221,17 @@ public class MealfoodController extends SwitchSceneController implements Initial
         
         setupActionColumn(LactionColumn, "Lunch");
         
+        // Thiết lập cột tổng calo cho bữa trưa
+        if (LtotalCaloColumn != null) {
+            setupColumn(LtotalCaloColumn, "Tổng Lượng Calo", 150);
+            LtotalCaloColumn.setCellValueFactory(cellData -> {
+                if (cellData.getValue() != null && cellData.getValue().getMeal() != null) {
+                    return new SimpleStringProperty(String.format("%.1f cal", cellData.getValue().getMeal().getTotalCalories()));
+                }
+                return new SimpleStringProperty("0.0 cal");
+            });
+        }
+        
         // Setup dinner columns
         setupColumn(DnameColumn, "Tên Thức Ăn", 150);
         setupColumn(DquantityColumn, "Số lượng/Đơn vị", 100);
@@ -227,6 +252,17 @@ public class MealfoodController extends SwitchSceneController implements Initial
         DsugarColumn.setCellValueFactory(cellData -> new SimpleDoubleProperty(cellData.getValue().getFood().getSugar() != null ? cellData.getValue().getFood().getSugar() : 0));
         
         setupActionColumn(DactionColumn, "Dinner");
+        
+        // Thiết lập cột tổng calo cho bữa tối
+        if (DtotalCaloColumn != null) {
+            setupColumn(DtotalCaloColumn, "Tổng Lượng Calo", 150);
+            DtotalCaloColumn.setCellValueFactory(cellData -> {
+                if (cellData.getValue() != null && cellData.getValue().getMeal() != null) {
+                    return new SimpleStringProperty(String.format("%.1f cal", cellData.getValue().getMeal().getTotalCalories()));
+                }
+                return new SimpleStringProperty("0.0 cal");
+            });
+        }
         
         // Setup nutrition summary columns
         if (nutritionSummaryTable != null) {
