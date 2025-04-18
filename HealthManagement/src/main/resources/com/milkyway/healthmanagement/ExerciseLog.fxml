@@ -264,8 +264,7 @@
                                                         <Label text="Danh Sách Bài Tập" />
                                                     </graphic>
                                                     <styleClass>
-                                                        <String fx:value="nav-btn" />
-                                                        <String fx:value="gradient-bg" />
+                                                        <String fx:value="nav-tab-btn" />
                                                         <String fx:value="shadow" />
                                                     </styleClass>
                                                     <HBox.margin>
@@ -277,9 +276,18 @@
                                                         <Label text="Thông Tin Bài Tập" />
                                                     </graphic>
                                                     <styleClass>
-                                                        <String fx:value="nav-btn" />
+                                                        <String fx:value="nav-tab-btn" />
+                                                        <String fx:value="nav-tab-btn-active" />
                                                         <String fx:value="shadow" />
-                                                        <String fx:value="gradient-bg" />
+                                                    </styleClass>
+                                                </Button>
+                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#SwitchToActivityChart" stylesheets="@style/main.css">
+                                                    <graphic>
+                                                        <Label text="Hoạt động" />
+                                                    </graphic>
+                                                    <styleClass>
+                                                        <String fx:value="nav-tab-btn" />
+                                                        <String fx:value="shadow" />
                                                     </styleClass>
                                                 </Button>
                                             </children>

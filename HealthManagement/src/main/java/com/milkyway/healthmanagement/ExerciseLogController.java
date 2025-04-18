@@ -61,6 +61,23 @@ public class ExerciseLogController extends SwitchSceneController implements Init
     private Button nextDateButton;
 
     private ObservableList<Exerciselog> exerciseData = FXCollections.observableArrayList();
+    
+    /**
+     * Chuyển đổi sang giao diện Hoạt động (Activity Chart)
+     * @throws IOException Nếu có lỗi khi tải FXML
+     */
+    @FXML
+    public void SwitchToActivityChart() throws IOException {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/milkyway/healthmanagement/ActivityChart.fxml"));
+            Parent root = loader.load();
+            Scene scene = btnClose.getScene();
+            scene.setRoot(root);
+        } catch (IOException ex) {
+            Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể chuyển đến giao diện Hoạt động: " + ex.getMessage());
+        }
+    }
 
     private void loadTableView(){
         TableColumn<Exerciselog, String> colName = new TableColumn<>("Mục Tiêu");
@@ -193,7 +210,10 @@ public class ExerciseLogController extends SwitchSceneController implements Init
             exerciseData.addAll(logs);
 
             if (logs.isEmpty()) {
-                tbExercise.setPlaceholder(new Label("Không có dữ liệu nào cho ngày " + selectedDate));
+                // Format the date to dd/MM/yyyy
+                java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                String formattedDate = formatter.format(selectedDate);
+                tbExercise.setPlaceholder(new Label("Không có dữ liệu nào cho ngày " + formattedDate));
                 txtTotal.setText("0");
             } else {
                 System.out.println("Tải dữ liệu thành công cho ngày " + selectedDate);
