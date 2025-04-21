@@ -7,6 +7,7 @@ import com.milkyway.services.ExerciseLogService;
 import com.milkyway.services.ExerciseService;
 import java.net.URL;
 import java.sql.Date;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.Optional;
 import java.util.ResourceBundle;
@@ -257,50 +258,62 @@ public class ExerciseDetailController extends SwitchSceneController implements I
             ExerciseLogService logService = new ExerciseLogService();
             boolean logSaved;
             
-            if (exerciseLogId != null) {
-                // Đang trong chế độ chỉnh sửa - cập nhật bản ghi hiện có
-                Exerciselog exerciseLog = new Exerciselog();
-                exerciseLog.setIdExLog(exerciseLogId);
-                exerciseLog.setDatetime(date);
-                exerciseLog.setExerciseId(exercise);
-                exerciseLog.setEffortLevel(effortLevel);
-                exerciseLog.setEnergyBurn(caloriesBurned);
-                exerciseLog.setDuration(duration);
-                exerciseLog.setUserId(User.getCurrentUser());
-                
-                // Cập nhật bản ghi log cũ
-                logSaved = logService.updateLog(exerciseLog);
-                if (logSaved) {
-                    showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được cập nhật thành công!");
+            try {
+                if (exerciseLogId != null) {
+                    // Đang trong chế độ chỉnh sửa - cập nhật bản ghi hiện có
+                    Exerciselog exerciseLog = new Exerciselog();
+                    exerciseLog.setIdExLog(exerciseLogId);
+                    exerciseLog.setDatetime(date);
+                    exerciseLog.setExerciseId(exercise);
+                    exerciseLog.setEffortLevel(effortLevel);
+                    exerciseLog.setEnergyBurn(caloriesBurned);
+                    exerciseLog.setDuration(duration);
+                    exerciseLog.setUserId(User.getCurrentUser());
+                    
+                    // Cập nhật bản ghi log cũ
+                    logSaved = logService.updateLog(exerciseLog);
+                    if (logSaved) {
+                        showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được cập nhật thành công!");
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Lỗi Cập Nhật", "Không thể cập nhật nhật ký tập luyện.");
+                        return;
+                    }
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Lỗi Cập Nhật", "Không thể cập nhật nhật ký tập luyện.");
-                    return;
+                    // Tạo bản ghi mới nếu không phải đang chỉnh sửa
+                    Exerciselog exerciseLog = new Exerciselog();
+                    exerciseLog.setDatetime(date);
+                    exerciseLog.setExerciseId(exercise);
+                    exerciseLog.setEffortLevel(effortLevel);
+                    exerciseLog.setEnergyBurn(caloriesBurned);
+                    exerciseLog.setDuration(duration);
+                    exerciseLog.setUserId(User.getCurrentUser());
+                    
+                    logSaved = logService.saveLog(exerciseLog);
+                    if (logSaved) {
+                        showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được lưu thành công!");
+                    } else {
+                        showAlert(Alert.AlertType.ERROR, "Lỗi Lưu", "Không thể lưu nhật ký tập luyện (service trả về false).");
+                        return;
+                    }
                 }
-            } else {
-                // Tạo bản ghi mới nếu không phải đang chỉnh sửa
-                Exerciselog exerciseLog = new Exerciselog();
-                exerciseLog.setDatetime(date);
-                exerciseLog.setExerciseId(exercise);
-                exerciseLog.setEffortLevel(effortLevel);
-                exerciseLog.setEnergyBurn(caloriesBurned);
-                exerciseLog.setDuration(duration);
-                exerciseLog.setUserId(User.getCurrentUser());
                 
-                logSaved = logService.saveLog(exerciseLog);
-                if (logSaved) {
-                    showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được lưu thành công!");
+                // Đóng cửa sổ sau khi lưu thành công
+                closeWindow(btnCancel);
+            } catch (SQLException ex) {
+                // Xử lý ngoại lệ từ kiểm tra thời gian tập vượt quá giới hạn
+                if (ex.getMessage().contains("Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ")) {
+                    showAlert(Alert.AlertType.ERROR, "Lỗi Vượt Giới Hạn", 
+                            "Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ (1440 phút).\n" +
+                            "Vui lòng giảm thời gian hoặc chọn ngày khác.");
                 } else {
-                    showAlert(Alert.AlertType.ERROR, "Lỗi Lưu", "Không thể lưu nhật ký tập luyện (service trả về false).");
-                    return;
+                    showAlert(Alert.AlertType.ERROR, "Lỗi SQL", "Lỗi cơ sở dữ liệu: " + ex.getMessage());
                 }
             }
-            
-            // Đóng cửa sổ sau khi lưu thành công
-            closeWindow(btnCancel);
             
         } catch (Exception e) {
             System.err.println("Lỗi khi lưu dữ liệu: " + e.getMessage());
             e.printStackTrace();
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Đã xảy ra lỗi: " + e.getMessage());
         }
     }
 }

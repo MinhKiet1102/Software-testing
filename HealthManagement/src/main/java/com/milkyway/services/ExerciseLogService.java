@@ -22,6 +22,11 @@ public class ExerciseLogService extends SwitchSceneController {
         if (log == null || log.getExerciseId() == null || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
             return false;
         }
+        
+        // Kiểm tra giới hạn thời gian tập luyện trong ngày
+        if (isExceedingDailyTimeLimit(log.getUserId().getId(), log.getDatetime(), log.getDuration(), null)) {
+            throw new SQLException("Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ");
+        }
 
         String sql = "INSERT INTO exerciselog (effortLevel, duration, datetime, energyBurn, exerciseId, userId) VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -53,6 +58,11 @@ public class ExerciseLogService extends SwitchSceneController {
         if (log == null || log.getIdExLog() == null || log.getExerciseId() == null 
                 || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
             return false;
+        }
+        
+        // Kiểm tra giới hạn thời gian tập luyện trong ngày
+        if (isExceedingDailyTimeLimit(log.getUserId().getId(), log.getDatetime(), log.getDuration(), log.getIdExLog())) {
+            throw new SQLException("Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ");
         }
 
         String sql = "UPDATE exerciselog SET effortLevel = ?, duration = ?, datetime = ?, " +
@@ -233,6 +243,52 @@ public class ExerciseLogService extends SwitchSceneController {
             if (conn != null) try { conn.close(); } catch (SQLException e) { }
         }
         return list;
+    }
+
+    /**
+     * Kiểm tra xem tổng thời gian tập trong một ngày có vượt quá 24 giờ (1440 phút) hay không
+     * @param userId ID của người dùng
+     * @param date Ngày cần kiểm tra
+     * @param newDuration Thời gian tập mới sẽ thêm vào (phút)
+     * @param excludeLogId ID của log hiện tại (để loại trừ khi cập nhật, null khi thêm mới)
+     * @return true nếu tổng thời gian tập vượt quá 24 giờ, false nếu không
+     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
+     */
+    public boolean isExceedingDailyTimeLimit(int userId, Date date, int newDuration, Integer excludeLogId) throws SQLException {
+        final int MAX_MINUTES_PER_DAY = 1440; // 24 giờ * 60 phút
+        
+        String sql = "SELECT SUM(duration) as totalDuration FROM exerciselog " +
+                    "WHERE userId = ? AND DATE(datetime) = DATE(?) ";
+        
+        // Nếu đang cập nhật log hiện có, loại trừ log đó khỏi tổng thời gian
+        if (excludeLogId != null) {
+            sql += "AND idExLog != ? ";
+        }
+        
+        try (Connection conn = JdbcUtils.getConn();
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            
+            stm.setInt(1, userId);
+            stm.setDate(2, new java.sql.Date(date.getTime()));
+            
+            if (excludeLogId != null) {
+                stm.setInt(3, excludeLogId);
+            }
+            
+            try (ResultSet rs = stm.executeQuery()) {
+                if (rs.next()) {
+                    int totalDuration = rs.getInt("totalDuration");
+                    // Kiểm tra tổng thời gian tính cả thời gian mới có vượt quá 24 giờ không
+                    return (totalDuration + newDuration) > MAX_MINUTES_PER_DAY;
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ExerciseLogService.class.getName()).log(Level.SEVERE, 
+                    "Lỗi kiểm tra giới hạn thời gian tập hàng ngày", ex);
+            throw ex;
+        }
+        
+        return false; // Nếu không có dữ liệu hoặc có lỗi, giả định là chưa vượt quá giới hạn
     }
 
      // Hàm tiện ích kiểm tra cột

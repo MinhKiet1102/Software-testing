@@ -23,18 +23,21 @@ public class ExerciseService {
     public List<Exercise> getExercise(String kw) throws SQLException {
         List<Exercise> results = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
-            // Cập nhật SQL để chỉ lấy bài tập mặc định (userId IS NULL) hoặc bài tập của người dùng hiện tại
-            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM exercise WHERE (userId IS NULL");
+            // Cập nhật SQL để lấy bài tập mặc định (userId IS NULL), bài tập của người dùng hiện tại
+            // và bài tập của người dùng có role là "Admin"
+            StringBuilder sqlBuilder = new StringBuilder("SELECT e.* FROM exercise e LEFT JOIN user u ON e.userId = u.id WHERE (e.userId IS NULL");
             
             // Nếu có người dùng đăng nhập, thêm điều kiện để lấy bài tập của họ
             if (User.getCurrentUser() != null) {
-                sqlBuilder.append(" OR userId = ?");
+                sqlBuilder.append(" OR e.userId = ?");
             }
-            sqlBuilder.append(")");
+            
+            // Thêm điều kiện để lấy bài tập của các admin
+            sqlBuilder.append(" OR u.role = 'ADMIN')");
             
             // Thêm điều kiện tìm kiếm theo tên nếu có
             if (kw != null && !kw.isEmpty()) {
-                sqlBuilder.append(" AND exerciseName LIKE CONCAT('%', ?, '%')");
+                sqlBuilder.append(" AND e.exerciseName LIKE CONCAT('%', ?, '%')");
             }
             
             PreparedStatement stm = conn.prepareCall(sqlBuilder.toString());
@@ -50,7 +53,6 @@ public class ExerciseService {
             if (kw != null && !kw.isEmpty()) {
                 stm.setString(paramIndex, kw);
             }
-
             ResultSet rs = stm.executeQuery();
             while (rs.next()) {
                 Exercise e = new Exercise(rs.getInt("idExercise"), rs.getString("exerciseName"), rs.getString("imageExercise"), rs.getFloat("caloriesBurnedPerMin"));
