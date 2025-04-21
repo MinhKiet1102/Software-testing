@@ -48,6 +48,10 @@ public class Exercise implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "caloriesBurnedPerMin")
     private double caloriesBurnedPerMin;
+    
+    // Adding the missing exerciseType field needed by AdminDashboardController
+    private String exerciseType;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
     private Set<Exerciselog> exerciselogSet;
     
@@ -106,6 +110,14 @@ public class Exercise implements Serializable {
 
     public void setCaloriesBurnedPerMin(Double caloriesBurnedPerMin) {
         this.caloriesBurnedPerMin = caloriesBurnedPerMin;
+    }
+
+    public String getExerciseType() {
+        return exerciseType;
+    }
+
+    public void setExerciseType(String exerciseType) {
+        this.exerciseType = exerciseType;
     }
 
     public Set<Exerciselog> getExerciselogSet() {

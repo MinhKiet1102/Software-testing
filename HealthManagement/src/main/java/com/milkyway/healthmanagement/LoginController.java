@@ -108,7 +108,15 @@ public class LoginController implements Initializable {
 
                 si_loginBtn.getScene().getWindow().hide();
 
-                Parent root = FXMLLoader.load(getClass().getResource("home.fxml"));
+                // Kiểm tra vai trò của người dùng và chuyển đến giao diện tương ứng
+                Parent root;
+                if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                    // Người dùng có vai trò Admin, chuyển đến giao diện Admin
+                    root = FXMLLoader.load(getClass().getResource("AdminDashboard.fxml"));
+                } else {
+                    // Người dùng có vai trò User, chuyển đến giao diện User thông thường
+                    root = FXMLLoader.load(getClass().getResource("home.fxml"));
+                }
 
                 Stage stage = new Stage();
                 stage.setTitle("Health Management System");

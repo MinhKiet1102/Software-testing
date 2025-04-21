@@ -20,14 +20,14 @@ import java.sql.Statement;
 public class LoginService {
 
     public User login(String username, String password) throws SQLException {
-        String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date FROM user WHERE username = ? AND password = ?";
+        String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE username = ? AND password = ?";
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
-                return new User(
+                User user = new User(
                         rs.getInt("id"),
                         rs.getString("username"),
                         rs.getString("password"),
@@ -38,6 +38,8 @@ public class LoginService {
                         rs.getInt("height"),
                         rs.getDate("registration_date")
                 );
+                user.setRole(rs.getString("role"));
+                return user;
             }
         }
         return null;
@@ -50,7 +52,7 @@ public class LoginService {
             }
 
             if (user.getId() > 0) { // Update
-                String query = "UPDATE user SET username=?, password=?, email=?, gender=?, current_weight=?, age=?, height=?, registration_date=? WHERE id=?";
+                String query = "UPDATE user SET username=?, password=?, email=?, gender=?, current_weight=?, age=?, height=?, registration_date=?, role=? WHERE id=?";
                 try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
@@ -60,11 +62,12 @@ public class LoginService {
                     preparedStatement.setInt(6, user.getAge());
                     preparedStatement.setInt(7, user.getHeight());
                     preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
-                    preparedStatement.setInt(9, user.getId());
+                    preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
+                    preparedStatement.setInt(10, user.getId());
                     preparedStatement.executeUpdate();
                 }
             } else { // Create
-                String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date) VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
+                String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
@@ -74,6 +77,7 @@ public class LoginService {
                     preparedStatement.setInt(6, user.getAge());
                     preparedStatement.setInt(7, user.getHeight());
                     preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+                    preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
                     preparedStatement.executeUpdate();
 
                     try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -98,7 +102,7 @@ public class LoginService {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
-                return new User(resultSet.getInt("id"),
+                User user = new User(resultSet.getInt("id"),
                         resultSet.getString("username"),
                         resultSet.getString("password"),
                         resultSet.getString("email"),
@@ -108,6 +112,8 @@ public class LoginService {
                         resultSet.getInt("height"),
                         resultSet.getDate("registration_date")
                 );
+                user.setRole(resultSet.getString("role"));
+                return user;
             }
 
         } catch (SQLException se) {

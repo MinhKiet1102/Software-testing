@@ -27,7 +27,10 @@ CREATE TABLE `exercise` (
   `exerciseName` varchar(255) NOT NULL,
   `imageExercise` varchar(500) CHARACTER SET utf8mb3 COLLATE utf8mb3_general_ci DEFAULT NULL,
   `caloriesBurnedPerMin` double DEFAULT NULL,
-  PRIMARY KEY (`idExercise`)
+  `userId` int DEFAULT NULL,
+  PRIMARY KEY (`idExercise`),
+  KEY `fk_exercise_user` (`userId`),
+  CONSTRAINT `fk_exercise_user` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -37,7 +40,7 @@ CREATE TABLE `exercise` (
 
 LOCK TABLES `exercise` WRITE;
 /*!40000 ALTER TABLE `exercise` DISABLE KEYS */;
-INSERT INTO `exercise` VALUES (1,'Khiêu Vũ','Dance.png',4.5),(2,'Đi bộ','Walking.png',5),(3,'Lướt Sóng','Surfing.png',6.2),(4,'Cardio','Cardio.png',7.1),(5,'Bơi Lội','Swimming.png',10.2),(6,'Đạp Xe','Cycling.png',4.6),(7,'Gym','Gym.png',6),(8,'Chạy Bộ','Running.png',11.3),(9,'Leo Núi',NULL,10.6),(10,'Yoga',NULL,8),(11,'Chạy nước rút',NULL,10),(12,'Nhảy xà',NULL,8.9);
+INSERT INTO `exercise` VALUES (1,'Khiêu Vũ','Dance.png',4.5,NULL),(2,'Đi bộ','Walking.png',5,NULL),(3,'Lướt Sóng','Surfing.png',6.2,NULL),(4,'Cardio','Cardio.png',7.1,NULL),(5,'Bơi Lội','Swimming.png',10.2,NULL),(6,'Đạp Xe','Cycling.png',4.6,NULL),(7,'Gym','Gym.png',6,NULL),(8,'Chạy Bộ','Running.png',11.3,NULL),(9,'Leo Núi',NULL,10.6,1),(10,'Yoga',NULL,8,1),(11,'Chạy nước rút',NULL,10,1),(12,'Nhảy xà',NULL,8.9,1);
 /*!40000 ALTER TABLE `exercise` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -91,7 +94,7 @@ CREATE TABLE `food` (
   `sodium` double DEFAULT NULL,
   `sugar` double DEFAULT NULL,
   PRIMARY KEY (`idFood`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -100,7 +103,7 @@ CREATE TABLE `food` (
 
 LOCK TABLES `food` WRITE;
 /*!40000 ALTER TABLE `food` DISABLE KEYS */;
-INSERT INTO `food` VALUES (1,'Cơm trắng',130,2.7,28,0.3,2,0.1),(2,'Ức gà (luộc)',165,31,0,3.6,65,0),(3,'Rau muống (luộc)',20,2,3.5,0.2,60,0.5),(4,'Trứng gà (luộc)',155,13,1.1,11,130,1),(5,'Táo',52,0.3,14,0.2,1,10),(6,'Sữa tươi không đường',61,3.4,4.8,3.3,45,4.8),(7,'cháo',10,1,11,1,1,1),(8,'Bánh tráng',11,1,1,1,1,1),(9,'Gà',100,1,11,1,1,1),(10,'gà',300,1,1,1,1,1),(11,'phở',10000,1,1,1,1,1),(12,'cháo gà',10,1,1,1,1,1);
+INSERT INTO `food` VALUES (1,'Cơm trắng',130,2.7,28,0.3,2,0.1),(2,'Ức gà (luộc)',165,31,0,3.6,65,0),(3,'Rau muống (luộc)',20,2,3.5,0.2,60,0.5),(4,'Trứng gà (luộc)',155,13,1.1,11,130,1),(5,'Táo',52,0.3,14,0.2,1,10),(6,'Sữa tươi không đường',61,3.4,4.8,3.3,45,4.8),(7,'cháo',10,1,11,1,1,1),(8,'Bánh tráng',11,1,1,1,1,1),(9,'Gà',100,1,11,1,1,1),(10,'gà',300,1,1,1,1,1),(11,'phở',10000,1,1,1,1,1),(12,'cháo gà',10,1,1,1,1,1),(13,'heo',100,1,1,1,1,1),(14,'nước ép',200,1,1,1,1,1),(15,'gà',100,1,1,1,1,1);
 /*!40000 ALTER TABLE `food` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -120,7 +123,7 @@ CREATE TABLE `history` (
   PRIMARY KEY (`history_id`),
   KEY `history_ibfk_1` (`user_id`),
   CONSTRAINT `history_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=15 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -129,7 +132,7 @@ CREATE TABLE `history` (
 
 LOCK TABLES `history` WRITE;
 /*!40000 ALTER TABLE `history` DISABLE KEYS */;
-INSERT INTO `history` VALUES (1,'2025-03-27',56.00,1,160),(2,'2025-04-03',60.00,1,164),(3,'2025-04-04',60.00,1,170),(4,'2025-04-05',50.00,1,170),(5,'2025-04-06',60.00,1,160);
+INSERT INTO `history` VALUES (1,'2025-03-27',56.00,1,160),(2,'2025-04-03',60.00,1,164),(3,'2025-04-04',60.00,1,170),(4,'2025-04-05',50.00,1,170),(5,'2025-04-06',60.00,1,160),(15,'2025-04-12',60.00,3,170);
 /*!40000 ALTER TABLE `history` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -149,7 +152,7 @@ CREATE TABLE `meal` (
   PRIMARY KEY (`idMeal`),
   KEY `userId` (`userId`),
   CONSTRAINT `meal_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=6 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -158,7 +161,7 @@ CREATE TABLE `meal` (
 
 LOCK TABLES `meal` WRITE;
 /*!40000 ALTER TABLE `meal` DISABLE KEYS */;
-INSERT INTO `meal` VALUES (1,'Breakfast',0,'2025-04-11 07:00:00',1),(2,'Lunch',0,'2025-04-11 12:30:00',1),(3,'Breakfast',78,'2025-04-11 15:00:00',2),(4,'Breakfast',1040000,'2025-04-10 00:00:00',1),(5,'Breakfast',1000,'2025-04-12 00:00:00',1);
+INSERT INTO `meal` VALUES (1,'Breakfast',60000,'2025-04-11 07:00:00',1),(2,'Lunch',10000,'2025-04-11 12:30:00',1),(3,'Breakfast',78,'2025-04-11 15:00:00',2),(4,'Breakfast',1040000,'2025-04-10 00:00:00',1),(5,'Breakfast',1000,'2025-04-12 00:00:00',1),(6,'Dinner',10000,'2025-04-12 00:00:00',1);
 /*!40000 ALTER TABLE `meal` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -187,7 +190,7 @@ CREATE TABLE `meal_food` (
 
 LOCK TABLES `meal_food` WRITE;
 /*!40000 ALTER TABLE `meal_food` DISABLE KEYS */;
-INSERT INTO `meal_food` VALUES (1,4,'piece',1),(2,1,'g',200),(2,3,'g',100),(3,5,'piece',1),(4,9,'g',100),(4,10,'g',100),(4,11,'g',100),(5,12,'g',100);
+INSERT INTO `meal_food` VALUES (1,4,'piece',1),(1,14,'ml',300),(2,1,'g',200),(2,3,'g',100),(2,15,'g',100),(3,5,'piece',1),(4,9,'g',100),(4,10,'g',100),(4,11,'g',100),(5,12,'g',100),(6,13,'g',100);
 /*!40000 ALTER TABLE `meal_food` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -243,7 +246,7 @@ CREATE TABLE `target` (
   PRIMARY KEY (`idTarget`),
   KEY `userId` (`userId`),
   CONSTRAINT `target_ibfk_1` FOREIGN KEY (`userId`) REFERENCES `user` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=12 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -252,7 +255,7 @@ CREATE TABLE `target` (
 
 LOCK TABLES `target` WRITE;
 /*!40000 ALTER TABLE `target` DISABLE KEYS */;
-INSERT INTO `target` VALUES (1,'giảm 15kg','2025-03-30 00:00:00','2025-03-31 00:00:00','2025-04-05 00:00:00',11,'kg',11,'Achieved',1),(2,'eee','2025-04-03 00:00:00','2025-04-03 00:00:00','2025-04-04 00:00:00',10,'kg',0,'Failed',1),(3,'chạy 50.1km','2025-04-06 00:00:00','2025-04-24 00:00:00','2025-05-10 00:00:00',50.1,'km',30,'Not Started',1),(5,'ddddd','2025-04-06 00:00:00','2025-04-06 00:00:00','2025-04-06 00:00:00',5,'kg',0,'Cancelled',1),(6,'aaa','2025-04-06 00:00:00','2025-04-06 00:00:00','2025-04-08 00:00:00',10,'kg',10,'Achieved',1),(7,'bbb','2025-04-06 00:00:00','2025-04-06 00:00:00','2025-04-07 00:00:00',5,'cm',0,'Cancelled',1),(9,'Chạy nước rút','2025-04-08 00:00:00','2025-04-08 00:00:00','2025-04-30 00:00:00',30,'km',10,'In Progress',1);
+INSERT INTO `target` VALUES (1,'giảm 15kg','2025-03-30 00:00:00','2025-03-31 00:00:00','2025-04-05 00:00:00',11,'kg',11,'Achieved',1),(2,'eee','2025-04-03 00:00:00','2025-04-03 00:00:00','2025-04-04 00:00:00',10,'kg',0,'Failed',1),(3,'chạy 50.1km','2025-04-06 00:00:00','2025-04-24 00:00:00','2025-05-10 00:00:00',50.1,'km',30,'Not Started',1),(5,'ddddd','2025-04-06 00:00:00','2025-04-06 00:00:00','2025-04-06 00:00:00',5,'kg',0,'Cancelled',1),(6,'aaa','2025-04-06 00:00:00','2025-04-06 00:00:00','2025-04-08 00:00:00',10,'kg',10,'Achieved',1),(7,'bbb','2025-04-06 00:00:00','2025-04-06 00:00:00','2025-04-07 00:00:00',5,'cm',0,'Cancelled',1),(9,'Chạy nước rút','2025-04-08 00:00:00','2025-04-08 00:00:00','2025-04-30 00:00:00',30,'km',10,'In Progress',1),(10,'Chạy nước rút 17km','2025-04-12 00:00:00','2025-04-12 00:00:00','2025-04-13 00:00:00',30,'km',0,'Failed',1),(11,'tập gym','2025-04-12 00:00:00','2025-04-12 00:00:00','2025-04-13 00:00:00',20,'h',0,'In Progress',3);
 /*!40000 ALTER TABLE `target` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -273,10 +276,11 @@ CREATE TABLE `user` (
   `age` int DEFAULT NULL,
   `height` int DEFAULT NULL,
   `registration_date` date DEFAULT NULL,
+  `role` varchar(20) NOT NULL DEFAULT 'USER',
   PRIMARY KEY (`id`),
   UNIQUE KEY `username` (`username`),
   UNIQUE KEY `email` (`email`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -285,9 +289,13 @@ CREATE TABLE `user` (
 
 LOCK TABLES `user` WRITE;
 /*!40000 ALTER TABLE `user` DISABLE KEYS */;
-INSERT INTO `user` VALUES (1,'miki','12345678','abc@gmail.com','Nam',60.00,20,175,'2025-04-04'),(2,'admin','12345678','admin@gmail.com','Nam',56.00,21,164,'2025-03-27');
+INSERT INTO `user` VALUES (1,'miki','12345678','minhkietle421@gmail.com','Nam',60.00,20,175,'2025-04-04','USER'),(2,'admin','12345678','admin@gmail.com','Nam',56.00,21,164,'2025-03-27','ADMIN'),(3,'thanhno','12345678','thanhno0308@gmail.com','Nam',60.00,20,170,'2025-04-12','USER');
 /*!40000 ALTER TABLE `user` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Dumping routines for database 'healthmanagementdb'
+--
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -298,4 +306,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-04-12 14:14:18
+-- Dump completed on 2025-04-20 22:59:19
