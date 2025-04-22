@@ -1351,13 +1351,6 @@ public class AdminDashboardController extends SwitchSceneController implements I
         }
     }
     
-    /**
-     * Tạo báo cáo PDF
-     */
-    @FXML
-    private void generatePDFReport(ActionEvent event) {
-        showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Chức năng xuất báo cáo đang được phát triển");
-    }
 
     @FXML
     private void switchToAdminDashboard() {

@@ -18,10 +18,47 @@ import java.sql.Statement;
  * @author Admin
  */
 public class LoginService {
+    
+    // Kết nối CSDL được truyền từ bên ngoài cho kiểm thử
+    private final Connection testConn;
+    
+    /**
+     * Constructor mặc định sử dụng kết nối từ JdbcUtils
+     */
+    public LoginService() {
+        this.testConn = null;
+    }
+    
+    /**
+     * Constructor nhận kết nối từ bên ngoài, chủ yếu dùng cho kiểm thử
+     * 
+     * @param conn Kết nối cơ sở dữ liệu
+     */
+    public LoginService(Connection conn) {
+        this.testConn = conn;
+    }
+    
+    /**
+     * Lấy kết nối dựa trên ngữ cảnh
+     * Nếu đang trong môi trường kiểm thử thì sử dụng kết nối được truyền vào
+     * Nếu không thì lấy kết nối mới từ JdbcUtils
+     * 
+     * @return Kết nối CSDL
+     * @throws SQLException nếu không thể tạo kết nối
+     */
+    private Connection getConnection() throws SQLException {
+        return testConn != null ? testConn : JdbcUtils.getConn();
+    }
 
     public User login(String username, String password) throws SQLException {
         String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE username = ? AND password = ?";
-        try (Connection conn = JdbcUtils.getConn(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+        // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
+        Connection conn = getConnection();
+        if (conn == null) {
+            return null;
+        }
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -41,19 +78,30 @@ public class LoginService {
                 user.setRole(rs.getString("role"));
                 return user;
             }
+        } finally {
+            // Chỉ đóng kết nối nếu không phải là kết nối kiểm thử
+            if (testConn == null && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }
 
     public void register(User user) throws SQLException {
-        try (Connection con = JdbcUtils.getConn()) {
-            if (con == null) {
-                return;
-            }
-
+        // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
+        Connection conn = getConnection();
+        if (conn == null) {
+            return;
+        }
+        
+        try {
             if (user.getId() > 0) { // Update
                 String query = "UPDATE user SET username=?, password=?, email=?, gender=?, current_weight=?, age=?, height=?, registration_date=?, role=? WHERE id=?";
-                try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+                try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
                     preparedStatement.setString(3, user.getEmail());
@@ -68,7 +116,7 @@ public class LoginService {
                 }
             } else { // Create
                 String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                try (PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+                try (PreparedStatement preparedStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
                     preparedStatement.setString(3, user.getEmail());
@@ -87,18 +135,27 @@ public class LoginService {
                     }
                 }
             }
+        } finally {
+            // Chỉ đóng kết nối nếu không phải là kết nối kiểm thử
+            if (testConn == null && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public User getUserByUsername(String username) throws SQLException {
-        Connection con = JdbcUtils.getConn();
-        if (con == null) {
+        // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
+        Connection conn = getConnection();
+        if (conn == null) {
             return null;
         }
 
         String query = "SELECT * FROM user WHERE username=?;";
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -115,14 +172,16 @@ public class LoginService {
                 user.setRole(resultSet.getString("role"));
                 return user;
             }
-
         } catch (SQLException se) {
             se.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
+            // Chỉ đóng kết nối nếu không phải là kết nối kiểm thử
+            if (testConn == null && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

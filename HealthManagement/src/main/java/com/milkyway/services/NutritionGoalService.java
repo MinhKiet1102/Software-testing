@@ -49,11 +49,12 @@ public class NutritionGoalService {
     }
     
     /**
-     * Cập nhật mục tiêu dinh dưỡng hiện có
+     * Cập nhật mục tiêu dinh dưỡng
      * @param goal Đối tượng NutritionGoal cần cập nhật
+     * @return true nếu cập nhật thành công, false nếu không
      * @throws SQLException Nếu có lỗi khi thực hiện thao tác SQL
      */
-    public void updateNutritionGoal(NutritionGoal goal) throws SQLException {
+    public boolean updateNutritionGoal(NutritionGoal goal) throws SQLException {
         String sql = "UPDATE nutrition_goals SET goal_value = ?, unit = ? WHERE id = ?";
         
         try (PreparedStatement stm = conn.prepareStatement(sql)) {
@@ -61,21 +62,24 @@ public class NutritionGoalService {
             stm.setString(2, goal.getUnit());
             stm.setInt(3, goal.getId());
             
-            stm.executeUpdate();
+            int rowsAffected = stm.executeUpdate();
+            return rowsAffected > 0;
         }
     }
     
     /**
      * Xóa mục tiêu dinh dưỡng theo ID
      * @param goalId ID của mục tiêu cần xóa
+     * @return true nếu xóa thành công, false nếu không
      * @throws SQLException Nếu có lỗi khi thực hiện thao tác SQL
      */
-    public void deleteNutritionGoal(int goalId) throws SQLException {
+    public boolean deleteNutritionGoal(int goalId) throws SQLException {
         String sql = "DELETE FROM nutrition_goals WHERE id = ?";
         
         try (PreparedStatement stm = conn.prepareStatement(sql)) {
             stm.setInt(1, goalId);
-            stm.executeUpdate();
+            int rowsAffected = stm.executeUpdate();
+            return rowsAffected > 0;
         }
     }
     
