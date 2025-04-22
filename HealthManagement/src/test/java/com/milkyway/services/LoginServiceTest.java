@@ -316,7 +316,10 @@ public class LoginServiceTest {
             
             assertTrue(rs.next(), "Người dùng phải tồn tại trong cơ sở dữ liệu");
             assertEquals(newEmail, rs.getString("email"), "Email phải được cập nhật");
-            assertEquals(newWeight, rs.getBigDecimal("current_weight"), "Cân nặng phải được cập nhật");
+            
+            // Sửa cách so sánh BigDecimal để không phụ thuộc vào số chữ số thập phân
+            BigDecimal actualWeight = rs.getBigDecimal("current_weight");
+            assertEquals(0, newWeight.compareTo(actualWeight), "Cân nặng phải được cập nhật");
         }
     }
     

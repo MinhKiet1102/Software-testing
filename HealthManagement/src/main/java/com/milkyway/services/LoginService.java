@@ -99,17 +99,42 @@ public class LoginService {
         }
         
         try {
-            if (user.getId() > 0) { // Update
+            if (user.getId() != null && user.getId() > 0) { // Update - fixed null check
                 String query = "UPDATE user SET username=?, password=?, email=?, gender=?, current_weight=?, age=?, height=?, registration_date=?, role=? WHERE id=?";
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
-                    preparedStatement.setBigDecimal(5, user.getCurrentWeight());
-                    preparedStatement.setInt(6, user.getAge());
-                    preparedStatement.setInt(7, user.getHeight());
-                    preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+                    
+                    // Handle null current_weight
+                    if (user.getCurrentWeight() != null) {
+                        preparedStatement.setBigDecimal(5, user.getCurrentWeight());
+                    } else {
+                        preparedStatement.setNull(5, java.sql.Types.DECIMAL);
+                    }
+                    
+                    // Handle null age
+                    if (user.getAge() != null) {
+                        preparedStatement.setInt(6, user.getAge());
+                    } else {
+                        preparedStatement.setNull(6, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null height
+                    if (user.getHeight() != null) {
+                        preparedStatement.setInt(7, user.getHeight());
+                    } else {
+                        preparedStatement.setNull(7, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null registration date
+                    if (user.getRegistrationDate() != null) {
+                        preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+                    } else {
+                        preparedStatement.setNull(8, java.sql.Types.DATE);
+                    }
+                    
                     preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
                     preparedStatement.setInt(10, user.getId());
                     preparedStatement.executeUpdate();
@@ -121,10 +146,35 @@ public class LoginService {
                     preparedStatement.setString(2, user.getPassword());
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
-                    preparedStatement.setBigDecimal(5, user.getCurrentWeight());
-                    preparedStatement.setInt(6, user.getAge());
-                    preparedStatement.setInt(7, user.getHeight());
-                    preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+                    
+                    // Handle null current_weight
+                    if (user.getCurrentWeight() != null) {
+                        preparedStatement.setBigDecimal(5, user.getCurrentWeight());
+                    } else {
+                        preparedStatement.setNull(5, java.sql.Types.DECIMAL);
+                    }
+                    
+                    // Handle null age
+                    if (user.getAge() != null) {
+                        preparedStatement.setInt(6, user.getAge());
+                    } else {
+                        preparedStatement.setNull(6, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null height
+                    if (user.getHeight() != null) {
+                        preparedStatement.setInt(7, user.getHeight());
+                    } else {
+                        preparedStatement.setNull(7, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null registration date
+                    if (user.getRegistrationDate() != null) {
+                        preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+                    } else {
+                        preparedStatement.setNull(8, java.sql.Types.DATE);
+                    }
+                    
                     preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
                     preparedStatement.executeUpdate();
 
