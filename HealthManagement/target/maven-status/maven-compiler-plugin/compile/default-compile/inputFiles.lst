@@ -7,11 +7,18 @@ D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\History.jav
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Meal.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Target.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\NutritionGoal.java
+<<<<<<< Updated upstream
+=======
+D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ActivityChartController.java
+>>>>>>> Stashed changes
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseDetailController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseLogController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\PersonalInforController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\MealFoodPK.java
+<<<<<<< Updated upstream
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\FoodItemService.java
+=======
+>>>>>>> Stashed changes
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExercisePageController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Food.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Exercise.java
@@ -24,6 +31,10 @@ D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\Exercis
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\NutritionGoalService.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\HistoryService.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\MealFood.java
+<<<<<<< Updated upstream
+=======
+D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\AdminDashboardController.java
+>>>>>>> Stashed changes
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\App.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Exerciselog.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\AddFoodFormController.java
