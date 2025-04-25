@@ -113,6 +113,12 @@ public class ExerciseLogService extends SwitchSceneController {
             // Không đóng kết nối ở đây để tránh lỗi với các thao tác tiếp theo
         }
     }
+
+    /**
+     * Xóa nhật ký bài tập theo ID
+     * @param logId ID của nhật ký bài tập cần xóa
+     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
+     */
     public void deleteExerciseLog(int logId) throws SQLException {
         String sql = "DELETE FROM exerciselog WHERE idExLog=?";
         Connection connect = null;
@@ -286,7 +292,15 @@ public class ExerciseLogService extends SwitchSceneController {
         return list;
     }
 
-   
+    /**
+     * Kiểm tra xem tổng thời gian tập trong một ngày có vượt quá 24 giờ (1440 phút) hay không
+     * @param userId ID của người dùng
+     * @param date Ngày cần kiểm tra
+     * @param newDuration Thời gian tập mới sẽ thêm vào (phút)
+     * @param excludeLogId ID của log hiện tại (để loại trừ khi cập nhật, null khi thêm mới)
+     * @return true nếu tổng thời gian tập vượt quá 24 giờ, false nếu không
+     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
+     */
     public boolean isExceedingDailyTimeLimit(int userId, Date date, int newDuration, Integer excludeLogId) throws SQLException {
         final int MAX_MINUTES_PER_DAY = 1440; 
         

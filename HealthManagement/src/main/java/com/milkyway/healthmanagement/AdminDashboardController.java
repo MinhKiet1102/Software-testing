@@ -1350,6 +1350,7 @@ public class AdminDashboardController extends SwitchSceneController implements I
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể làm mới dữ liệu: " + ex.getMessage());
         }
     }
+    
 
     @FXML
     private void switchToAdminDashboard() {
