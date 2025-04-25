@@ -28,9 +28,6 @@ public class ExerciseLogService extends SwitchSceneController {
         if (log == null || log.getExerciseId() == null || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
             return false;
         }
-
-        
-
         
         // Kiểm tra giới hạn thời gian tập luyện trong ngày
         if (isExceedingDailyTimeLimit(log.getUserId().getId(), log.getDatetime(), log.getDuration(), null)) {
@@ -115,7 +112,15 @@ public class ExerciseLogService extends SwitchSceneController {
         }
     }
 
+<<<<<<< Updated upstream
 
+=======
+    /**
+     * Xóa nhật ký bài tập theo ID
+     * @param logId ID của nhật ký bài tập cần xóa
+     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
+     */
+>>>>>>> Stashed changes
     public void deleteExerciseLog(int logId) throws SQLException {
         String sql = "DELETE FROM exerciselog WHERE idExLog=?";
         Connection connect = null;
@@ -214,7 +219,13 @@ public class ExerciseLogService extends SwitchSceneController {
         return list;
     }
 
-
+    /**
+     * Lấy danh sách nhật ký bài tập của người dùng trong khoảng thời gian
+     * @param userId ID của người dùng cần lấy nhật ký
+     * @param startDate Ngày bắt đầu khoảng thời gian
+     * @param endDate Ngày kết thúc khoảng thời gian
+     * @return Danh sách các nhật ký bài tập trong khoảng thời gian
+     */
     public List<Exerciselog> getExerciseLogsByDateRange(int userId, Date startDate, Date endDate) {
         List<Exerciselog> list = new ArrayList<>();
         Connection conn = null;
