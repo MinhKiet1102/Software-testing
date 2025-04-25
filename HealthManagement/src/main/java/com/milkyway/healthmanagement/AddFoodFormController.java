@@ -75,13 +75,13 @@ public class AddFoodFormController implements Initializable {
             quantityField.setText("100");
             
             // Thiết lập các giá trị cho ComboBox đơn vị
-            unitComboBox.getItems().addAll("g", "ml", "piece", "serving");
+            unitComboBox.getItems().addAll("g", "ml", "phần/cái");
             unitComboBox.setValue("g");
             
             // Thiết lập các TextFormatter để chỉ cho phép nhập số
             quantityField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
                 String newText = change.getControlNewText();
-                if (newText.matches("^\\d*$")) {
+                if (newText.matches("^\\d*\\.?\\d*$")) {
                     return change;
                 }
                 return null;
@@ -166,7 +166,7 @@ public class AddFoodFormController implements Initializable {
             }
             
             // Lấy giá trị số lượng và đơn vị từ form
-            int quantity = Integer.parseInt(quantityField.getText().trim());
+            double quantity = Double.parseDouble(quantityField.getText().trim());
             String unit = unitComboBox.getValue();
             
             // Add food to meal
@@ -212,14 +212,14 @@ public class AddFoodFormController implements Initializable {
         
         // Check if quantity is provided and valid
         try {
-            int quantity = Integer.parseInt(quantityField.getText().trim());
+            double quantity = Double.parseDouble(quantityField.getText().trim());
             if (quantity <= 0) {
                 showAlert("Lỗi nhập liệu", "Số lượng phải lớn hơn 0", Alert.AlertType.ERROR);
                 quantityField.requestFocus();
                 return false;
             }
         } catch (NumberFormatException e) {
-            showAlert("Lỗi nhập liệu", "Số lượng phải là một số nguyên", Alert.AlertType.ERROR);
+            showAlert("Lỗi nhập liệu", "Số lượng phải là một số hợp lệ", Alert.AlertType.ERROR);
             quantityField.requestFocus();
             return false;
         }

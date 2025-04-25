@@ -120,11 +120,28 @@ public class MealfoodController extends SwitchSceneController implements Initial
             selectedDate = LocalDate.now();
             consumeDatePicker.setValue(selectedDate);
             
+            // Prevent selecting future dates
+            consumeDatePicker.setDayCellFactory(picker -> new javafx.scene.control.DateCell() {
+                @Override
+                public void updateItem(LocalDate date, boolean empty) {
+                    super.updateItem(date, empty);
+                    LocalDate today = LocalDate.now();
+                    setDisable(empty || date.isAfter(today));
+                }
+            });
+            
             setupTableColumns();
             loadUserNutritionGoals();
             loadMealData();
             
             consumeDatePicker.valueProperty().addListener((obs, oldVal, newVal) -> {
+                // Check if the selected date is in the future
+                LocalDate today = LocalDate.now();
+                if (newVal.isAfter(today)) {
+                    showAlert("Thông báo", "Không thể chọn ngày trong tương lai.", Alert.AlertType.WARNING);
+                    consumeDatePicker.setValue(oldVal != null ? oldVal : today);
+                    return;
+                }
                 selectedDate = newVal;
                 loadMealData();
             });
@@ -327,12 +344,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
         });
     }
     
-    /**
-     * Xóa món ăn khỏi bữa ăn
-     * 
-     * @param mealFood Đối tượng MealFood cần xóa
-     * @param mealType Loại bữa ăn (Breakfast, Lunch, Dinner)
-     */
+    
     private void handleDeleteFood(MealFood mealFood, String mealType) {
         try {
             // Hiển thị hộp thoại xác nhận
@@ -359,12 +371,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
         }
     }
     
-    /**
-     * Chỉnh sửa thông tin của món ăn
-     * 
-     * @param mealFood Đối tượng MealFood cần chỉnh sửa
-     * @param mealType Loại bữa ăn (Breakfast, Lunch, Dinner)
-     */
+  
     private void handleEditFood(MealFood mealFood, String mealType) {
         try {
             Dialog<Map<String, Object>> dialog = new Dialog<>();
@@ -386,7 +393,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
             TextField quantityField = new TextField(String.valueOf(mealFood.getQuantity()));
             quantityField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
                 String newText = change.getControlNewText();
-                if (newText.matches("^\\d*$")) {
+                if (newText.matches("^\\d*\\.?\\d*$")) {
                     return change;
                 }
                 return null;
@@ -519,7 +526,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
                     }
                     
                     try {
-                        int quantity = Integer.parseInt(quantityText);
+                        double quantity = Double.parseDouble(quantityText);
                         if (quantity <= 0) {
                             showAlert("Lỗi", "Số lượng phải lớn hơn 0", Alert.AlertType.ERROR);
                             return null;
@@ -568,7 +575,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
             if (result.isPresent()) {
                 Map<String, Object> values = result.get();
                 String newFoodName = (String) values.get("foodName");
-                int newQuantity = (int) values.get("quantity");
+                double newQuantity = (double) values.get("quantity");
                 String newUnit = (String) values.get("unit");
                 double newCalories = (double) values.get("calories");
                 double newCarb = (double) values.get("carb");
@@ -690,14 +697,15 @@ public class MealfoodController extends SwitchSceneController implements Initial
         for (List<MealFood> mealFoods : allMeals) {
             for (MealFood mf : mealFoods) {
                 Food food = mf.getFood();
-                int quantity = mf.getQuantity();
+                double quantity = mf.getQuantity();
                 
-                totalCalories += food.getCalories() * quantity;
-                totalCarbs += (food.getCarb() != null ? food.getCarb() : 0) * quantity;
-                totalProtein += (food.getProtein() != null ? food.getProtein() : 0) * quantity;
-                totalFat += (food.getFat() != null ? food.getFat() : 0) * quantity;
-                totalSodium += (food.getSodium() != null ? food.getSodium() : 0) * quantity;
-                totalSugar += (food.getSugar() != null ? food.getSugar() : 0) * quantity;
+                // Calculate exact nutrition values based on quantity
+                totalCalories += food.getCalories();
+                totalCarbs += (food.getCarb() != null ? food.getCarb() : 0);
+                totalProtein += (food.getProtein() != null ? food.getProtein() : 0);
+                totalFat += (food.getFat() != null ? food.getFat() : 0);
+                totalSodium += (food.getSodium() != null ? food.getSodium() : 0);
+                totalSugar += (food.getSugar() != null ? food.getSugar() : 0);
             }
         }
         
@@ -990,9 +998,7 @@ public class MealfoodController extends SwitchSceneController implements Initial
         // selectedDate sẽ được cập nhật tự động thông qua Listener đã thiết lập trong initialize()
     }
     
-    /**
-     * Xử lý sự kiện khi người dùng nhấn nút ngày tiếp theo (▶)
-     */
+
     @FXML
     private void handleNextDate(ActionEvent event) {
         // Lấy ngày hiện tại từ DatePicker và cộng thêm 1 ngày
