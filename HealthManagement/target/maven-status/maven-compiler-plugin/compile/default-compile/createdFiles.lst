@@ -1,4 +1,5 @@
 
+
 com\milkyway\healthmanagement\MealfoodController$NutritionSummary.class
 com\milkyway\pojo\MealFoodPK.class
 com\milkyway\healthmanagement\TargetController.class
@@ -39,7 +40,7 @@ com\milkyway\pojo\Food.class
 com\milkyway\healthmanagement\ExerciseLogController$1.class
 com\milkyway\pojo\NutritionGoal.class
 com\milkyway\healthmanagement\LoginController.class
-=======
+
 com\milkyway\healthmanagement\AdminDashboardController.class
 com\milkyway\pojo\MealFoodPK.class
 com\milkyway\healthmanagement\AddFoodFormController.class
@@ -86,4 +87,6 @@ com\milkyway\healthmanagement\ExerciseLogController.class
 com\milkyway\healthmanagement\AdminDashboardController$2$2.class
 com\milkyway\pojo\Food.class
 com\milkyway\pojo\NutritionGoal.class
+com\milkyway\services\ExerciseService.class
+com\milkyway\healthmanagement\PersonalInforController.class
 
