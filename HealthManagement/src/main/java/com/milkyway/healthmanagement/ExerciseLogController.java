@@ -13,7 +13,10 @@ import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
@@ -24,7 +27,11 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.HBox;
+import javafx.stage.Modality;
+import javafx.stage.Stage;
 import com.milkyway.pojo.User;
+import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -47,7 +54,30 @@ public class ExerciseLogController extends SwitchSceneController implements Init
     @FXML
     private Label txtTotal;
 
+    @FXML
+    private Button prevDateButton;
+
+    @FXML
+    private Button nextDateButton;
+
     private ObservableList<Exerciselog> exerciseData = FXCollections.observableArrayList();
+    
+    /**
+     * Chuyển đổi sang giao diện Hoạt động (Activity Chart)
+     * @throws IOException Nếu có lỗi khi tải FXML
+     */
+    @FXML
+    public void SwitchToActivityChart() throws IOException {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/milkyway/healthmanagement/ActivityChart.fxml"));
+            Parent root = loader.load();
+            Scene scene = btnClose.getScene();
+            scene.setRoot(root);
+        } catch (IOException ex) {
+            Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể chuyển đến giao diện Hoạt động: " + ex.getMessage());
+        }
+    }
 
     private void loadTableView(){
         TableColumn<Exerciselog, String> colName = new TableColumn<>("Mục Tiêu");
@@ -71,9 +101,26 @@ public class ExerciseLogController extends SwitchSceneController implements Init
         TableColumn<Exerciselog, Void> colAction = new TableColumn<>("Hành Động");
         colAction.setPrefWidth(200);
         colAction.setCellFactory(column -> new TableCell<>() {
-            private final Button btn = new Button("Xóa");
+            private final Button btnEdit = new Button("Sửa");
+            private final Button btnDelete = new Button("Xóa");
+            private final HBox buttonsBox = new HBox(5);
+            
             {
-                btn.setOnAction(evt -> {
+                // Xử lý nút sửa
+                btnEdit.setOnAction(evt -> {
+                    Exerciselog log = getTableView().getItems().get(getIndex());
+                    if (log != null) {
+                        try {
+                            openExerciseDetailForEdit(log);
+                        } catch (IOException ex) {
+                            Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+                            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể mở cửa sổ chỉnh sửa: " + ex.getMessage());
+                        }
+                    }
+                });
+                
+                // Xử lý nút xóa
+                btnDelete.setOnAction(evt -> {
                     //cho phép người dùng xóa khi nhấn nút xác nhận
                     Alert alert = new Alert(Alert.AlertType.CONFIRMATION, "Bạn có chắc chắn muốn xóa không?");
                     alert.setTitle("Xác nhận xóa");
@@ -82,22 +129,24 @@ public class ExerciseLogController extends SwitchSceneController implements Init
                     Optional<ButtonType> result = alert.showAndWait();
                     if (result.isPresent() && result.get() == ButtonType.OK) {
                         Exerciselog log = getTableView().getItems().get(getIndex());
-                    if (log != null) {
-                        ExerciseLogService els = new ExerciseLogService();
-                        try {
-                            els.deleteExerciseLog(log.getIdExLog());
-                        } catch (SQLException ex) {
-                            Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+                        if (log != null) {
+                            ExerciseLogService els = new ExerciseLogService();
+                            try {
+                                els.deleteExerciseLog(log.getIdExLog());
+                            } catch (SQLException ex) {
+                                Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                            showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa thành công!");
+                            Date sqlDateFilter = Date.valueOf(dtpDateOfExercise.getValue());
+                            loadData(User.getCurrentUser().getId(), sqlDateFilter);
+                            txtTotal.setText(String.valueOf(exerciseData.stream().mapToDouble(Exerciselog::getEnergyBurn).sum()));
                         }
-                        showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Xóa thành công!");
-                        Date sqlDateFilter = Date.valueOf(dtpDateOfExercise.getValue());
-                        loadData(User.getCurrentUser().getId(), sqlDateFilter);
-                        txtTotal.setText(String.valueOf(exerciseData.stream().mapToDouble(Exerciselog::getEnergyBurn).sum()));
-                    }
-                    } else {
-                        return;
                     }
                 });
+                
+                buttonsBox.getChildren().addAll(btnEdit, btnDelete);
+                // Căn giữa các nút trong cột "Hành động"
+                buttonsBox.setAlignment(javafx.geometry.Pos.CENTER);
             }
 
             @Override
@@ -106,13 +155,48 @@ public class ExerciseLogController extends SwitchSceneController implements Init
                 if (empty) {
                     setGraphic(null);
                 } else {
-                    setGraphic(btn);
+                    setGraphic(buttonsBox);
                 }
             }
         });
         tbExercise.getColumns().clear();
         tbExercise.getColumns().addAll(colName, colTime, colCalories, colAction);
         tbExercise.setItems(exerciseData);
+    }
+
+    /**
+     * Mở cửa sổ ExerciseDetail để chỉnh sửa bản ghi log
+     * @param log Bản ghi log cần chỉnh sửa
+     * @throws IOException Nếu có lỗi khi tải FXML
+     */
+    private void openExerciseDetailForEdit(Exerciselog log) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/milkyway/healthmanagement/ExerciseDetail.fxml"));
+        Parent root = loader.load();
+
+        // Tạo cửa sổ mới (Stage)
+        Stage stage = new Stage();
+        stage.setScene(new Scene(root));
+        stage.setTitle("Chỉnh sửa bài tập");
+
+        // Lấy controller và thiết lập dữ liệu
+        ExerciseDetailController controller = loader.getController();
+        // Thiết lập bài tập
+        controller.setExercise(log.getExerciseId());
+        
+        // Thiết lập dữ liệu chi tiết từ log
+        controller.setExerciseLogData(log);
+
+        // Thiết lập modal (người dùng phải đóng cửa sổ này trước khi quay lại cửa sổ chính)
+        stage.initModality(Modality.APPLICATION_MODAL);
+
+        // Hiển thị cửa sổ và đợi người dùng đóng cửa sổ
+        stage.showAndWait();
+        
+        // Sau khi người dùng đóng cửa sổ, tải lại dữ liệu để hiển thị các thay đổi
+        if (User.getCurrentUser() != null && dtpDateOfExercise.getValue() != null) {
+            Date sqlDateFilter = Date.valueOf(dtpDateOfExercise.getValue());
+            loadData(User.getCurrentUser().getId(), sqlDateFilter);
+        }
     }
 
     private final ExerciseLogService exerciseLogService = new ExerciseLogService();
@@ -126,7 +210,10 @@ public class ExerciseLogController extends SwitchSceneController implements Init
             exerciseData.addAll(logs);
 
             if (logs.isEmpty()) {
-                tbExercise.setPlaceholder(new Label("Không có dữ liệu nào cho ngày " + selectedDate));
+                // Format the date to dd/MM/yyyy
+                java.text.SimpleDateFormat formatter = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                String formattedDate = formatter.format(selectedDate);
+                tbExercise.setPlaceholder(new Label("Không có dữ liệu nào cho ngày " + formattedDate));
                 txtTotal.setText("0");
             } else {
                 System.out.println("Tải dữ liệu thành công cho ngày " + selectedDate);
@@ -137,6 +224,34 @@ public class ExerciseLogController extends SwitchSceneController implements Init
         }
     }
 
+    /**
+     * Xử lý khi người dùng nhấn nút mũi tên trái để chuyển đến ngày trước đó
+     */
+    @FXML
+    private void handlePrevDate() {
+        LocalDate currentDate = dtpDateOfExercise.getValue();
+        if (currentDate != null) {
+            LocalDate previousDay = currentDate.minusDays(1);
+            dtpDateOfExercise.setValue(previousDay);
+        }
+    }
+
+    /**
+     * Xử lý khi người dùng nhấn nút mũi tên phải để chuyển đến ngày tiếp theo
+     */
+    @FXML
+    private void handleNextDate() {
+        LocalDate currentDate = dtpDateOfExercise.getValue();
+        if (currentDate != null) {
+            // Không cho phép chọn ngày trong tương lai
+            LocalDate nextDay = currentDate.plusDays(1);
+            if (!nextDay.isAfter(LocalDate.now())) {
+                dtpDateOfExercise.setValue(nextDay);
+            } else {
+                showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Không thể chọn ngày trong tương lai.");
+            }
+        }
+    }
 
     @Override
     public void initialize(URL url, ResourceBundle rb) {

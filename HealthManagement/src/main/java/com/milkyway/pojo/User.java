@@ -39,6 +39,7 @@ import javax.persistence.TemporalType;
     @NamedQuery(name = "User.findByCurrentWeight", query = "SELECT u FROM User u WHERE u.currentWeight = :currentWeight"),
     @NamedQuery(name = "User.findByAge", query = "SELECT u FROM User u WHERE u.age = :age"),
     @NamedQuery(name = "User.findByHeight", query = "SELECT u FROM User u WHERE u.height = :height"),
+    @NamedQuery(name = "User.findByRole", query = "SELECT u FROM User u WHERE u.role = :role"),
     @NamedQuery(name = "User.findByRegistrationDate", query = "SELECT u FROM User u WHERE u.registrationDate = :registrationDate")})
 public class User implements Serializable {
 
@@ -62,7 +63,8 @@ public class User implements Serializable {
     private String email;
     @Column(name = "gender")
     private String gender;
-    // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
+    @Column(name = "role")
+    private String role;
     @Column(name = "current_weight")
     private BigDecimal currentWeight;
     @Column(name = "age")
@@ -145,6 +147,14 @@ public class User implements Serializable {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 
     public BigDecimal getCurrentWeight() {
@@ -340,6 +350,14 @@ public class User implements Serializable {
         } else {
             return 1.0; // Điều chỉnh cho giới tính nữ
         }
+    }
+    
+    /**
+     * Kiểm tra xem người dùng có quyền admin hay không
+     * @return true nếu người dùng có quyền admin, ngược lại false
+     */
+    public boolean isAdmin() {
+        return "ADMIN".equalsIgnoreCase(this.role);
     }
 
 }

@@ -247,7 +247,7 @@
                                             <children>
                                                 <AnchorPane prefHeight="2.0" prefWidth="896.0">
                                                     <children>
-                                                        <TextField fx:id="txtFind" layoutX="32.0" layoutY="38.0" prefHeight="27.0" prefWidth="790.0" styleClass="search" stylesheets="@style/main.css" text="Tìm Kiếm">
+                                                        <TextField fx:id="txtFind" layoutX="32.0" layoutY="38.0" prefHeight="27.0" prefWidth="790.0" promptText="Tìm Kiếm" styleClass="search" stylesheets="@style/main.css">
                                                             <font>
                                                                 <Font size="13.0" />
                                                             </font>
@@ -264,8 +264,7 @@
                                                         <Label text="Danh Sách Bài Tập" />
                                                     </graphic>
                                                     <styleClass>
-                                                        <String fx:value="nav-btn" />
-                                                        <String fx:value="gradient-bg" />
+                                                        <String fx:value="nav-tab-btn" />
                                                         <String fx:value="shadow" />
                                                     </styleClass>
                                                     <HBox.margin>
@@ -277,9 +276,18 @@
                                                         <Label text="Thông Tin Bài Tập" />
                                                     </graphic>
                                                     <styleClass>
-                                                        <String fx:value="nav-btn" />
+                                                        <String fx:value="nav-tab-btn" />
+                                                        <String fx:value="nav-tab-btn-active" />
                                                         <String fx:value="shadow" />
-                                                        <String fx:value="gradient-bg" />
+                                                    </styleClass>
+                                                </Button>
+                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#SwitchToActivityChart" stylesheets="@style/main.css">
+                                                    <graphic>
+                                                        <Label text="Hoạt động" />
+                                                    </graphic>
+                                                    <styleClass>
+                                                        <String fx:value="nav-tab-btn" />
+                                                        <String fx:value="shadow" />
                                                     </styleClass>
                                                 </Button>
                                             </children>
@@ -298,7 +306,9 @@
                                                                         <Insets left="30.0" />
                                                                     </HBox.margin>
                                                                 </Label>
+                                                                <Button fx:id="prevDateButton" onAction="#handlePrevDate" text="◀" />
                                                                 <DatePicker fx:id="dtpDateOfExercise" />
+                                                                <Button fx:id="nextDateButton" onAction="#handleNextDate" text="▶" />
                                                             </children>
                                                         </HBox>
                                                         <HBox prefHeight="269.0" prefWidth="896.0">

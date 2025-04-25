@@ -165,7 +165,28 @@ public class SwitchSceneController {
         alert.showAndWait();
     }
 
-    
+    public void switchToScene(String fxmlPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        root = loader.load();
+        
+        // Nếu stage chưa được khởi tạo, lấy từ scene hiện tại
+        if (stage == null && username != null) {
+            stage = (Stage) username.getScene().getWindow();
+        } else if (stage == null && logout_btn != null) {
+            stage = (Stage) logout_btn.getScene().getWindow();
+        }
+        
+        if (stage != null) {
+            stage.setTitle("Health Management System");
+            Image icon = new Image(getClass().getResourceAsStream("/com/milkyway/healthmanagement/image/image.jpg"));
+            stage.getIcons().add(icon);
+            stage.setResizable(false);
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
+    }
+
     public void closeWindow(Button btnCancel) {
         Stage stage = (Stage) btnCancel.getScene().getWindow();
         stage.close();

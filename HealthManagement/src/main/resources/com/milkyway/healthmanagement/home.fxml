@@ -122,7 +122,7 @@
                                                 <String fx:value="shadow" />
                                             </styleClass>
                                             <children>
-                                                <TableView layoutX="51.0" layoutY="14.0" prefHeight="254.4" prefWidth="867.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+                                                <TableView fx:id="tbMeal" layoutX="51.0" layoutY="14.0" prefHeight="254.4" prefWidth="867.2" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
                                                     <columns>
                                                         <TableColumn prefWidth="111.19996356964111" text="Bữa Ăn" />
                                                         <TableColumn prefWidth="288.80003356933594" text="Chi Tiết Bữa Ăn" />

@@ -35,8 +35,7 @@ public class MealService {
             String dateStr = dateFormat.format(date);
             
             System.out.println("Searching meals for user ID: " + userId + " on date: " + dateStr);
-            
-            // Query to get meals for user and date - using actual column names from database schema
+
             String sql = "SELECT idMeal, nameMeal, totalCalories, dateOfMeal " +
                         "FROM meal " +
                         "WHERE userId = ? AND DATE(dateOfMeal) = ?";
@@ -60,7 +59,8 @@ public class MealService {
                     meal.setTotalCalories(rs.getDouble("totalCalories"));
                     meal.setDateOfMeal(rs.getTimestamp("dateOfMeal"));
                     
-                    System.out.println("Found meal: ID=" + meal.getIdMeal() + ", Name=" + meal.getNameMeal());
+                    System.out.println("Found meal: ID=" + meal.getIdMeal() + ", Name=" + meal.getNameMeal() + 
+                                      ", Date=" + dateFormat.format(meal.getDateOfMeal()));
                     
                     // Set user ID
                     User user = new User();
@@ -536,6 +536,65 @@ public class MealService {
             System.err.println("Error in getFoodById: " + e.getMessage());
             e.printStackTrace();
             throw new SQLException("Error retrieving food: " + e.getMessage(), e);
+        }
+    }
+
+    public List<Meal> getMealsByUserAndToday(int userId, Date date) throws SQLException {
+        List<Meal> meals = new ArrayList<>();
+        
+        try {
+            // Format the date to SQL date format
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            String dateStr = dateFormat.format(date);
+            
+            System.out.println("Searching meals for user ID: " + userId + " on date: " + dateStr);
+            
+            // Query to get ALL meals for user UP TO the specified date - using <= instead of =
+            String sql = "SELECT idMeal, nameMeal, totalCalories, dateOfMeal " +
+                        "FROM meal " +
+                        "WHERE userId = ? AND DATE(dateOfMeal) <= ?";
+            
+            System.out.println("SQL query: " + sql);
+            
+            try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                stmt.setInt(1, userId);
+                stmt.setString(2, dateStr);
+                
+                System.out.println("Executing query with parameters: userId=" + userId + ", date=" + dateStr);
+                
+                ResultSet rs = stmt.executeQuery();
+                int count = 0;
+                
+                while (rs.next()) {
+                    count++;
+                    Meal meal = new Meal();
+                    meal.setIdMeal(rs.getInt("idMeal"));
+                    meal.setNameMeal(rs.getString("nameMeal"));
+                    meal.setTotalCalories(rs.getDouble("totalCalories"));
+                    meal.setDateOfMeal(rs.getTimestamp("dateOfMeal"));
+                    
+                    System.out.println("Found meal: ID=" + meal.getIdMeal() + ", Name=" + meal.getNameMeal() + 
+                                      ", Date=" + dateFormat.format(meal.getDateOfMeal()));
+                    
+                    // Set user ID
+                    User user = new User();
+                    user.setId(userId);
+                    meal.setUserId(user);
+                    
+                    // Load food items for this meal
+                    loadMealFoods(meal);
+                    
+                    meals.add(meal);
+                }
+                
+                System.out.println("Total meals found: " + count);
+            }
+            
+            return meals;
+        } catch (Exception e) {
+            System.err.println("Error in getMealsByUserAndDate: " + e.getMessage());
+            e.printStackTrace();
+            throw new SQLException("Error retrieving meals: " + e.getMessage(), e);
         }
     }
 }
