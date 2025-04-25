@@ -18,10 +18,53 @@ import java.sql.Statement;
  * @author Admin
  */
 public class LoginService {
+    
+    // Kết nối CSDL được truyền từ bên ngoài cho kiểm thử
+    private final Connection testConn;
+    
+    /**
+     * Constructor mặc định sử dụng kết nối từ JdbcUtils
+     */
+    public LoginService() {
+        this.testConn = null;
+    }
+    
+    /**
+     * Constructor nhận kết nối từ bên ngoài, chủ yếu dùng cho kiểm thử
+     * 
+     * @param conn Kết nối cơ sở dữ liệu
+     */
+    public LoginService(Connection conn) {
+        this.testConn = conn;
+    }
+    
+    /**
+     * Lấy kết nối dựa trên ngữ cảnh
+     * Nếu đang trong môi trường kiểm thử thì sử dụng kết nối được truyền vào
+     * Nếu không thì lấy kết nối mới từ JdbcUtils
+     * 
+     * @return Kết nối CSDL
+     * @throws SQLException nếu không thể tạo kết nối
+     */
+    private Connection getConnection() throws SQLException {
+        return testConn != null ? testConn : JdbcUtils.getConn();
+    }
 
     public User login(String username, String password) throws SQLException {
-        String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE username = ? AND password = ?";
+
+        String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date FROM user WHERE username = ? AND password = ?";
+
         try (Connection conn = JdbcUtils.getConn(); PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+        String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE username = ? AND password = ?";
+        // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
+        Connection conn = getConnection();
+        if (conn == null) {
+            return null;
+        }
+        
+        try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -41,23 +84,35 @@ public class LoginService {
                 user.setRole(rs.getString("role"));
                 return user;
             }
+        } finally {
+            // Chỉ đóng kết nối nếu không phải là kết nối kiểm thử
+            if (testConn == null && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         return null;
     }
 
-    public void register(User user) throws SQLException {
-        try (Connection con = JdbcUtils.getConn()) {
-            if (con == null) {
-                return;
-            }
 
-            if (user.getId() > 0) { // Update
+        // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
+        Connection conn = getConnection();
+        if (conn == null) {
+            return;
+        }
+        
+        try {
+            if (user.getId() != null && user.getId() > 0) { // Update - fixed null check
                 String query = "UPDATE user SET username=?, password=?, email=?, gender=?, current_weight=?, age=?, height=?, registration_date=?, role=? WHERE id=?";
-                try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
+                try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
+
                     preparedStatement.setBigDecimal(5, user.getCurrentWeight());
                     preparedStatement.setInt(6, user.getAge());
                     preparedStatement.setInt(7, user.getHeight());
@@ -69,15 +124,85 @@ public class LoginService {
             } else { // Create
                 String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = con.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
+                    
+                    // Handle null current_weight
+                    if (user.getCurrentWeight() != null) {
+                        preparedStatement.setBigDecimal(5, user.getCurrentWeight());
+                    } else {
+                        preparedStatement.setNull(5, java.sql.Types.DECIMAL);
+                    }
+                    
+                    // Handle null age
+                    if (user.getAge() != null) {
+                        preparedStatement.setInt(6, user.getAge());
+                    } else {
+                        preparedStatement.setNull(6, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null height
+                    if (user.getHeight() != null) {
+                        preparedStatement.setInt(7, user.getHeight());
+                    } else {
+                        preparedStatement.setNull(7, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null registration date
+                    if (user.getRegistrationDate() != null) {
+                        preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+                    } else {
+                        preparedStatement.setNull(8, java.sql.Types.DATE);
+                    }
+                    
+                    preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
+                    preparedStatement.setInt(10, user.getId());
+                    preparedStatement.executeUpdate();
+                }
+            } else { // Create
+                String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                try (PreparedStatement preparedStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
+
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
+
                     preparedStatement.setBigDecimal(5, user.getCurrentWeight());
                     preparedStatement.setInt(6, user.getAge());
                     preparedStatement.setInt(7, user.getHeight());
                     preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+
+                    
+                    // Handle null current_weight
+                    if (user.getCurrentWeight() != null) {
+                        preparedStatement.setBigDecimal(5, user.getCurrentWeight());
+                    } else {
+                        preparedStatement.setNull(5, java.sql.Types.DECIMAL);
+                    }
+                    
+                    // Handle null age
+                    if (user.getAge() != null) {
+                        preparedStatement.setInt(6, user.getAge());
+                    } else {
+                        preparedStatement.setNull(6, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null height
+                    if (user.getHeight() != null) {
+                        preparedStatement.setInt(7, user.getHeight());
+                    } else {
+                        preparedStatement.setNull(7, java.sql.Types.INTEGER);
+                    }
+                    
+                    // Handle null registration date
+                    if (user.getRegistrationDate() != null) {
+                        preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
+                    } else {
+                        preparedStatement.setNull(8, java.sql.Types.DATE);
+                    }
+                    
                     preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
+
                     preparedStatement.executeUpdate();
 
                     try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -87,18 +212,27 @@ public class LoginService {
                     }
                 }
             }
+        } finally {
+            // Chỉ đóng kết nối nếu không phải là kết nối kiểm thử
+            if (testConn == null && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     public User getUserByUsername(String username) throws SQLException {
-        Connection con = JdbcUtils.getConn();
-        if (con == null) {
+        // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
+        Connection conn = getConnection();
+        if (conn == null) {
             return null;
         }
 
         String query = "SELECT * FROM user WHERE username=?;";
-        try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
-
+        try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
             preparedStatement.setString(1, username);
             ResultSet resultSet = preparedStatement.executeQuery();
             if (resultSet.next()) {
@@ -115,14 +249,16 @@ public class LoginService {
                 user.setRole(resultSet.getString("role"));
                 return user;
             }
-
         } catch (SQLException se) {
             se.printStackTrace();
         } finally {
-            try {
-                con.close();
-            } catch (SQLException se) {
-                se.printStackTrace();
+            // Chỉ đóng kết nối nếu không phải là kết nối kiểm thử
+            if (testConn == null && conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
 

@@ -1,5 +1,6 @@
 package com.milkyway.services;
 
+import com.milkyway.healthmanagement.SwitchSceneController;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Target;
 import com.milkyway.pojo.User;
@@ -27,15 +28,8 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 
-public class TargetService {
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+public class TargetService extends SwitchSceneController {
+ 
 
     public boolean isPlanExist(String planName, LocalDate startDate, int userId) throws SQLException {
         String checkPlan = "SELECT COUNT(*) FROM target WHERE targetName = ? AND startDate = ? AND userId = ?";

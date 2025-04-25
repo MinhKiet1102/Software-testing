@@ -23,10 +23,11 @@ public class ExerciseService {
     public List<Exercise> getExercise(String kw) throws SQLException {
         List<Exercise> results = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
-            // Cập nhật SQL để lấy bài tập mặc định (userId IS NULL), bài tập của người dùng hiện tại
-            // và bài tập của người dùng có role là "Admin"
-            StringBuilder sqlBuilder = new StringBuilder("SELECT e.* FROM exercise e LEFT JOIN user u ON e.userId = u.id WHERE (e.userId IS NULL");
-            
+
+            // Cập nhật SQL để chỉ lấy bài tập mặc định (userId IS NULL) hoặc bài tập của người dùng hiện tại
+            StringBuilder sqlBuilder = new StringBuilder("SELECT * FROM exercise WHERE (userId IS NULL");
+
+
             // Nếu có người dùng đăng nhập, thêm điều kiện để lấy bài tập của họ
             if (User.getCurrentUser() != null) {
                 sqlBuilder.append(" OR e.userId = ?");
@@ -40,7 +41,7 @@ public class ExerciseService {
                 sqlBuilder.append(" AND e.exerciseName LIKE CONCAT('%', ?, '%')");
             }
             
-            PreparedStatement stm = conn.prepareCall(sqlBuilder.toString());
+            PreparedStatement stm = conn.prepareStatement(sqlBuilder.toString());
             
             int paramIndex = 1;
             
@@ -71,28 +72,97 @@ public class ExerciseService {
     }
 
     public boolean saveExercise(Exercise exercise) {
-        String sql = "INSERT INTO exercise (exerciseName, caloriesBurnedPerMin, userId) VALUES (?, ?, ?)";
-        try (Connection conn = JdbcUtils.getConn(); PreparedStatement stm = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+        String sql = "INSERT INTO exercise (exerciseName, caloriesBurnedPerMin, imageExercise, userId) VALUES (?, ?, ?, ?)";
+        
+        // Kiểm tra kết nối cơ sở dữ liệu trước
+        Connection conn = null;
+        PreparedStatement stm = null;
+        ResultSet generatedKeys = null;
+        
+        try {
+            conn = JdbcUtils.getConn();
+            if (conn == null) {
+                System.err.println("Không thể kết nối đến cơ sở dữ liệu");
+                return false;
+            }
+            
+            stm = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            
+            // Set exerciseName parameter
             stm.setString(1, exercise.getExerciseName());
+            
+            // Set caloriesBurnedPerMin parameter
             stm.setDouble(2, exercise.getCaloriesBurnedPerMin());
             
-            if (exercise.getUserId() != null) {
-                stm.setInt(3, exercise.getUserId().getId());
+            // Set imageExercise parameter
+            if (exercise.getImageExercise() != null && !exercise.getImageExercise().isEmpty()) {
+                stm.setString(3, exercise.getImageExercise());
             } else {
-                stm.setNull(3, java.sql.Types.INTEGER); // Bài tập mặc định
+                stm.setNull(3, java.sql.Types.VARCHAR);
             }
+            
+            // Set userId parameter
+            if (exercise.getUserId() != null) {
+                stm.setInt(4, exercise.getUserId().getId());
+            } else {
+                stm.setNull(4, java.sql.Types.INTEGER); // Bài tập mặc định
+            }
+            
+            // In thông tin SQL và tham số cho mục đích debug
+            System.out.println("SQL thực thi: " + sql);
+            System.out.println("Tham số: exerciseName=" + exercise.getExerciseName() + 
+                             ", caloriesBurnedPerMin=" + exercise.getCaloriesBurnedPerMin() + 
+                             ", imageExercise=" + exercise.getImageExercise() + 
+                             ", userId=" + (exercise.getUserId() != null ? exercise.getUserId().getId() : "NULL"));
 
             int affectedRows = stm.executeUpdate();
+            System.out.println("Số dòng được thêm vào: " + affectedRows);
+            
             if (affectedRows > 0) {
-                try (ResultSet generatedKeys = stm.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        exercise.setIdExercise(generatedKeys.getInt(1));
-                        return true;
+                // Trước tiên, thử lấy ID được tạo thông qua getGeneratedKeys
+                generatedKeys = stm.getGeneratedKeys();
+                if (generatedKeys.next()) {
+                    int id = generatedKeys.getInt(1);
+                    exercise.setIdExercise(id);
+                    System.out.println("Đã lấy được ID tự động: " + id);
+                    return true;
+                } else {
+                    System.out.println("Không thể lấy ID tự động, thử tìm bằng tên bài tập");
+                    
+                    // Phương án dự phòng: Tìm ID dựa trên tên bài tập
+                    String checkSql = "SELECT idExercise FROM exercise WHERE exerciseName = ?";
+                    try (PreparedStatement checkStm = conn.prepareStatement(checkSql)) {
+                        checkStm.setString(1, exercise.getExerciseName());
+                        ResultSet rs = checkStm.executeQuery();
+                        if (rs.next()) {
+                            int id = rs.getInt("idExercise");
+                            exercise.setIdExercise(id);
+                            System.out.println("ID tìm thấy qua truy vấn: " + id);
+                            return true;
+                        } else {
+                            System.out.println("Không tìm thấy bài tập sau khi thêm!");
+                        }
                     }
                 }
+                
+                // Nếu không thể xác định ID nhưng chắc chắn đã thêm bản ghi, vẫn trả về true
+                System.out.println("Đã thêm bản ghi nhưng không lấy được ID");
+                return true;
+            } else {
+                System.out.println("Không thêm được bản ghi vào cơ sở dữ liệu");
             }
         } catch (SQLException ex) {
+            Logger.getLogger(ExerciseService.class.getName()).log(Level.SEVERE, "Lỗi lưu bài tập", ex);
             ex.printStackTrace();
+        } finally {
+            // Đóng các tài nguyên theo thứ tự ngược lại
+            try {
+                if (generatedKeys != null) generatedKeys.close();
+                if (stm != null) stm.close();
+                // Không đóng kết nối ở đây vì có thể tái sử dụng
+            } catch (SQLException e) {
+                System.err.println("Lỗi khi đóng tài nguyên: " + e.getMessage());
+            }
         }
         return false;
     }
