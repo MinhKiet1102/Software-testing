@@ -1351,7 +1351,6 @@ public class AdminDashboardController extends SwitchSceneController implements I
         }
     }
 
-
     @FXML
     private void switchToAdminDashboard() {
         // Đã ở trang dashboard nên không cần làm gì
