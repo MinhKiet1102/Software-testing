@@ -28,9 +28,6 @@ public class ExerciseLogService extends SwitchSceneController {
         if (log == null || log.getExerciseId() == null || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
             return false;
         }
-
-        
-
         
         // Kiểm tra giới hạn thời gian tập luyện trong ngày
         // System.out.println(log.getUserId().getId() + " " + log.getDatetime() + " " + log.getDuration() + " null");
@@ -117,6 +114,11 @@ public class ExerciseLogService extends SwitchSceneController {
         }
     }
 
+    /**
+     * Xóa nhật ký bài tập theo ID
+     * @param logId ID của nhật ký bài tập cần xóa
+     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
+     */
     public void deleteExerciseLog(int logId) throws SQLException {
         String sql = "DELETE FROM exerciselog WHERE idExLog=?";
         Connection connect = null;
@@ -215,7 +217,13 @@ public class ExerciseLogService extends SwitchSceneController {
         return list;
     }
 
-
+    /**
+     * Lấy danh sách nhật ký bài tập của người dùng trong khoảng thời gian
+     * @param userId ID của người dùng cần lấy nhật ký
+     * @param startDate Ngày bắt đầu khoảng thời gian
+     * @param endDate Ngày kết thúc khoảng thời gian
+     * @return Danh sách các nhật ký bài tập trong khoảng thời gian
+     */
     public List<Exerciselog> getExerciseLogsByDateRange(int userId, Date startDate, Date endDate) {
         List<Exerciselog> list = new ArrayList<>();
         Connection connect = null;
@@ -284,7 +292,15 @@ public class ExerciseLogService extends SwitchSceneController {
         return list;
     }
 
-   
+    /**
+     * Kiểm tra xem tổng thời gian tập trong một ngày có vượt quá 24 giờ (1440 phút) hay không
+     * @param userId ID của người dùng
+     * @param date Ngày cần kiểm tra
+     * @param newDuration Thời gian tập mới sẽ thêm vào (phút)
+     * @param excludeLogId ID của log hiện tại (để loại trừ khi cập nhật, null khi thêm mới)
+     * @return true nếu tổng thời gian tập vượt quá 24 giờ, false nếu không
+     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
+     */
     public boolean isExceedingDailyTimeLimit(int userId, Date date, int newDuration, Integer excludeLogId) throws SQLException {
         final int MAX_MINUTES_PER_DAY = 1440; 
         

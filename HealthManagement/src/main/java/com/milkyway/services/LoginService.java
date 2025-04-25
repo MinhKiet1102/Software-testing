@@ -51,7 +51,6 @@ public class LoginService {
     }
 
     public User login(String username, String password) throws SQLException {
-
         String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE username = ? AND password = ?";
         // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
         Connection conn = getConnection();
@@ -60,7 +59,6 @@ public class LoginService {
         }
         
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-
             stmt.setString(1, username);
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
@@ -94,7 +92,6 @@ public class LoginService {
     }
 
     public void register(User user) throws SQLException {
-
         // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
         Connection conn = getConnection();
         if (conn == null) {
@@ -138,16 +135,13 @@ public class LoginService {
                         preparedStatement.setNull(8, java.sql.Types.DATE);
                     }
                     
-
                     preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
                     preparedStatement.setInt(10, user.getId());
                     preparedStatement.executeUpdate();
                 }
             } else { // Create
                 String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
-
                     preparedStatement.setString(1, user.getUsername());
                     preparedStatement.setString(2, user.getPassword());
                     preparedStatement.setString(3, user.getEmail());
@@ -182,7 +176,6 @@ public class LoginService {
                     }
                     
                     preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
-
                     preparedStatement.executeUpdate();
 
                     try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
