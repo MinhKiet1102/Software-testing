@@ -210,7 +210,7 @@ public class MealService {
         }
     }
 
-    public void addFoodToMeal(int mealId, int foodId, int quantity, String unit) throws SQLException {
+    public void addFoodToMeal(int mealId, int foodId, double quantity, String unit) throws SQLException {
         try {
             // First get the food to calculate calories
             Food food = getFoodById(foodId);
@@ -225,7 +225,7 @@ public class MealService {
             try (PreparedStatement stmt = conn.prepareStatement(sqlMealFood)) {
                 stmt.setInt(1, mealId);
                 stmt.setInt(2, foodId);
-                stmt.setInt(3, quantity);
+                stmt.setDouble(3, quantity);
                 stmt.setString(4, unit);
                 
                 stmt.executeUpdate();
@@ -420,7 +420,7 @@ public class MealService {
         }
     }
     
-    public void updateMealFoodComplete(int mealId, int foodId, String foodName, int quantity, String unit,
+    public void updateMealFoodComplete(int mealId, int foodId, String foodName, double quantity, String unit,
                                      double calories, double carb, double protein, double fat, 
                                      double sodium, double sugar) throws SQLException {
         try {
@@ -434,7 +434,7 @@ public class MealService {
                 oldStmt.setInt(2, foodId);
                 try (ResultSet oldRs = oldStmt.executeQuery()) {
                     if (oldRs.next()) {
-                        oldQuantity = oldRs.getInt("quantity");
+                        oldQuantity = oldRs.getDouble("quantity");
                     }
                 }
             }
@@ -477,7 +477,7 @@ public class MealService {
             String updateMealFoodSql = "UPDATE meal_food SET quantity = ?, unit = ? WHERE mealId = ? AND foodId = ?";
             
             try (PreparedStatement updateMealFoodStmt = conn.prepareStatement(updateMealFoodSql)) {
-                updateMealFoodStmt.setInt(1, quantity);
+                updateMealFoodStmt.setDouble(1, quantity);
                 updateMealFoodStmt.setString(2, unit);
                 updateMealFoodStmt.setInt(3, mealId);
                 updateMealFoodStmt.setInt(4, foodId);

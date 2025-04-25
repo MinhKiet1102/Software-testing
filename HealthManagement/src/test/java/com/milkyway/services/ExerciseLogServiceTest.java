@@ -207,9 +207,6 @@ public class ExerciseLogServiceTest {
         field.set(null, null);
     }
     
-    /**
-     * Chèn dữ liệu thử nghiệm
-     */
     private void insertTestData() throws SQLException {
         // Đảm bảo bảng trống trước khi thêm dữ liệu
         try (Statement stmt = h2Connection.createStatement()) {

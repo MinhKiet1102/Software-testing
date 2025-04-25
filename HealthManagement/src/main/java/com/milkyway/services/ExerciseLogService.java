@@ -30,7 +30,7 @@ public class ExerciseLogService extends SwitchSceneController {
         }
         
         // Kiểm tra giới hạn thời gian tập luyện trong ngày
-        System.out.println(log.getUserId().getId() + " " + log.getDatetime() + " " + log.getDuration() + " null");
+        // System.out.println(log.getUserId().getId() + " " + log.getDatetime() + " " + log.getDuration() + " null");
         if (isExceedingDailyTimeLimit(log.getUserId().getId(), log.getDatetime(), log.getDuration(), null)) {
             throw new SQLException("Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ");
         }
@@ -57,7 +57,11 @@ public class ExerciseLogService extends SwitchSceneController {
             Logger.getLogger(ExerciseLogService.class.getName()).log(Level.SEVERE, "Lỗi lưu ExerciseLog", ex);
             throw ex; 
         } finally {
-            if (stm != null) try { stm.close(); } catch (SQLException e) { }
+            if (stm != null) 
+                try {  
+                    stm.close(); 
+                } 
+                catch (SQLException e) { }
             // Không đóng kết nối ở đây để tránh lỗi với các thao tác tiếp theo
         }
     }
