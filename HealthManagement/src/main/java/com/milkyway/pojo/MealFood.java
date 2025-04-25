@@ -37,7 +37,7 @@ public class MealFood implements Serializable {
     private String unit;
     @Basic(optional = false)
     @Column(name = "quantity")
-    private int quantity;
+    private double quantity;
     @JoinColumn(name = "foodId", referencedColumnName = "idFood", insertable = false, updatable = false)
     @ManyToOne(optional = false)
     private Food food;
@@ -52,7 +52,7 @@ public class MealFood implements Serializable {
         this.mealFoodPK = mealFoodPK;
     }
 
-    public MealFood(MealFoodPK mealFoodPK, String unit, int quantity) {
+    public MealFood(MealFoodPK mealFoodPK, String unit, double quantity) {
         this.mealFoodPK = mealFoodPK;
         this.unit = unit;
         this.quantity = quantity;
@@ -78,11 +78,11 @@ public class MealFood implements Serializable {
         this.unit = unit;
     }
 
-    public int getQuantity() {
+    public double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(int quantity) {
+    public void setQuantity(double quantity) {
         this.quantity = quantity;
     }
 

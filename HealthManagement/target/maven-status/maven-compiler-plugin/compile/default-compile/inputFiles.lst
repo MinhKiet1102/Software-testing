@@ -7,12 +7,9 @@ D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\History.jav
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Meal.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Target.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\NutritionGoal.java
-<<<<<<< Updated upstream
 
-
-=======
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ActivityChartController.java
->>>>>>> Stashed changes
+
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseDetailController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseLogController.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\PersonalInforController.java
@@ -29,12 +26,8 @@ D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\Exercis
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\NutritionGoalService.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\HistoryService.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\MealFood.java
-<<<<<<< Updated upstream
 
-
-=======
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\AdminDashboardController.java
->>>>>>> Stashed changes
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\App.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Exerciselog.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\AddFoodFormController.java
@@ -43,44 +36,3 @@ D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\TargetS
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\PersonalInforService.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\LoginService.java
 D:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\EditNutritionGoalsController.java
-<<<<<<< Updated upstream
-
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\SwitchSceneController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\MealfoodController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\TargetController.java
-d:\Software-testing\HealthManagement\src\main\java\module-info.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\HomeController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\History.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Meal.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Target.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\NutritionGoal.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ActivityChartController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseDetailController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseLogController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\PersonalInforController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\MealFoodPK.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\FoodItemService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExercisePageController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Food.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Exercise.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\MealService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\LoginController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\JdbcUtils.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\User.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\ExerciseLogService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\ExerciseService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\NutritionGoalService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\HistoryService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\MealFood.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\AdminDashboardController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\App.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\pojo\Exerciselog.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\AddFoodFormController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\ExerciseController.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\TargetService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\PersonalInforService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\services\LoginService.java
-d:\Software-testing\HealthManagement\src\main\java\com\milkyway\healthmanagement\EditNutritionGoalsController.java
-
-=======
->>>>>>> Stashed changes
