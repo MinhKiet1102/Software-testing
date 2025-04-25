@@ -113,12 +113,6 @@ public class ExerciseLogService extends SwitchSceneController {
             // Không đóng kết nối ở đây để tránh lỗi với các thao tác tiếp theo
         }
     }
-
-    /**
-     * Xóa nhật ký bài tập theo ID
-     * @param logId ID của nhật ký bài tập cần xóa
-     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
-     */
     public void deleteExerciseLog(int logId) throws SQLException {
         String sql = "DELETE FROM exerciselog WHERE idExLog=?";
         Connection connect = null;

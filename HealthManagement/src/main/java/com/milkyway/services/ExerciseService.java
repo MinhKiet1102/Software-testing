@@ -23,8 +23,6 @@ public class ExerciseService {
     public List<Exercise> getExercise(String kw) throws SQLException {
         List<Exercise> results = new ArrayList<>();
         try (Connection conn = JdbcUtils.getConn()) {
-            // Cập nhật SQL để lấy bài tập mặc định (userId IS NULL), bài tập của người dùng hiện tại
-            // và bài tập của người dùng có role là "Admin"
             StringBuilder sqlBuilder = new StringBuilder("SELECT e.* FROM exercise e LEFT JOIN user u ON e.userId = u.id WHERE (e.userId IS NULL");            
             // Nếu có người dùng đăng nhập, thêm điều kiện để lấy bài tập của họ
             if (User.getCurrentUser() != null) {
