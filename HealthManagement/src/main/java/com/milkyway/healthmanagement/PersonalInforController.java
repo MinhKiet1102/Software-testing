@@ -134,6 +134,7 @@ public class PersonalInforController extends SwitchSceneController implements In
         newUsername.clear();
         showAlert(Alert.AlertType.INFORMATION, "Thành công", "Thay đổi tên đăng nhập thành công!");
         User.getCurrentUser().setUsername(newusername);
+        displayUsername();
     }
 
     public void handleUpdatePassword(ActionEvent event) throws IOException, SQLException {
