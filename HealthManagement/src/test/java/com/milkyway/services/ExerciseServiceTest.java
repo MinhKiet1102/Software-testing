@@ -592,6 +592,75 @@ public class ExerciseServiceTest {
     }
     
     /**
+     * Kiểm thử phương thức isExerciseInUse khi bài tập đang được sử dụng trong exerciselog
+     */
+    @Test
+    public void testIsExerciseInUseWithUsedExercise() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // ID của bài tập "Chạy bộ" đã được sử dụng trong log (xem insertTestData)
+        int usedExerciseId = 1;
+        
+        // Thêm exerciselog sử dụng bài tập này
+        try (PreparedStatement stmt = h2Connection.prepareStatement(
+                "INSERT INTO exerciselog (idExLog, effortLevel, duration, datetime, energyBurn, userId, exerciseId) VALUES (?, ?, ?, ?, ?, ?, ?)",
+                Statement.RETURN_GENERATED_KEYS)) {
+            
+            stmt.setInt(1, 100);
+            stmt.setString(2, "Cao");
+            stmt.setInt(3, 30);
+            stmt.setDate(4, new java.sql.Date(System.currentTimeMillis()));
+            stmt.setDouble(5, 165.0);
+            stmt.setInt(6, 2); // currentUser.getId()
+            stmt.setInt(7, usedExerciseId);
+            stmt.executeUpdate();
+        }
+        
+        // Gọi phương thức được kiểm thử
+        boolean isInUse = exerciseService.isExerciseInUse(usedExerciseId);
+        
+        // Kiểm tra kết quả
+        assertTrue(isInUse, "Bài tập đã được sử dụng trong exerciselog nên phải trả về true");
+    }
+    
+    /**
+     * Kiểm thử phương thức isExerciseInUse khi bài tập chưa được sử dụng trong exerciselog
+     */
+    @Test
+    public void testIsExerciseInUseWithUnusedExercise() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Xóa tất cả exerciselog liên quan đến bài tập "Bơi lội" (ID = 2) nếu có
+        try (PreparedStatement stmt = h2Connection.prepareStatement("DELETE FROM exerciselog WHERE exerciseId = ?")) {
+            stmt.setInt(1, 2);
+            stmt.executeUpdate();
+        }
+        
+        // Gọi phương thức được kiểm thử
+        boolean isInUse = exerciseService.isExerciseInUse(2);
+        
+        // Kiểm tra kết quả
+        assertFalse(isInUse, "Bài tập chưa được sử dụng trong exerciselog nên phải trả về false");
+    }
+    
+    /**
+     * Kiểm thử phương thức isExerciseInUse với ID bài tập không tồn tại
+     */
+    @Test
+    public void testIsExerciseInUseWithNonExistentExercise() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Gọi phương thức được kiểm thử với ID không tồn tại
+        boolean isInUse = exerciseService.isExerciseInUse(999);
+        
+        // Kiểm tra kết quả - phải trả về false vì ID không tồn tại
+        assertFalse(isInUse, "Bài tập không tồn tại nên phải trả về false");
+    }
+    
+    /**
      * Phương thức hỗ trợ tìm bài tập theo tên trong danh sách
      */
     private Exercise findExerciseByName(List<Exercise> exercises, String name) {

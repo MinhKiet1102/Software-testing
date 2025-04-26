@@ -165,6 +165,36 @@ public class ExerciseService {
         return false;
     }
 
+    /**
+     * Kiểm tra xem một bài tập với tên đã cho đã tồn tại chưa
+     * @param name Tên bài tập cần kiểm tra
+     * @return true nếu bài tập đã tồn tại, false nếu chưa
+     * @throws SQLException nếu có lỗi xảy ra khi truy vấn cơ sở dữ liệu
+     */
+    public boolean exerciseNameExists(String name) throws SQLException {
+        if (name == null || name.trim().isEmpty()) {
+            return false;
+        }
+        
+        String sql = "SELECT COUNT(*) FROM exercise WHERE LOWER(exerciseName) = LOWER(?)";
+        try (Connection conn = JdbcUtils.getConn(); 
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            
+            stm.setString(1, name.trim());
+            ResultSet rs = stm.executeQuery();
+            
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ExerciseService.class.getName()).log(Level.SEVERE, 
+                    "Lỗi kiểm tra tên bài tập tồn tại: " + name, ex);
+            throw ex;
+        }
+        return false;
+    }
+
     public Exercise getExerciseByName(String name) throws SQLException {
         if (name == null || name.trim().isEmpty()) {
             return null;
@@ -190,6 +220,32 @@ public class ExerciseService {
             throw ex;
         }
         return null; // Không tìm thấy
+    }
+
+    /**
+     * Kiểm tra xem một bài tập có đang được sử dụng trong nhật ký bài tập không
+     * @param exerciseId ID của bài tập cần kiểm tra
+     * @return true nếu bài tập đã được sử dụng trong nhật ký, false nếu chưa
+     * @throws SQLException nếu có lỗi xảy ra khi truy vấn cơ sở dữ liệu
+     */
+    public boolean isExerciseInUse(int exerciseId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM exerciselog WHERE exerciseId = ?";
+        try (Connection conn = JdbcUtils.getConn(); 
+             PreparedStatement stm = conn.prepareStatement(sql)) {
+            
+            stm.setInt(1, exerciseId);
+            ResultSet rs = stm.executeQuery();
+            
+            if (rs.next()) {
+                int count = rs.getInt(1);
+                return count > 0;
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(ExerciseService.class.getName()).log(Level.SEVERE, 
+                    "Lỗi kiểm tra bài tập có đang được sử dụng: ID=" + exerciseId, ex);
+            throw ex;
+        }
+        return false;
     }
 
     private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {

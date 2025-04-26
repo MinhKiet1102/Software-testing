@@ -179,6 +179,14 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                 return;
             }
             String exerciseName = txtExercise.getText();
+            
+            // Kiểm tra xem tên bài tập đã tồn tại chưa (khi thêm mới)
+            if (isAddingNew && exerciseService.exerciseNameExists(exerciseName)) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Bài tập với tên \"" + exerciseName + "\" đã tồn tại!\nVui lòng chọn tên khác.");
+                txtExercise.requestFocus();
+                return;
+            }
+            
             // kiểm tra duration có null hay không hoặc có chứa kí tự đặc biệt hay không
             if (txtDuration.getText() == null || txtDuration.getText().isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Thời gian không được để trống!");
@@ -237,6 +245,23 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                 }
                 
                 caloriesPerMinute = Double.parseDouble(txtCaloriesPerMinute.getText());
+                
+                // Kiểm tra lượng calo tiêu thụ có quá lớn không
+                if (caloriesPerMinute > 100) {
+                    // Hiển thị cửa sổ xác nhận nếu giá trị calo quá lớn
+                    Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
+                    confirmAlert.setTitle("Cảnh báo giá trị calo");
+                    confirmAlert.setHeaderText("Giá trị calo có vẻ cao bất thường");
+                    confirmAlert.setContentText("Bạn đã nhập " + caloriesPerMinute + " calo/phút, đây là một giá trị rất cao.\n" +
+                                                "Các hoạt động thông thường tiêu thụ khoảng 3-15 calo/phút.\n\n" +
+                                                "Bạn có chắc chắn muốn sử dụng giá trị này không?");
+                    
+                    Optional<ButtonType> result = confirmAlert.showAndWait();
+                    if (result.isPresent() && result.get() != ButtonType.OK) {
+                        txtCaloriesPerMinute.requestFocus();
+                        return; // Người dùng không xác nhận giá trị cao
+                    }
+                }
 
                 Exercise newExercise = new Exercise();
                 newExercise.setExerciseName(exerciseName);

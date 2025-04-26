@@ -930,6 +930,22 @@ public class TargetController extends SwitchSceneController implements Initializ
                 return;
             }
             
+            // Kiểm tra email người dùng trước khi gửi
+            String email = currentUser.getEmail();
+            if (email == null || email.trim().isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                        "Không thể gửi email nhắc nhở. Bạn chưa cung cấp địa chỉ email trong hồ sơ cá nhân!");
+                return;
+            }
+            
+            // Kiểm tra định dạng email
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            if (!email.matches(emailRegex)) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                        "Không thể gửi email nhắc nhở. Địa chỉ email '" + email + "' không đúng định dạng!");
+                return;
+            }
+            
             boolean emailSent = planService.checkMidCycleProgressAndSendEmail(selectedPlan, currentUser);
             
             if (emailSent) {
@@ -937,7 +953,7 @@ public class TargetController extends SwitchSceneController implements Initializ
                         "Đã gửi email nhắc nhở về mục tiêu đến địa chỉ: " + currentUser.getEmail());
             } else {
                 showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
-                        "Không thể gửi email. Vui lòng kiểm tra lại kết nối mạng hoặc địa chỉ email của bạn!");
+                        "Không thể gửi email. Email của bạn có thể không tồn tại hoặc có lỗi kết nối mạng!");
             }
         } catch (Exception e) {
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi khi gửi email: " + e.getMessage());

@@ -6,12 +6,13 @@ package com.milkyway.services;
 
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
-import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -236,5 +237,50 @@ public class LoginService {
         }
 
         return null;
+    }
+
+    public boolean usernameExists(String username) throws SQLException {
+        if (username == null || username.trim().isEmpty()) {
+            return false;
+        }
+        
+        String sql = "SELECT COUNT(*) FROM user WHERE username = ?";
+        try (Connection conn = JdbcUtils.getConn();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            stmt.setString(1, username.trim());
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1) > 0;
+                }
+            }
+        }
+        
+        return false;
+    }
+
+    /**
+     * Đếm số lượng người dùng có vai trò Admin trong hệ thống
+     * 
+     * @return Số lượng người dùng có vai trò Admin
+     * @throws SQLException Nếu có lỗi khi truy vấn cơ sở dữ liệu
+     */
+    public int countAdminUsers() throws SQLException {
+        String sql = "SELECT COUNT(*) FROM user WHERE role = 'ADMIN'";
+        try (Connection conn = getConnection();
+             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(LoginService.class.getName()).log(Level.SEVERE, 
+                    "Lỗi đếm số người dùng Admin", ex);
+            throw ex;
+        }
+        
+        return 0;
     }
 }
