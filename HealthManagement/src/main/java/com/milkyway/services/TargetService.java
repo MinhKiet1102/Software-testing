@@ -22,6 +22,7 @@ import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javafx.collections.FXCollections;
@@ -258,6 +259,13 @@ public class TargetService extends SwitchSceneController {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.host", "smtp.gmail.com");
         props.put("mail.smtp.port", "587");
+        
+        // Thêm thuộc tính để nhận phản hồi về địa chỉ không tồn tại
+        props.put("mail.smtp.dsn.notify", "FAILURE");
+        props.put("mail.smtp.dsn.ret", "FULL");
+        // Thêm thời gian chờ để kiểm tra lỗi email không tồn tại
+        props.put("mail.smtp.timeout", "10000");
+        props.put("mail.smtp.connectiontimeout", "10000");
 
         Session session = Session.getInstance(props, new Authenticator() {
             @Override
@@ -267,17 +275,47 @@ public class TargetService extends SwitchSceneController {
         });
 
         try {
+            InternetAddress[] addresses = InternetAddress.parse(emailTo);
+            for (InternetAddress address : addresses) {
+                try {
+                    // Kiểm tra định dạng email
+                    address.validate();
+                } catch (AddressException ex) {
+                    System.err.println("Địa chỉ email không hợp lệ: " + ex.getMessage());
+                    return false;
+                }
+            }
+
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(username));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(emailTo));
+            message.setRecipients(Message.RecipientType.TO, addresses);
             message.setSubject(subject);
             message.setText(messageContent);
+            
+            // Thiết lập thông báo nhận khi gửi thất bại
+            message.setHeader("Return-Receipt-To", username);
+            message.setHeader("Disposition-Notification-To", username);
 
-            Transport.send(message);
+            // Thực hiện gửi email với thời gian timeout
+            Transport transport = session.getTransport("smtp");
+            transport.connect("smtp.gmail.com", username, password);
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+            
             System.out.println("Email đã được gửi đến " + emailTo);
             return true;
         } catch (MessagingException e) {
             System.err.println("Lỗi khi gửi email: " + e.getMessage());
+            // Phân tích lỗi để xác định nếu email không tồn tại
+            if (e.getMessage().contains("550") || 
+                e.getMessage().contains("553") || 
+                e.getMessage().contains("address rejected") || 
+                e.getMessage().contains("user not found") || 
+                e.getMessage().contains("unknown user")) {
+                System.err.println("Email không tồn tại hoặc bị từ chối: " + emailTo);
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                        "Email " + emailTo + " có thể không tồn tại hoặc không thể gửi được.");
+            }
             e.printStackTrace();
             return false;
         }
@@ -315,31 +353,45 @@ public class TargetService extends SwitchSceneController {
 
             if (progressPercentage < 50) {
                 String email = user.getEmail();
+                
+                // Kiểm tra email có tồn tại và hợp lệ không
+                if (email == null || email.trim().isEmpty()) {
+                    showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                            "Không thể gửi email. Người dùng chưa cung cấp địa chỉ email.");
+                    return false;
+                }
+                
+                // Kiểm tra định dạng email
+                String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+                if (!email.matches(emailRegex)) {
+                    showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                            "Không thể gửi email. Địa chỉ email '" + email + "' không đúng định dạng.");
+                    return false;
+                }
+                
                 boolean emailSent = false;
                 
-                if (email != null && !email.isEmpty()) {
-                    // Định dạng ngày theo dd/MM/yyyy
-                    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
-                    String formattedStartDate = startDate.format(formatter);
-                    String formattedEndDate = endDate.format(formatter);
-                    String formattedToday = today.format(formatter);
-                    
-                    String subject = "Cảnh báo: Tiến độ mục tiêu thấp";
-                    String content = "Kính gửi " + user.getUsername() + ",\n\n"
-                            + "Hệ thống Health Management nhận thấy mục tiêu \"" + target.getTargetName() 
-                            + "\" của bạn hiện mới đạt " + String.format("%.1f", progressPercentage) + "% ("
-                            + progress + " " + target.getUnit() + " / " + targetNumber + " " + target.getUnit() + "), "
-                            + "trong khi thời gian thực hiện đã trôi qua hơn 50%.\n\n"
-                            + "Thời gian bắt đầu: " + formattedStartDate + "\n"
-                            + "Thời gian kết thúc: " + formattedEndDate + "\n"
-                            + "Thời gian hiện tại: " + formattedToday + "\n\n"
-                            + "Vui lòng đăng nhập vào ứng dụng Health Management để kiểm tra và cập nhật tiến độ "
-                            + "nhằm đảm bảo đạt được mục tiêu đã đề ra.\n\n"
-                            + "Trân trọng,\n"
-                            + "Đội ngũ Health Management";
+                // Định dạng ngày theo dd/MM/yyyy
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String formattedStartDate = startDate.format(formatter);
+                String formattedEndDate = endDate.format(formatter);
+                String formattedToday = today.format(formatter);
+                
+                String subject = "Cảnh báo: Tiến độ mục tiêu thấp";
+                String content = "Kính gửi " + user.getUsername() + ",\n\n"
+                        + "Hệ thống Health Management nhận thấy mục tiêu \"" + target.getTargetName() 
+                        + "\" của bạn hiện mới đạt " + String.format("%.1f", progressPercentage) + "% ("
+                        + progress + " " + target.getUnit() + " / " + targetNumber + " " + target.getUnit() + "), "
+                        + "trong khi thời gian thực hiện đã trôi qua hơn 50%.\n\n"
+                        + "Thời gian bắt đầu: " + formattedStartDate + "\n"
+                        + "Thời gian kết thúc: " + formattedEndDate + "\n"
+                        + "Thời gian hiện tại: " + formattedToday + "\n\n"
+                        + "Vui lòng đăng nhập vào ứng dụng Health Management để kiểm tra và cập nhật tiến độ "
+                        + "nhằm đảm bảo đạt được mục tiêu đã đề ra.\n\n"
+                        + "Trân trọng,\n"
+                        + "Đội ngũ Health Management";
 
-                    emailSent = sendEmail(email, subject, content);
-                }
+                emailSent = sendEmail(email, subject, content);
                 
                 // Không hiển thị cảnh báo khi gửi email thành công
                 return emailSent;

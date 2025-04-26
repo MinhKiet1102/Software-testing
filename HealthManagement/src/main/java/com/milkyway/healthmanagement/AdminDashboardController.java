@@ -1,7 +1,5 @@
 package com.milkyway.healthmanagement;
 
-import com.milkyway.healthmanagement.HomeController;
-import com.milkyway.healthmanagement.SwitchSceneController;
 import com.milkyway.pojo.Exercise;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
@@ -16,7 +14,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,10 +26,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
 import javafx.scene.chart.PieChart;
 import javafx.scene.chart.XYChart;
@@ -41,7 +35,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.Tab;
 import javafx.scene.control.TabPane;
 import javafx.scene.control.TableCell;
 import javafx.scene.control.TableColumn;
@@ -50,7 +43,6 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
-import javafx.stage.StageStyle;
 import javafx.util.Callback;
 
 
@@ -571,6 +563,24 @@ public class AdminDashboardController extends SwitchSceneController implements I
             dialog.setResultConverter(dialogButton -> {
                 if (dialogButton == buttonTypeOk) {
                     try {
+                        // Kiểm tra trường hợp gỡ bỏ quyền admin khỏi tài khoản admin cuối cùng
+                        if ("ADMIN".equals(user.getRole()) && !"ADMIN".equals(cbRole.getValue())) {
+                            try {
+                                int adminCount = loginService.countAdminUsers();
+                                if (adminCount <= 1) {
+                                    showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                                            "Không thể gỡ bỏ quyền Admin của tài khoản Admin cuối cùng");
+                                    return null;
+                                }
+                            } catch (SQLException ex) {
+                                Logger.getLogger(AdminDashboardController.class.getName()).log(Level.SEVERE, 
+                                        "Lỗi kiểm tra số lượng admin", ex);
+                                showAlert(Alert.AlertType.ERROR, "Lỗi", 
+                                        "Không thể kiểm tra số lượng admin: " + ex.getMessage());
+                                return null;
+                            }
+                        }
+
                         user.setUsername(txtUsername.getText());
                         user.setEmail(txtEmail.getText());
                         user.setGender(txtGender.getText());
@@ -610,6 +620,12 @@ public class AdminDashboardController extends SwitchSceneController implements I
      * Xóa người dùng
      */
     private void deleteUser(User user) {
+        // Kiểm tra xem tài khoản có phải là tài khoản đang đăng nhập không
+        if (User.getCurrentUser() != null && User.getCurrentUser().getId() == user.getId()) {
+            showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Không thể xóa tài khoản đang sử dụng");
+            return;
+        }
+        
         Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
         confirmation.setTitle("Xác nhận");
         confirmation.setHeaderText("Xóa người dùng");
@@ -639,6 +655,59 @@ public class AdminDashboardController extends SwitchSceneController implements I
                 Logger.getLogger(AdminDashboardController.class.getName()).log(Level.SEVERE, null, ex);
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xóa người dùng: " + ex.getMessage());
             }
+        }
+    }
+    
+    /**
+     * Xóa bài tập
+     */
+    private void deleteExercise(Exercise exercise) {
+        try {
+            // Kiểm tra xem bài tập đã được sử dụng trong nhật ký bài tập chưa
+            boolean isInUse = exerciseService.isExerciseInUse(exercise.getIdExercise());
+            
+            if (isInUse) {
+                // Nếu đã được sử dụng, hiển thị thông báo và không cho phép xóa
+                showAlert(Alert.AlertType.WARNING, "Không thể xóa", 
+                        "Bài tập \"" + exercise.getExerciseName() + "\" đang được sử dụng trong nhật ký bài tập.\n" + 
+                        "Để đảm bảo tính toàn vẹn dữ liệu, không thể xóa bài tập này.");
+                return;
+            }
+            
+            // Nếu bài tập chưa được sử dụng, hiển thị hộp thoại xác nhận xóa
+            Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
+            confirmation.setTitle("Xác nhận");
+            confirmation.setHeaderText("Xóa bài tập");
+            confirmation.setContentText("Bạn có chắc muốn xóa bài tập " + exercise.getExerciseName() + "?");
+            
+            Optional<ButtonType> result = confirmation.showAndWait();
+            
+            if (result.isPresent() && result.get() == ButtonType.OK) {
+                try {
+                    Connection conn = JdbcUtils.getConn();
+                    String sql = "DELETE FROM exercise WHERE idExercise = ?";
+                    
+                    try (PreparedStatement stmt = conn.prepareStatement(sql)) {
+                        stmt.setInt(1, exercise.getIdExercise());
+                        int rowsAffected = stmt.executeUpdate();
+                        
+                        if (rowsAffected > 0) {
+                            exerciseList.remove(exercise);
+                            tblExercises.refresh();
+                            loadDashboardData(); // Refresh dashboard counts
+                            showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã xóa bài tập thành công");
+                        } else {
+                            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xóa bài tập");
+                        }
+                    }
+                } catch (SQLException ex) {
+                    Logger.getLogger(AdminDashboardController.class.getName()).log(Level.SEVERE, null, ex);
+                    showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xóa bài tập: " + ex.getMessage());
+                }
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(AdminDashboardController.class.getName()).log(Level.SEVERE, null, ex);
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kiểm tra trạng thái sử dụng của bài tập: " + ex.getMessage());
         }
     }
     
@@ -707,6 +776,31 @@ public class AdminDashboardController extends SwitchSceneController implements I
                         // Kiểm tra các trường bắt buộc
                         if (txtUsername.getText().isEmpty() || txtPassword.getText().isEmpty() || txtEmail.getText().isEmpty()) {
                             showAlert(Alert.AlertType.ERROR, "Lỗi", "Tên đăng nhập, mật khẩu và email không được để trống.");
+                            return null;
+                        }
+                        
+                        // Kiểm tra tên người dùng đã tồn tại chưa
+                        try {
+                            if (loginService.usernameExists(txtUsername.getText())) {
+                                showAlert(Alert.AlertType.ERROR, "Lỗi", "Tên đăng nhập \"" + txtUsername.getText() + "\" đã tồn tại.\nVui lòng chọn tên đăng nhập khác.");
+                                return null;
+                            }
+                        } catch (SQLException ex) {
+                            Logger.getLogger(AdminDashboardController.class.getName()).log(Level.SEVERE, "Lỗi kiểm tra tên người dùng", ex);
+                            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể kiểm tra tên đăng nhập: " + ex.getMessage());
+                            return null;
+                        }
+                        
+                        // Kiểm tra độ dài mật khẩu
+                        if (txtPassword.getText().length() < 8) {
+                            showAlert(Alert.AlertType.ERROR, "Lỗi", "Mật khẩu phải có ít nhất 8 ký tự.");
+                            return null;
+                        }
+                        
+                        // Kiểm tra định dạng email
+                        String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+                        if (!txtEmail.getText().matches(emailRegex)) {
+                            showAlert(Alert.AlertType.ERROR, "Lỗi", "Email không đúng định dạng.");
                             return null;
                         }
                         
@@ -780,6 +874,11 @@ public class AdminDashboardController extends SwitchSceneController implements I
         }
         
         tblUsers.setItems(filteredList);
+        
+        // Hiển thị thông báo nếu không tìm thấy kết quả
+        if (filteredList.isEmpty()) {
+            showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Không tìm được \"" + searchText + "\"");
+        }
     }
     
     /**
@@ -948,42 +1047,6 @@ public class AdminDashboardController extends SwitchSceneController implements I
         } catch (Exception e) {
             Logger.getLogger(AdminDashboardController.class.getName()).log(Level.SEVERE, null, e);
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể mở form chỉnh sửa: " + e.getMessage());
-        }
-    }
-    
-    /**
-     * Xóa bài tập
-     */
-    private void deleteExercise(Exercise exercise) {
-        Alert confirmation = new Alert(Alert.AlertType.CONFIRMATION);
-        confirmation.setTitle("Xác nhận");
-        confirmation.setHeaderText("Xóa bài tập");
-        confirmation.setContentText("Bạn có chắc muốn xóa bài tập " + exercise.getExerciseName() + "?");
-        
-        Optional<ButtonType> result = confirmation.showAndWait();
-        
-        if (result.isPresent() && result.get() == ButtonType.OK) {
-            try {
-                Connection conn = JdbcUtils.getConn();
-                String sql = "DELETE FROM exercise WHERE idExercise = ?";
-                
-                try (PreparedStatement stmt = conn.prepareStatement(sql)) {
-                    stmt.setInt(1, exercise.getIdExercise());
-                    int rowsAffected = stmt.executeUpdate();
-                    
-                    if (rowsAffected > 0) {
-                        exerciseList.remove(exercise);
-                        tblExercises.refresh();
-                        loadDashboardData(); // Refresh dashboard counts
-                        showAlert(Alert.AlertType.INFORMATION, "Thành công", "Đã xóa bài tập thành công");
-                    } else {
-                        showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xóa bài tập");
-                    }
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(AdminDashboardController.class.getName()).log(Level.SEVERE, null, ex);
-                showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể xóa bài tập: " + ex.getMessage());
-            }
         }
     }
     
@@ -1188,6 +1251,11 @@ public class AdminDashboardController extends SwitchSceneController implements I
         }
         
         tblExercises.setItems(filteredList);
+        
+        // Hiển thị thông báo nếu không tìm thấy kết quả
+        if (filteredList.isEmpty()) {
+            showAlert(Alert.AlertType.INFORMATION, "Thông báo", "Không tìm được \"" + searchText + "\"");
+        }
     }
     
     /**

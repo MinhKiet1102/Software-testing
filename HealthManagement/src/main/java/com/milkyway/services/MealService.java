@@ -1,8 +1,6 @@
 package com.milkyway.services;
 
-import com.milkyway.healthmanagement.SwitchSceneController;
 import com.milkyway.pojo.Food;
-import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Meal;
 import com.milkyway.pojo.MealFood;
 import com.milkyway.pojo.MealFoodPK;
