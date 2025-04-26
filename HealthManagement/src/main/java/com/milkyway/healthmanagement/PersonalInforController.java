@@ -113,7 +113,10 @@ public class PersonalInforController extends SwitchSceneController implements In
 
     private PersonalInforService personalInforService = new PersonalInforService();
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     public void handleUpdateUserName() throws SQLException {
         int userId = User.getCurrentUser().getId();
         String newusername = newUsername.getText();
