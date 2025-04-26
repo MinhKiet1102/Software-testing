@@ -1,4 +1,3 @@
-
 com\milkyway\healthmanagement\AdminDashboardController.class
 com\milkyway\pojo\MealFoodPK.class
 com\milkyway\healthmanagement\AddFoodFormController.class
@@ -13,6 +12,7 @@ com\milkyway\healthmanagement\App.class
 com\milkyway\pojo\Exerciselog.class
 module-info.class
 com\milkyway\healthmanagement\TargetController$1.class
+com\milkyway\healthmanagement\PersonalInforController$1.class
 com\milkyway\services\NutritionGoalService.class
 com\milkyway\services\HistoryService.class
 com\milkyway\healthmanagement\ExerciseDetailController.class
@@ -39,6 +39,7 @@ com\milkyway\healthmanagement\PersonalInforController$WeightHistoryRow.class
 com\milkyway\pojo\History.class
 com\milkyway\pojo\MealFood.class
 com\milkyway\services\PersonalInforService.class
+com\milkyway\healthmanagement\MealfoodController$2.class
 com\milkyway\healthmanagement\TargetController$2$1.class
 com\milkyway\pojo\Target.class
 com\milkyway\healthmanagement\ExerciseLogController.class
