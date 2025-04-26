@@ -6,8 +6,8 @@ package com.milkyway.healthmanagement;
 
 import com.milkyway.pojo.History;
 import com.milkyway.pojo.User;
-import com.milkyway.service.HistoryService;
-import com.milkyway.service.PersonalInforService;
+import com.milkyway.services.HistoryService;
+import com.milkyway.services.PersonalInforService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -27,6 +27,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
@@ -92,6 +93,12 @@ public class PersonalInforController extends SwitchSceneController implements In
     private Text totalEnteredCalories;
 
     @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnMinimize;
+
+    @FXML
     private TableView<WeightHistoryRow> weightHistoryTable;
 
     @FXML
@@ -109,7 +116,6 @@ public class PersonalInforController extends SwitchSceneController implements In
 
     private PersonalInforService personalInforService = new PersonalInforService();
 
-<<<<<<< Updated upstream
     private void showAlert(Alert.AlertType type, String title, String message) {
         Alert alert = new Alert(type);
         alert.setTitle(title);
@@ -117,9 +123,6 @@ public class PersonalInforController extends SwitchSceneController implements In
         alert.setContentText(message);
         alert.showAndWait();
     }
-
-=======
->>>>>>> Stashed changes
     public void handleUpdateUserName() throws SQLException {
         int userId = User.getCurrentUser().getId();
         String newusername = newUsername.getText();
@@ -274,8 +277,10 @@ public class PersonalInforController extends SwitchSceneController implements In
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         try {
-            displayUsername();
 
+            btnClose.setOnAction(event -> closeWindow(btnClose));
+            btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
+            displayUsername();
             newDateAddWeight.setValue(LocalDate.now());
 
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM/dd/yyyy");

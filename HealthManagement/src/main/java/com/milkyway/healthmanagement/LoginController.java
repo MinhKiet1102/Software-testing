@@ -3,8 +3,8 @@ package com.milkyway.healthmanagement;
 import com.milkyway.pojo.History;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
-import com.milkyway.service.HistoryService;
-import com.milkyway.service.LoginService;
+import com.milkyway.services.HistoryService;
+import com.milkyway.services.LoginService;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
@@ -29,6 +29,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  * FXML Controller class
@@ -107,7 +108,15 @@ public class LoginController implements Initializable {
 
                 si_loginBtn.getScene().getWindow().hide();
 
-                Parent root = FXMLLoader.load(getClass().getResource("home.fxml"));
+                // Kiểm tra vai trò của người dùng và chuyển đến giao diện tương ứng
+                Parent root;
+                if ("ADMIN".equalsIgnoreCase(user.getRole())) {
+                    // Người dùng có vai trò Admin, chuyển đến giao diện Admin
+                    root = FXMLLoader.load(getClass().getResource("AdminDashboard.fxml"));
+                } else {
+                    // Người dùng có vai trò User, chuyển đến giao diện User thông thường
+                    root = FXMLLoader.load(getClass().getResource("home.fxml"));
+                }
 
                 Stage stage = new Stage();
                 stage.setTitle("Health Management System");
@@ -115,6 +124,7 @@ public class LoginController implements Initializable {
                 stage.getIcons().add(icon);
                 stage.setResizable(false);
                 stage.setScene(new Scene(root));
+                stage.initStyle(StageStyle.UNDECORATED);
                 stage.show();
             } else {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Sai tên đăng nhập hoặc mật khẩu!");

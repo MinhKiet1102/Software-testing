@@ -13,6 +13,8 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
@@ -46,8 +48,16 @@ public class Exercise implements Serializable {
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "caloriesBurnedPerMin")
     private double caloriesBurnedPerMin;
+    
+    // Adding the missing exerciseType field needed by AdminDashboardController
+    private String exerciseType;
+    
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "exerciseId")
     private Set<Exerciselog> exerciselogSet;
+    
+    @JoinColumn(name = "userId", referencedColumnName = "id")
+    @ManyToOne
+    private User userId;
 
     public Exercise() {
     }
@@ -102,12 +112,28 @@ public class Exercise implements Serializable {
         this.caloriesBurnedPerMin = caloriesBurnedPerMin;
     }
 
+    public String getExerciseType() {
+        return exerciseType;
+    }
+
+    public void setExerciseType(String exerciseType) {
+        this.exerciseType = exerciseType;
+    }
+
     public Set<Exerciselog> getExerciselogSet() {
         return exerciselogSet;
     }
 
     public void setExerciselogSet(Set<Exerciselog> exerciselogSet) {
         this.exerciselogSet = exerciselogSet;
+    }
+    
+    public User getUserId() {
+        return userId;
+    }
+
+    public void setUserId(User userId) {
+        this.userId = userId;
     }
 
     @Override

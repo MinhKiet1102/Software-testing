@@ -5,23 +5,18 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
-
 import java.io.IOException;
 import javafx.scene.image.Image;
 
-/**
- * JavaFX App
- */
-public class App extends Application {
 
+public class App extends Application {
     private static Scene scene;
 
     @Override
     public void start(Stage stage) throws IOException {
-
-
         scene = new Scene(loadFXML("Login"), 650, 600);
-        stage.setTitle("Health Management System");
+        stage.setAlwaysOnTop(false);
+        stage.setTitle("Health Mangement System");
         Image icon = new Image(getClass().getResourceAsStream("/com/milkyway/healthmanagement/image/image.jpg"));
         stage.getIcons().add(icon);
         stage.setResizable(false);

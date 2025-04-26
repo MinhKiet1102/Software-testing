@@ -102,12 +102,12 @@
                                                 <Font size="14.0" />
                                             </font>
                                         </Label>
-                                        <Button alignment="CENTER" layoutX="1067.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="close" stylesheets="@style/main.css">
+                                        <Button fx:id="btnClose" alignment="CENTER" layoutX="1067.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="close" stylesheets="@style/main.css">
                                             <graphic>
                                                 <FontAwesomeIconView glyphName="CLOSE" />
                                             </graphic>
                                         </Button>
-                                        <Button alignment="CENTER" layoutX="1036.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="minimize" stylesheets="@style/main.css">
+                                        <Button fx:id="btnMinimize" alignment="CENTER" layoutX="1036.0" layoutY="2.0" mnemonicParsing="false" prefHeight="24.0" prefWidth="30.0" styleClass="minimize" stylesheets="@style/main.css">
                                             <graphic>
                                                 <FontAwesomeIconView glyphName="MINUS" />
                                             </graphic>
@@ -263,8 +263,8 @@
                                                         <Label text="Danh Sách Bài Tập" />
                                                     </graphic>
                                                     <styleClass>
-                                                        <String fx:value="nav-btn" />
-                                                        <String fx:value="gradient-bg" />
+                                                        <String fx:value="nav-tab-btn" />
+                                                        <String fx:value="nav-tab-btn-active" />
                                                         <String fx:value="shadow" />
                                                     </styleClass>
                                                     <HBox.margin>
@@ -276,14 +276,22 @@
                                                         <Label text="Thông Tin Bài Tập" />
                                                     </graphic>
                                                     <styleClass>
-                                                        <String fx:value="nav-btn" />
+                                                        <String fx:value="nav-tab-btn" />
                                                         <String fx:value="shadow" />
-                                                        <String fx:value="gradient-bg" />
+                                                    </styleClass>
+                                                </Button>
+                                                <Button layoutX="10.0" layoutY="10.0" mnemonicParsing="false" onAction="#SwitchToActivityChart" stylesheets="@style/main.css">
+                                                    <graphic>
+                                                        <Label text="Hoạt Động" />
+                                                    </graphic>
+                                                    <styleClass>
+                                                        <String fx:value="nav-tab-btn" />
+                                                        <String fx:value="shadow" />
                                                     </styleClass>
                                                 </Button>
                                             </children>
                                         </HBox>
-                                        <HBox prefHeight="411.0" prefWidth="895.0" styleClass="shadow" stylesheets="@style/main.css">
+                                        <HBox fx:id="exerciseListContent" prefHeight="411.0" prefWidth="895.0" styleClass="shadow" stylesheets="@style/main.css">
                                             <children>
                                                 <ScrollPane fx:id="scrollPanel" prefHeight="411.0" prefWidth="894.0">
                                                     <content>

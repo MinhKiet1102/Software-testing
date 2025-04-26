@@ -19,6 +19,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
+import javafx.stage.StageStyle;
 
 /**
  *
@@ -74,6 +75,12 @@ public class SwitchSceneController {
         stage.setResizable(false);
         scene = new Scene(root);
         stage.setScene(scene);
+        
+        // Tránh gọi initStyle khi stage đã hiển thị
+        if (!stage.isShowing()) {
+            stage.initStyle(StageStyle.UNDECORATED);
+        }
+        
         stage.show();
     }
 
@@ -148,6 +155,46 @@ public class SwitchSceneController {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public void showAlert(Alert.AlertType type, String title, String message) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(null);
+        alert.setContentText(message);
+        alert.showAndWait();
+    }
+
+    public void switchToScene(String fxmlPath) throws IOException {
+        FXMLLoader loader = new FXMLLoader(getClass().getResource(fxmlPath));
+        root = loader.load();
+        
+        // Nếu stage chưa được khởi tạo, lấy từ scene hiện tại
+        if (stage == null && username != null) {
+            stage = (Stage) username.getScene().getWindow();
+        } else if (stage == null && logout_btn != null) {
+            stage = (Stage) logout_btn.getScene().getWindow();
+        }
+        
+        if (stage != null) {
+            stage.setTitle("Health Management System");
+            Image icon = new Image(getClass().getResourceAsStream("/com/milkyway/healthmanagement/image/image.jpg"));
+            stage.getIcons().add(icon);
+            stage.setResizable(false);
+            scene = new Scene(root);
+            stage.setScene(scene);
+            stage.show();
+        }
+    }
+
+    public void closeWindow(Button btnCancel) {
+        Stage stage = (Stage) btnCancel.getScene().getWindow();
+        stage.close();
+    }
+    
+    public void minimizeWindow(Button btnMinimize) {
+        Stage stage = (Stage) btnMinimize.getScene().getWindow();
+        stage.setIconified(true);
     }
 
 }

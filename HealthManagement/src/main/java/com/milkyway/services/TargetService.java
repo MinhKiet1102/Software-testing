@@ -1,7 +1,9 @@
-package com.milkyway.service;
+package com.milkyway.services;
 
+import com.milkyway.healthmanagement.SwitchSceneController;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Target;
+import com.milkyway.pojo.User;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -13,19 +15,22 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import javax.mail.Authenticator;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.control.Alert;
 
-public class TargetService {
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
-    }
+public class TargetService extends SwitchSceneController {
+ 
 
     public boolean isPlanExist(String planName, LocalDate startDate, int userId) throws SQLException {
         String checkPlan = "SELECT COUNT(*) FROM target WHERE targetName = ? AND startDate = ? AND userId = ?";
@@ -245,6 +250,156 @@ public class TargetService {
         return statusList;
     }
 
+    private boolean sendEmail(String emailTo, String subject, String messageContent) {
+        final String username = "kiet7784@gmail.com";
+        final String password = "cipm rvrt rhso zhsr";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        
+        // Thêm thuộc tính để nhận phản hồi về địa chỉ không tồn tại
+        props.put("mail.smtp.dsn.notify", "FAILURE");
+        props.put("mail.smtp.dsn.ret", "FULL");
+        // Thêm thời gian chờ để kiểm tra lỗi email không tồn tại
+        props.put("mail.smtp.timeout", "10000");
+        props.put("mail.smtp.connectiontimeout", "10000");
+
+        Session session = Session.getInstance(props, new Authenticator() {
+            @Override
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            InternetAddress[] addresses = InternetAddress.parse(emailTo);
+            for (InternetAddress address : addresses) {
+                try {
+                    // Kiểm tra định dạng email
+                    address.validate();
+                } catch (AddressException ex) {
+                    System.err.println("Địa chỉ email không hợp lệ: " + ex.getMessage());
+                    return false;
+                }
+            }
+
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.setRecipients(Message.RecipientType.TO, addresses);
+            message.setSubject(subject);
+            message.setText(messageContent);
+            
+            // Thiết lập thông báo nhận khi gửi thất bại
+            message.setHeader("Return-Receipt-To", username);
+            message.setHeader("Disposition-Notification-To", username);
+
+            // Thực hiện gửi email với thời gian timeout
+            Transport transport = session.getTransport("smtp");
+            transport.connect("smtp.gmail.com", username, password);
+            transport.sendMessage(message, message.getAllRecipients());
+            transport.close();
+            
+            System.out.println("Email đã được gửi đến " + emailTo);
+            return true;
+        } catch (MessagingException e) {
+            System.err.println("Lỗi khi gửi email: " + e.getMessage());
+            // Phân tích lỗi để xác định nếu email không tồn tại
+            if (e.getMessage().contains("550") || 
+                e.getMessage().contains("553") || 
+                e.getMessage().contains("address rejected") || 
+                e.getMessage().contains("user not found") || 
+                e.getMessage().contains("unknown user")) {
+                System.err.println("Email không tồn tại hoặc bị từ chối: " + emailTo);
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                        "Email " + emailTo + " có thể không tồn tại hoặc không thể gửi được.");
+            }
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    public boolean checkMidCycleProgressAndSendEmail(Target target, User user) {
+        if (target == null || user == null) {
+            return false;
+        }
+
+        String status = target.getStatus();
+        if ("Failed".equals(status) || "Not Started".equals(status) || "Cancelled".equals(status)) {
+            return false;
+        }
+
+        LocalDate startDate;
+        startDate = LocalDate.parse(String.valueOf(target.getStartDate()));
+        LocalDate endDate;
+        endDate = LocalDate.parse(String.valueOf(target.getEndDate()));
+
+        float progress = target.getProgress();
+        float targetNumber = target.getTargetNumber();
+
+        if (startDate == null || endDate == null || targetNumber <= 0) {
+            return false;
+        }
+
+        long totalDays = ChronoUnit.DAYS.between(startDate, endDate);
+        LocalDate midCycleDate = startDate.plusDays(totalDays / 2);
+
+        LocalDate today = LocalDate.now();
+
+        if (!today.isBefore(midCycleDate)) {
+            float progressPercentage = (progress / targetNumber) * 100;
+
+            if (progressPercentage < 50) {
+                String email = user.getEmail();
+                
+                // Kiểm tra email có tồn tại và hợp lệ không
+                if (email == null || email.trim().isEmpty()) {
+                    showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                            "Không thể gửi email. Người dùng chưa cung cấp địa chỉ email.");
+                    return false;
+                }
+                
+                // Kiểm tra định dạng email
+                String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+                if (!email.matches(emailRegex)) {
+                    showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                            "Không thể gửi email. Địa chỉ email '" + email + "' không đúng định dạng.");
+                    return false;
+                }
+                
+                boolean emailSent = false;
+                
+                // Định dạng ngày theo dd/MM/yyyy
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                String formattedStartDate = startDate.format(formatter);
+                String formattedEndDate = endDate.format(formatter);
+                String formattedToday = today.format(formatter);
+                
+                String subject = "Cảnh báo: Tiến độ mục tiêu thấp";
+                String content = "Kính gửi " + user.getUsername() + ",\n\n"
+                        + "Hệ thống Health Management nhận thấy mục tiêu \"" + target.getTargetName() 
+                        + "\" của bạn hiện mới đạt " + String.format("%.1f", progressPercentage) + "% ("
+                        + progress + " " + target.getUnit() + " / " + targetNumber + " " + target.getUnit() + "), "
+                        + "trong khi thời gian thực hiện đã trôi qua hơn 50%.\n\n"
+                        + "Thời gian bắt đầu: " + formattedStartDate + "\n"
+                        + "Thời gian kết thúc: " + formattedEndDate + "\n"
+                        + "Thời gian hiện tại: " + formattedToday + "\n\n"
+                        + "Vui lòng đăng nhập vào ứng dụng Health Management để kiểm tra và cập nhật tiến độ "
+                        + "nhằm đảm bảo đạt được mục tiêu đã đề ra.\n\n"
+                        + "Trân trọng,\n"
+                        + "Đội ngũ Health Management";
+
+                emailSent = sendEmail(email, subject, content);
+                
+                // Không hiển thị cảnh báo khi gửi email thành công
+                return emailSent;
+            }
+        }
+        return false;
+    }
+
     public void checkMidCycleProgress(Target target) {
         if (target == null) {
             return;
@@ -326,5 +481,30 @@ public class TargetService {
         } else {
             return "Not Started";
         }
+    }
+
+    public List<Target> getTargetByUserId(int userId, String status) throws SQLException {
+        List<Target> targets = new ArrayList<>();
+        String sql = "SELECT * FROM target WHERE userId = ? AND status = ?";
+        try (Connection connect = JdbcUtils.getConn(); PreparedStatement prepare = connect.prepareStatement(sql)) {
+            prepare.setInt(1, userId);
+            prepare.setString(2, status);
+            ResultSet result = prepare.executeQuery();
+            while (result.next()) {
+                Target target = new Target(
+                        result.getInt("idTarget"),
+                        result.getString("targetName"),
+                        result.getDate("dateCreated"),
+                        result.getDate("startDate"),
+                        result.getDate("endDate"),
+                        result.getFloat("targetNumber"),
+                        result.getString("unit"),
+                        result.getFloat("progress"),
+                        result.getString("status")
+                );
+                targets.add(target);
+            }
+        }
+        return targets;
     }
 }

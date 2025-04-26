@@ -6,7 +6,7 @@ package com.milkyway.healthmanagement;
 
 import com.milkyway.pojo.Target;
 import com.milkyway.pojo.User;
-import com.milkyway.service.TargetService;
+import com.milkyway.services.TargetService;
 import java.net.URL;
 import java.sql.SQLException;
 import java.time.LocalDate;
@@ -22,6 +22,7 @@ import javafx.application.Platform;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
@@ -78,6 +79,12 @@ public class TargetController extends SwitchSceneController implements Initializ
 
     @FXML
     private TextField myPlans_progress;
+
+    @FXML
+    private Button btnClose;
+
+    @FXML
+    private Button btnMinimize;
 
     @FXML
     private TableColumn<Target, String> myPlans_col_plan;
@@ -211,14 +218,6 @@ public class TargetController extends SwitchSceneController implements Initializ
     private void setupMenuEvents() {
         menu_target_nav_main.setOnAction(event -> showForm(form_target_main, form_target_sub));
         menu_target_nav_sub.setOnAction(event -> showForm(form_target_sub, form_target_main));
-    }
-
-    private void showAlert(Alert.AlertType type, String title, String message) {
-        Alert alert = new Alert(type);
-        alert.setTitle(title);
-        alert.setHeaderText(null);
-        alert.setContentText(message);
-        alert.showAndWait();
     }
 
     private String[] listUnits = {"kg (Kilogam)", "g (Gram)", "km (Kilomet)", "m (Mét)", "cm (Centimet)", "h (Giờ)", "min (Phút)", "calories (Năng lượng tiêu thụ)", "reps (Số lần lặp lại bài tập)"};
@@ -502,14 +501,32 @@ public class TargetController extends SwitchSceneController implements Initializ
         myPlansListData.setAll(myPlansDataList());
 
         myPlans_col_plan.setCellValueFactory(new PropertyValueFactory<>("targetName"));
-        myPlans_col_dateCreated.setCellValueFactory(new PropertyValueFactory<>("dateCreated"));
-        myPlans_col_startDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
-        myPlans_col_endDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        
+        // Định dạng ngày tháng theo dd/MM/yyyy
+        myPlans_col_dateCreated.setCellValueFactory(cellData -> {
+            Target target = cellData.getValue();
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = dateFormat.format(target.getDateCreated());
+            return new SimpleStringProperty(formattedDate);
+        });
+        
+        myPlans_col_startDate.setCellValueFactory(cellData -> {
+            Target target = cellData.getValue();
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = dateFormat.format(target.getStartDate());
+            return new SimpleStringProperty(formattedDate);
+        });
+        
+        myPlans_col_endDate.setCellValueFactory(cellData -> {
+            Target target = cellData.getValue();
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = dateFormat.format(target.getEndDate());
+            return new SimpleStringProperty(formattedDate);
+        });
+        
         myPlans_col_target.setCellValueFactory(new PropertyValueFactory<>("targetNumber"));
         myPlans_col_unit.setCellValueFactory(new PropertyValueFactory<>("unit"));
         myPlans_col_progress.setCellValueFactory(new PropertyValueFactory<>("progress"));
-        myPlans_col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
-
         myPlans_col_status.setCellValueFactory(cellData -> {
             Target target = cellData.getValue();
             String status = planService.calculateStatus(target);
@@ -709,8 +726,22 @@ public class TargetController extends SwitchSceneController implements Initializ
 
         finishedPlans_col_planID.setCellValueFactory(new PropertyValueFactory<>("idTarget"));
         finishedPlans_col_plan.setCellValueFactory(new PropertyValueFactory<>("targetName"));
-        finishedPlans_col_startDate.setCellValueFactory(new PropertyValueFactory<>("startDate"));
-        finishedPlans_col_endDate.setCellValueFactory(new PropertyValueFactory<>("endDate"));
+        
+        // Định dạng ngày tháng theo dd/MM/yyyy
+        finishedPlans_col_startDate.setCellValueFactory(cellData -> {
+            Target target = cellData.getValue();
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = dateFormat.format(target.getStartDate());
+            return new SimpleStringProperty(formattedDate);
+        });
+        
+        finishedPlans_col_endDate.setCellValueFactory(cellData -> {
+            Target target = cellData.getValue();
+            java.text.SimpleDateFormat dateFormat = new java.text.SimpleDateFormat("dd/MM/yyyy");
+            String formattedDate = dateFormat.format(target.getEndDate());
+            return new SimpleStringProperty(formattedDate);
+        });
+        
         finishedPlans_col_status.setCellValueFactory(new PropertyValueFactory<>("status"));
         finishedPlans_col_target.setCellValueFactory(new PropertyValueFactory<>("targetNumber"));
         finishedPlans_col_unit.setCellValueFactory(new PropertyValueFactory<>("unit"));
@@ -796,6 +827,9 @@ public class TargetController extends SwitchSceneController implements Initializ
     public void initialize(URL url, ResourceBundle rb) {
         try {
 
+            btnClose.setOnAction(event -> closeWindow(btnClose));
+            btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
+
             setupMenuEvents();
 
             displayUsername();
@@ -819,9 +853,112 @@ public class TargetController extends SwitchSceneController implements Initializ
             finishedPlansDisplayCP();
 
             finishedPlansDisplayAP();
+            
+            // Thêm dòng này để kiểm tra và gửi email cho các mục tiêu cần cảnh báo
+            scanAndSendEmailForMidCycleTargets();
 
         } catch (SQLException ex) {
             Logger.getLogger(TargetController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    /**
+     * Quét tất cả các mục tiêu của người dùng hiện tại và gửi email cảnh báo
+     * cho các mục tiêu đã qua 50% thời gian nhưng chưa đạt 50% tiến độ
+     */
+    private void scanAndSendEmailForMidCycleTargets() {
+        try {
+            User currentUser = User.getCurrentUser();
+            if (currentUser == null) {
+                return;
+            }
+            
+            // Chỉ lấy các mục tiêu đang thực hiện (In Progress)
+            List<Target> inProgressTargets = planService.getTargetByUserId(currentUser.getId(), "In Progress");
+            
+            int emailsSent = 0;
+            
+            for (Target target : inProgressTargets) {
+                boolean emailSent = planService.checkMidCycleProgressAndSendEmail(target, currentUser);
+                if (emailSent) {
+                    emailsSent++;
+                }
+            }
+            
+            if (emailsSent > 0) {
+                showAlert(Alert.AlertType.INFORMATION, "Thông báo", 
+                        "Đã gửi " + emailsSent + " email cảnh báo cho các mục tiêu cần được quan tâm.");
+            }
+        } catch (SQLException ex) {
+            System.err.println("Lỗi khi quét mục tiêu để gửi email: " + ex.getMessage());
+            ex.printStackTrace();
+        }
+    }
+    
+    /**
+     * Kiểm tra và gửi email cảnh báo cho một mục tiêu cụ thể
+     * 
+     * @param target Mục tiêu cần kiểm tra
+     * @return true nếu email đã được gửi, false nếu không
+     */
+    public boolean checkAndSendEmailForTarget(Target target) {
+        User currentUser = User.getCurrentUser();
+        if (currentUser == null || target == null) {
+            return false;
+        }
+        
+        return planService.checkMidCycleProgressAndSendEmail(target, currentUser);
+    }
+    
+    /**
+     * Gửi email cảnh báo theo yêu cầu của người dùng
+     * 
+     * @param event Sự kiện kích hoạt
+     */
+    @FXML
+    public void handleSendReminderEmail(ActionEvent event) {
+        try {
+            Target selectedPlan = myPlans_tableView.getSelectionModel().getSelectedItem();
+            
+            if (selectedPlan == null) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", "Vui lòng chọn một mục tiêu để gửi nhắc nhở!");
+                return;
+            }
+            
+            User currentUser = User.getCurrentUser();
+            if (currentUser == null) {
+                showAlert(Alert.AlertType.ERROR, "Lỗi", "Không tìm thấy thông tin người dùng hiện tại!");
+                return;
+            }
+            
+            // Kiểm tra email người dùng trước khi gửi
+            String email = currentUser.getEmail();
+            if (email == null || email.trim().isEmpty()) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                        "Không thể gửi email nhắc nhở. Bạn chưa cung cấp địa chỉ email trong hồ sơ cá nhân!");
+                return;
+            }
+            
+            // Kiểm tra định dạng email
+            String emailRegex = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$";
+            if (!email.matches(emailRegex)) {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                        "Không thể gửi email nhắc nhở. Địa chỉ email '" + email + "' không đúng định dạng!");
+                return;
+            }
+            
+            boolean emailSent = planService.checkMidCycleProgressAndSendEmail(selectedPlan, currentUser);
+            
+            if (emailSent) {
+                showAlert(Alert.AlertType.INFORMATION, "Thành công", 
+                        "Đã gửi email nhắc nhở về mục tiêu đến địa chỉ: " + currentUser.getEmail());
+            } else {
+                showAlert(Alert.AlertType.WARNING, "Cảnh báo", 
+                        "Không thể gửi email. Email của bạn có thể không tồn tại hoặc có lỗi kết nối mạng!");
+            }
+        } catch (Exception e) {
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Lỗi khi gửi email: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 

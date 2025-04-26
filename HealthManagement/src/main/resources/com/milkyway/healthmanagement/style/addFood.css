@@ -1,0 +1,89 @@
+/* CSS for addFoodForm */
+
+.root {
+    -fx-background-color: linear-gradient(to bottom right, #f0f8ff, #e6f2ff);
+    -fx-font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.anchor-pane {
+    -fx-background-color: white;
+    -fx-background-radius: 10px;
+    -fx-border-radius: 10px;
+    -fx-border-color: #dcdcdc;
+    -fx-border-width: 1px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 4);
+    -fx-padding: 15px;
+}
+
+.title-label {
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #1bac5a;
+    -fx-padding: 0 0 15px 0;
+}
+
+.form-label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #555555;
+}
+
+.text-field {
+    -fx-background-color: #f8f8f8;
+    -fx-border-color: #e0e0e0;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-padding: 8px;
+    -fx-font-size: 13px;
+}
+
+.text-field:focused {
+    -fx-background-color: white;
+    -fx-border-color: #1bac5a;
+    -fx-effect: dropshadow(three-pass-box, rgba(27, 172, 90, 0.25), 5, 0, 0, 0);
+}
+
+.button {
+    -fx-background-color: #1bac5a;
+    -fx-text-fill: white;
+    -fx-font-size: 14px;
+    -fx-font-weight: bold;
+    -fx-padding: 10px 20px;
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #159c4f;
+}
+
+.button:pressed {
+    -fx-background-color: #108040;
+}
+
+.cancel-button {
+    -fx-background-color: #e74c3c;
+}
+
+.cancel-button:hover {
+    -fx-background-color: #c0392b;
+}
+
+.cancel-button:pressed {
+    -fx-background-color: #a93226;
+}
+
+.form-container {
+    -fx-spacing: 15px;
+}
+
+.form-row {
+    -fx-alignment: center-left;
+    -fx-spacing: 10px;
+}
+
+.buttons-container {
+    -fx-alignment: center;
+    -fx-spacing: 20px;
+    -fx-padding: 20px 0 0 0;
+}

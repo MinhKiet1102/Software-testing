@@ -61,9 +61,39 @@
 }
 
 .gradient-bg{
-        -fx-background-color: linear-gradient(to bottom right, #449d6b, #328958);
+    -fx-background-color: linear-gradient(to bottom right, #449d6b, #328958);
 }
 
+/* CSS cho nút */
+.border {
+    -fx-background-color: #449d6b;
+    -fx-border-color: #1bac5a;
+    -fx-border-width: 1px;
+    -fx-border-radius: 5px;
+    -fx-background-radius: 5px;
+    -fx-text-fill: white;
+    -fx-cursor: hand;
+    -fx-font-weight: bold;
+    -fx-padding: 5px 10px;
+    -fx-min-width: 80px;
+    -fx-min-height: 30px;
+}
+
+.border:hover {
+    -fx-background-color: #328958;
+}
+
+.button-label {
+    -fx-text-fill: white;
+    -fx-font-weight: bold;
+}
+
+.button-container {
+    -fx-background-color: transparent;
+    -fx-padding: 10px;
+}
+
+/* Style cho table view */
 .table-view{
     -fx-background-color: transparent;
     -fx-padding: 0px;
@@ -105,8 +135,40 @@
     -fx-border-width: 2px;
 }
 
-.border {
-    -fx-border-color: #000;
-    -fx-border-width: 0.5px;
-    -fx-border-radius: 4px;
+/* Custom styles for the navigation tabs buttons in Exercise pages */
+.nav-tab-btn {
+    -fx-background-color: linear-gradient(to bottom right, #449d6b, #328958);
+    -fx-background-radius: 5px;
+    -fx-cursor: hand;
+    -fx-font-family: "Arial";
+    -fx-font-weight: bold;
+    -fx-font-size: 14px;
+    -fx-text-fill: white;
+    -fx-padding: 8px 15px;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.3), 3, 0, 0, 2);
+    -fx-transition: all 0.3s ease;
+}
+
+.nav-tab-btn:hover {
+    -fx-background-color: linear-gradient(to bottom right, #3a8a5a, #277747);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 5, 0, 0, 3);
+    -fx-scale-x: 1.03;
+    -fx-scale-y: 1.03;
+}
+
+.nav-tab-btn:pressed {
+    -fx-background-color: linear-gradient(to bottom right, #277747, #1e5d36);
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.4), 2, 0, 0, 1);
+    -fx-scale-x: 0.98;
+    -fx-scale-y: 0.98;
+}
+
+.nav-tab-btn-active {
+    -fx-background-color: linear-gradient(to bottom right, #1bac5a, #0d8a41);
+    -fx-background-radius: 5px;
+    -fx-border-color: #ffffff;
+    -fx-border-width: 2px;
+    -fx-border-radius: 5px;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.5), 5, 0, 0, 3);
 }

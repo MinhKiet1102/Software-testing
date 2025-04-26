@@ -8,8 +8,13 @@ module com.milkyway.healthmanagement {
     requires spring.security.crypto;
     
     requires de.jensd.fx.glyphs.fontawesome;
+    
+    // Thêm requires cho JavaMail API
+    requires java.mail;
+    requires activation;
+    
     opens com.milkyway.healthmanagement to javafx.fxml;
     exports com.milkyway.healthmanagement;
-    exports com.milkyway.service;
+    exports com.milkyway.services;
     exports com.milkyway.pojo;
 }
