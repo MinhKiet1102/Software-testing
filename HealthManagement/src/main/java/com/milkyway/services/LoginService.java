@@ -6,19 +6,27 @@ package com.milkyway.services;
 
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
+
+import java.math.BigDecimal;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 
 /**
  *
  * @author Admin
  */
 public class LoginService {
+
     
     // Kết nối CSDL được truyền từ bên ngoài cho kiểm thử
     private final Connection testConn;
@@ -29,46 +37,40 @@ public class LoginService {
     public LoginService() {
         this.testConn = null;
     }
-    
-    /**
-     * Constructor nhận kết nối từ bên ngoài, chủ yếu dùng cho kiểm thử
-     * 
-     * @param conn Kết nối cơ sở dữ liệu
-     */
+
     public LoginService(Connection conn) {
         this.testConn = conn;
     }
-    
-    /**
-     * Lấy kết nối dựa trên ngữ cảnh
-     * Nếu đang trong môi trường kiểm thử thì sử dụng kết nối được truyền vào
-     * Nếu không thì lấy kết nối mới từ JdbcUtils
-     * 
-     * @return Kết nối CSDL
-     * @throws SQLException nếu không thể tạo kết nối
-     */
+  
     private Connection getConnection() throws SQLException {
         return testConn != null ? testConn : JdbcUtils.getConn();
     }
 
     public User login(String username, String password) throws SQLException {
-        String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE username = ? AND password = ?";
-        // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
+        String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE BINARY username = ?";
+
         Connection conn = getConnection();
         if (conn == null) {
             return null;
         }
-        
+
         try (PreparedStatement stmt = conn.prepareStatement(sql)) {
             stmt.setString(1, username);
-            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
 
             if (rs.next()) {
+                String hashedPassword = rs.getString("password");
+
+                // So sánh mật khẩu nhập vào với mật khẩu đã hash
+                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                if (!passwordEncoder.matches(password, hashedPassword)) {
+                    return null; // Sai mật khẩu
+                }
+
                 User user = new User(
                         rs.getInt("id"),
                         rs.getString("username"),
-                        rs.getString("password"),
+                        hashedPassword, // giữ hashed password trong user object
                         rs.getString("email"),
                         rs.getString("gender"),
                         rs.getBigDecimal("current_weight"),
@@ -80,7 +82,6 @@ public class LoginService {
                 return user;
             }
         } finally {
-            // Chỉ đóng kết nối nếu không phải là kết nối kiểm thử
             if (testConn == null && conn != null) {
                 try {
                     conn.close();
@@ -98,44 +99,47 @@ public class LoginService {
         if (conn == null) {
             return;
         }
-        
+
         try {
             if (user.getId() != null && user.getId() > 0) { // Update - fixed null check
                 String query = "UPDATE user SET username=?, password=?, email=?, gender=?, current_weight=?, age=?, height=?, registration_date=?, role=? WHERE id=?";
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query)) {
                     preparedStatement.setString(1, user.getUsername());
-                    preparedStatement.setString(2, user.getPassword());
+                    String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+                    preparedStatement.setString(2, hashedPassword);
+
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
-                    
+
+
                     // Handle null current_weight
                     if (user.getCurrentWeight() != null) {
                         preparedStatement.setBigDecimal(5, user.getCurrentWeight());
                     } else {
                         preparedStatement.setNull(5, java.sql.Types.DECIMAL);
                     }
-                    
+
                     // Handle null age
                     if (user.getAge() != null) {
                         preparedStatement.setInt(6, user.getAge());
                     } else {
                         preparedStatement.setNull(6, java.sql.Types.INTEGER);
                     }
-                    
+
                     // Handle null height
                     if (user.getHeight() != null) {
                         preparedStatement.setInt(7, user.getHeight());
                     } else {
                         preparedStatement.setNull(7, java.sql.Types.INTEGER);
                     }
-                    
+
                     // Handle null registration date
                     if (user.getRegistrationDate() != null) {
                         preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
                     } else {
                         preparedStatement.setNull(8, java.sql.Types.DATE);
                     }
-                    
+
                     preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
                     preparedStatement.setInt(10, user.getId());
                     preparedStatement.executeUpdate();
@@ -144,38 +148,41 @@ public class LoginService {
                 String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                     preparedStatement.setString(1, user.getUsername());
-                    preparedStatement.setString(2, user.getPassword());
+
+                    String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
+                    preparedStatement.setString(2, hashedPassword);
+
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
-                    
+
                     // Handle null current_weight
                     if (user.getCurrentWeight() != null) {
                         preparedStatement.setBigDecimal(5, user.getCurrentWeight());
                     } else {
                         preparedStatement.setNull(5, java.sql.Types.DECIMAL);
                     }
-                    
+
                     // Handle null age
                     if (user.getAge() != null) {
                         preparedStatement.setInt(6, user.getAge());
                     } else {
                         preparedStatement.setNull(6, java.sql.Types.INTEGER);
                     }
-                    
+
                     // Handle null height
                     if (user.getHeight() != null) {
                         preparedStatement.setInt(7, user.getHeight());
                     } else {
                         preparedStatement.setNull(7, java.sql.Types.INTEGER);
                     }
-                    
+
                     // Handle null registration date
                     if (user.getRegistrationDate() != null) {
                         preparedStatement.setDate(8, new java.sql.Date(user.getRegistrationDate().getTime()));
                     } else {
                         preparedStatement.setNull(8, java.sql.Types.DATE);
                     }
-                    
+
                     preparedStatement.setString(9, user.getRole() != null ? user.getRole() : "USER");
                     preparedStatement.executeUpdate();
 
@@ -283,4 +290,5 @@ public class LoginService {
         
         return 0;
     }
+
 }
