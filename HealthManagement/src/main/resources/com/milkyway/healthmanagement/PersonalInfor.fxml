@@ -200,41 +200,37 @@
                                         <AnchorPane prefHeight="555.0" prefWidth="569.0" stylesheets="@style/personalinfor.css">
                                             <children>
                                                 <Line endY="413.0" layoutX="11.0" layoutY="142.0" startY="-142.0" />
-                                                <Text layoutX="84.0" layoutY="181.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="BMI Hiện tại" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
-                                                <Text fx:id="CurrentBMI" layoutX="149.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
-                                                <Text layoutX="226.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cân nặng hiện tại" textAlignment="CENTER" wrappingWidth="67.01513838768005" />
-                                                <Text fx:id="CurrentWeight" layoutX="299.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
-                                                <Text layoutX="63.0" layoutY="311.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Tốt hơn hết bạn nên" wrappingWidth="141.01513671875" />
-                                                <Text fx:id="ChangeRecommendation" layoutX="184.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="107.01513671875" />
-                                                <Text fx:id="WeightChange" layoutX="256.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="60.01513671875" />
-                                                <Text layoutX="304.0" layoutY="312.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="KG so với cân nặng của bạn" wrappingWidth="209.01513671875" />
-                                                <Text layoutX="88.0" layoutY="502.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Bạn đã nạp vào cơ thể" wrappingWidth="173.01513671875" />
-                                                <Text fx:id="CaloriesPerDay" layoutX="337.0" layoutY="502.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="X" wrappingWidth="38.01513835787773" />
-                                                <Text layoutX="375.0" layoutY="502.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="cal mỗi ngày" wrappingWidth="107.01513290405273" />
-                                                <Text layoutX="123.0" layoutY="251.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Trạng thái cân nặng hiện tại của bạn là" wrappingWidth="262.99999552965164" />
-                                                <Text fx:id="WeightStatus" layoutX="382.0" layoutY="251.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="142.01513850688934" />
-                                                <Separator layoutX="196.0" layoutY="210.0" prefWidth="200.0" />
-                                                <Separator layoutX="199.0" layoutY="466.0" prefWidth="200.0" />
-                                                <Separator layoutX="200.0" layoutY="332.0" prefWidth="200.0" />
-                                                <Separator layoutX="198.0" layoutY="272.0" prefWidth="200.0" />
-                                                <Text layoutX="385.0" layoutY="179.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cân nặng lý tưởng" textAlignment="CENTER" wrappingWidth="77.01513838768005" />
-                                                <Text fx:id="OptimalWeight" layoutX="468.0" layoutY="188.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
-                                                <Text layoutX="139.0" layoutY="378.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Bạn đã hấp thụ" wrappingWidth="104.99999552965164" />
-                                                <Text layoutX="281.0" layoutY="379.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cal hôm nay" wrappingWidth="142.01513850688934" />
-                                                <Separator layoutX="202.0" layoutY="400.0" prefWidth="200.0" />
-                                                <Text fx:id="totalEnteredCalories" layoutX="239.0" layoutY="502.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="53.01513835787773" />
-                                                <Text layoutX="289.0" layoutY="501.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="trong " wrappingWidth="46.01513835787773" />
-                                                <Text fx:id="totalEatenCaloriesText" layoutX="243.0" layoutY="379.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="60.01513637602329" />
-                                                <Text layoutX="140.0" layoutY="441.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Bạn đã tiêu thụ" wrappingWidth="105.99999552965164" />
-                                                <Text layoutX="279.0" layoutY="441.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cal hôm nay" wrappingWidth="142.01513850688934" />
-                                                <Text fx:id="totalBurnedCaloriesText" layoutX="235.0" layoutY="442.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="73.01513850688934" />
-                                                <TableView fx:id="weightHistoryTable" layoutX="42.0" layoutY="9.0" prefHeight="150.0" prefWidth="500.0" stylesheets="@style/target.css">
+                                                <Text layoutX="73.0" layoutY="282.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="BMI Hiện tại" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <Text fx:id="CurrentBMI" layoutX="138.0" layoutY="289.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <Text layoutX="215.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cân nặng hiện tại" textAlignment="CENTER" wrappingWidth="67.01513838768005" />
+                                                <Text fx:id="CurrentWeight" layoutX="288.0" layoutY="289.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <Text layoutX="73.0" layoutY="412.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Tốt hơn hết bạn nên" wrappingWidth="141.01513671875" />
+                                                <Text fx:id="ChangeRecommendation" layoutX="190.0" layoutY="413.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="107.01513671875" />
+                                                <Text fx:id="WeightChange" layoutX="267.0" layoutY="413.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="60.01513671875" />
+                                                <Text layoutX="314.0" layoutY="413.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="KG so với cân nặng của bạn" wrappingWidth="209.01513671875" />
+                                                <Text layoutX="108.0" layoutY="484.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Bạn nên nạp vào cơ thể" wrappingWidth="173.01513671875" />
+                                                <Text fx:id="CaloriesPerDay" layoutX="301.0" layoutY="485.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="X" wrappingWidth="38.01513835787773" />
+                                                <Text layoutX="369.0" layoutY="484.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="cal mỗi ngày" wrappingWidth="107.01513290405273" />
+                                                <Text layoutX="112.0" layoutY="352.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Trạng thái cân nặng hiện tại của bạn là" wrappingWidth="262.99999552965164" />
+                                                <Text fx:id="WeightStatus" layoutX="371.0" layoutY="352.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" wrappingWidth="142.01513850688934" />
+                                                <Separator layoutX="206.0" layoutY="311.0" prefWidth="200.0" />
+                                                <Separator layoutX="210.0" layoutY="433.0" prefWidth="200.0" />
+                                                <Separator layoutX="208.0" layoutY="373.0" prefWidth="200.0" />
+                                                <Text layoutX="374.0" layoutY="280.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="Cân nặng lý tưởng" textAlignment="CENTER" wrappingWidth="77.01513838768005" />
+                                                <Text fx:id="OptimalWeight" layoutX="457.0" layoutY="289.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="numbers" text="22" textAlignment="CENTER" wrappingWidth="60.015138387680054" />
+                                                <TableView fx:id="weightHistoryTable" layoutX="42.0" layoutY="58.0" prefHeight="196.0" prefWidth="500.0" stylesheets="@style/target.css">
                                                     <columns>
                                                         <TableColumn fx:id="dateColumn" prefWidth="186.0" text="Ngày" />
                                                         <TableColumn fx:id="weightColumn" minWidth="0.0" prefWidth="154.0" text="Cân nặng" />
                                           <TableColumn fx:id="heightColumn" minWidth="0.0" prefWidth="147.0" text="Chiều cao" />
                                                     </columns>
                                                 </TableView>
+                                    <Text layoutX="167.0" layoutY="520.0" strokeType="OUTSIDE" strokeWidth="0.0" styleClass="texts" text="để có thể giữ được thể trạng tốt nhất" wrappingWidth="250.01513671875" />
+                                    <Label layoutX="121.0" text="Lịch sử &amp; Trạng thái">
+                                       <font>
+                                          <Font size="40.0" />
+                                       </font>
+                                    </Label>
                                             </children>
                                         </AnchorPane>
                                     </children>

@@ -393,7 +393,8 @@ public class TargetController extends SwitchSceneController implements Initializ
         }
     }
 
-    public void myPlansUpdateProgressBtn() {
+    public void myPlansUpdateProgressBtn() throws SQLException {
+        myPlansShowData();
         Target selectedPlan = myPlans_tableView.getSelectionModel().getSelectedItem();
 
         if (selectedPlan == null) {
