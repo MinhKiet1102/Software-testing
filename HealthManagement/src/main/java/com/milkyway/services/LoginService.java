@@ -4,29 +4,22 @@
  */
 package com.milkyway.services;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
-
-import java.math.BigDecimal;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 
 /**
  *
  * @author Admin
  */
 public class LoginService {
-
     
     // Kết nối CSDL được truyền từ bên ngoài cho kiểm thử
     private final Connection testConn;
@@ -37,18 +30,30 @@ public class LoginService {
     public LoginService() {
         this.testConn = null;
     }
-
+    
+    /**
+     * Constructor nhận kết nối từ bên ngoài, chủ yếu dùng cho kiểm thử
+     * 
+     * @param conn Kết nối cơ sở dữ liệu
+     */
     public LoginService(Connection conn) {
         this.testConn = conn;
     }
-  
+    
+    /**
+     * Lấy kết nối dựa trên ngữ cảnh
+     * Nếu đang trong môi trường kiểm thử thì sử dụng kết nối được truyền vào
+     * Nếu không thì lấy kết nối mới từ JdbcUtils
+     * 
+     * @return Kết nối CSDL
+     * @throws SQLException nếu không thể tạo kết nối
+     */
     private Connection getConnection() throws SQLException {
         return testConn != null ? testConn : JdbcUtils.getConn();
     }
 
     public User login(String username, String password) throws SQLException {
         String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE BINARY username = ?";
-
         Connection conn = getConnection();
         if (conn == null) {
             return null;
@@ -111,7 +116,6 @@ public class LoginService {
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
 
-
                     // Handle null current_weight
                     if (user.getCurrentWeight() != null) {
                         preparedStatement.setBigDecimal(5, user.getCurrentWeight());
@@ -148,7 +152,6 @@ public class LoginService {
                 String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                     preparedStatement.setString(1, user.getUsername());
-
                     String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
                     preparedStatement.setString(2, hashedPassword);
 
@@ -203,7 +206,9 @@ public class LoginService {
                 }
             }
         }
-    }
+    }  
+
+
 
     public User getUserByUsername(String username) throws SQLException {
         // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
@@ -290,5 +295,4 @@ public class LoginService {
         
         return 0;
     }
-
 }

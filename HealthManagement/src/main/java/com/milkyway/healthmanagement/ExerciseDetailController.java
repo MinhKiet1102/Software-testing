@@ -71,17 +71,14 @@ public class ExerciseDetailController extends SwitchSceneController implements I
     @Override
     public void initialize(URL url, ResourceBundle rb) {
         txtEffort.getItems().addAll("Nhẹ", "Vừa", "Nặng");
-        //mặc định của dtpDate là ngày hiện tại
         dtpDate.setValue(LocalDate.now());
         caloriesBox.setVisible(false);
 
         btnCancel.setOnAction(event -> handleCancel(event));
         
-        // Thêm sự kiện cho nút minimize và close
         btnMinimize.setOnAction(event -> minimizeWindow(btnMinimize));
         btnClose.setOnAction(event -> closeWindow(btnClose));
 
-        // Khi click vào txtExercise, nếu đang thêm mới thì hiện ô nhập calo
         txtExercise.setOnMouseClicked((MouseEvent event) -> {
             if (isAddingNew) {
                 caloriesBox.setVisible(true);
@@ -131,23 +128,16 @@ public class ExerciseDetailController extends SwitchSceneController implements I
         }
     }
 
-    /**
-     * Thiết lập dữ liệu cho form từ bản ghi log hiện có
-     * @param log Bản ghi log cần chỉnh sửa
-     */
     public void setExerciseLogData(Exerciselog log) {
         if (log != null) {
-            // Lưu ID của log để cập nhật thay vì tạo mới
             this.exerciseLogId = log.getIdExLog();
-            
-            // Thiết lập dữ liệu vào các trường
+
             txtDuration.setText(String.valueOf(log.getDuration()));
             
             if (log.getEffortLevel() != null && !log.getEffortLevel().isEmpty()) {
                 txtEffort.setValue(log.getEffortLevel());
             }
             
-            // Thiết lập ngày
             if (log.getDatetime() != null) {
                 LocalDate localDate = log.getDatetime().toLocalDate();
                 dtpDate.setValue(localDate);
@@ -157,70 +147,55 @@ public class ExerciseDetailController extends SwitchSceneController implements I
 
     @FXML
     private void saveExercise(ActionEvent event) {
-        // Yêu cầu xác nhận trước khi lưu
         if (!showConfirmationDialog("Xác nhận lưu", "Bạn có chắc chắn muốn lưu thông tin này?")) {
-            return; // Người dùng đã hủy bỏ việc lưu
+            return; 
         }
         
         try {
             double caloriesPerMinute = exercise.getCaloriesBurnedPerMin();
-            //kiểm tra exerciseName có chứa kí tự đặc biệt hay không, exerciseName được phép sử dụng tiếng Việt và khoảng trắng
             if (txtExercise.getText().matches(".*[!@#$%^&*()_+={}|;':\",.<>?`~].*")) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Tên bài tập không được chứa kí tự đặc biệt!");
-                // sau khi thông báo lỗi thì cho người dùng nhập lại
                 txtExercise.requestFocus();
                 return;
             }
-            // kiểm tra exerciseName có null hay không hoặc có chứa kí tự đặc biệt hay không
             if (txtExercise.getText() == null || txtExercise.getText().isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Tên bài tập không được để trống!");
-                // sau khi thông báo lỗi thì cho người dùng nhập lại
                 txtExercise.requestFocus();
                 return;
             }
             String exerciseName = txtExercise.getText();
             
-            // Kiểm tra xem tên bài tập đã tồn tại chưa (khi thêm mới)
             if (isAddingNew && exerciseService.exerciseNameExists(exerciseName)) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Bài tập với tên \"" + exerciseName + "\" đã tồn tại!\nVui lòng chọn tên khác.");
                 txtExercise.requestFocus();
                 return;
             }
             
-            // kiểm tra duration có null hay không hoặc có chứa kí tự đặc biệt hay không
             if (txtDuration.getText() == null || txtDuration.getText().isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Thời gian không được để trống!");
-                // sau khi thông báo lỗi thì cho người dùng nhập lại
                 txtDuration.requestFocus();
                 return;
             }
-            // kiểm tra duration có phải là số hay không
             if (!txtDuration.getText().matches("[0-9]+")) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Thời gian phải là số!");
-                // sau khi thông báo lỗi thì cho người dùng nhập lại
                 txtDuration.requestFocus();
                 return;
             }
             int duration = Integer.parseInt(txtDuration.getText());
-            // kiểm tra effortLevel có null hay không hoặc có chứa kí tự đặc biệt hay không
             if (txtEffort.getValue() == null || txtEffort.getValue().isEmpty()) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Mức độ nỗ lực không được để trống!");
-                // sau khi thông báo lỗi thì cho người dùng nhập lại
                 txtEffort.requestFocus();
                 return;
             }
             String effortLevel = txtEffort.getValue();
-            // kiểm tra dtpDate có null hay không hoặc có chứa kí tự đặc biệt hay không
             if (dtpDate.getValue() == null) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Ngày không được để trống!");
-                // sau khi thông báo lỗi thì cho người dùng nhập lại
                 dtpDate.requestFocus();
                 return;
             }
             // chỉ cho chọn ngày trong quá khứ
             if (dtpDate.getValue().isAfter(LocalDate.now())) {
                 showAlert(Alert.AlertType.ERROR, "Lỗi", "Ngày không được chọn trong tương lai!");
-                // sau khi thông báo lỗi thì cho người dùng nhập lại
                 dtpDate.requestFocus();
                 return;
             }
@@ -229,26 +204,20 @@ public class ExerciseDetailController extends SwitchSceneController implements I
 
             // Nếu exercise chưa có ID thì là bài tập mới => thêm vào database
             if (exercise.getIdExercise() == null) {
-                // kiểm tra caloriesPerMinute có null hay không hoặc có chứa kí tự đặc biệt hay không
                 if (txtCaloriesPerMinute.getText() == null || txtCaloriesPerMinute.getText().isEmpty()) {
                     showAlert(Alert.AlertType.ERROR, "Lỗi", "Lượng calo tiêu thụ không được để trống!");
-                    // sau khi thông báo lỗi thì cho người dùng nhập lại
                     txtCaloriesPerMinute.requestFocus();
                     return;
                 }
-                // kiểm tra caloriesPerMinute có phải là số hay không (cho phép nhập số thực)
                 if (!txtCaloriesPerMinute.getText().matches("[0-9]+(\\.[0-9]+)?")) {
                     showAlert(Alert.AlertType.ERROR, "Lỗi", "Lượng calo tiêu thụ phải là số!");
-                    // sau khi thông báo lỗi thì cho người dùng nhập lại
                     txtCaloriesPerMinute.requestFocus();
                     return;
                 }
                 
                 caloriesPerMinute = Double.parseDouble(txtCaloriesPerMinute.getText());
                 
-                // Kiểm tra lượng calo tiêu thụ có quá lớn không
                 if (caloriesPerMinute > 100) {
-                    // Hiển thị cửa sổ xác nhận nếu giá trị calo quá lớn
                     Alert confirmAlert = new Alert(Alert.AlertType.CONFIRMATION);
                     confirmAlert.setTitle("Cảnh báo giá trị calo");
                     confirmAlert.setHeaderText("Giá trị calo có vẻ cao bất thường");
@@ -259,7 +228,7 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                     Optional<ButtonType> result = confirmAlert.showAndWait();
                     if (result.isPresent() && result.get() != ButtonType.OK) {
                         txtCaloriesPerMinute.requestFocus();
-                        return; // Người dùng không xác nhận giá trị cao
+                        return; 
                     }
                 }
 
@@ -267,16 +236,13 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                 newExercise.setExerciseName(exerciseName);
                 newExercise.setCaloriesBurnedPerMin(caloriesPerMinute);
                 newExercise.setImageExercise("");
-                // Thiết lập người dùng hiện tại cho bài tập mới
                 newExercise.setUserId(User.getCurrentUser());
-
                 exerciseService.saveExercise(newExercise);
 
-                // Sau khi thêm thì mình phải lấy lại thông tin (vì ID mới được sinh ra trong DB)
                 Exercise insertedExercise = exerciseService.getExerciseByName(exerciseName);
                 exercise = insertedExercise; // cập nhật lại biến exercise hiện tại
             }
-            //tính toán caloriesBurned và chỉ lấy tối đa 2 chữ số thập phân
+            
             double caloriesBurned = duration * caloriesPerMinute;
             caloriesBurned = Math.round(caloriesBurned * 100.0) / 100.0;
             
@@ -285,7 +251,6 @@ public class ExerciseDetailController extends SwitchSceneController implements I
             
             try {
                 if (exerciseLogId != null) {
-                    // Đang trong chế độ chỉnh sửa - cập nhật bản ghi hiện có
                     Exerciselog exerciseLog = new Exerciselog();
                     exerciseLog.setIdExLog(exerciseLogId);
                     exerciseLog.setDatetime(date);
@@ -295,7 +260,6 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                     exerciseLog.setDuration(duration);
                     exerciseLog.setUserId(User.getCurrentUser());
                     
-                    // Cập nhật bản ghi log cũ
                     logSaved = logService.updateLog(exerciseLog);
                     if (logSaved) {
                         showAlert(Alert.AlertType.INFORMATION, "Thành Công", "Dữ liệu đã được cập nhật thành công!");
@@ -304,7 +268,6 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                         return;
                     }
                 } else {
-                    // Tạo bản ghi mới nếu không phải đang chỉnh sửa
                     Exerciselog exerciseLog = new Exerciselog();
                     exerciseLog.setDatetime(date);
                     exerciseLog.setExerciseId(exercise);
@@ -322,10 +285,8 @@ public class ExerciseDetailController extends SwitchSceneController implements I
                     }
                 }
                 
-                // Đóng cửa sổ sau khi lưu thành công
                 closeWindow(btnCancel);
             } catch (SQLException ex) {
-                // Xử lý ngoại lệ từ kiểm tra thời gian tập vượt quá giới hạn
                 if (ex.getMessage().contains("Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ")) {
                     showAlert(Alert.AlertType.ERROR, "Lỗi Vượt Giới Hạn", 
                             "Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ (1440 phút).\n" +

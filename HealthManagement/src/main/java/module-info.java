@@ -7,12 +7,8 @@ module com.milkyway.healthmanagement {
     requires java.sql;
     
     requires de.jensd.fx.glyphs.fontawesome;
-<<<<<<< Updated upstream
-    
-    // Thêm requires cho JavaMail API
-=======
     requires spring.security.crypto;
->>>>>>> Stashed changes
+
     requires java.mail;
     requires activation;
     

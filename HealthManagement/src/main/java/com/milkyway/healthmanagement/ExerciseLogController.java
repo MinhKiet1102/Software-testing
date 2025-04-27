@@ -62,23 +62,6 @@ public class ExerciseLogController extends SwitchSceneController implements Init
 
     private ObservableList<Exerciselog> exerciseData = FXCollections.observableArrayList();
     
-    /**
-     * Chuyển đổi sang giao diện Hoạt động (Activity Chart)
-     * @throws IOException Nếu có lỗi khi tải FXML
-     */
-    @FXML
-    public void SwitchToActivityChart() throws IOException {
-        try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/milkyway/healthmanagement/ActivityChart.fxml"));
-            Parent root = loader.load();
-            Scene scene = btnClose.getScene();
-            scene.setRoot(root);
-        } catch (IOException ex) {
-            Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
-            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể chuyển đến giao diện Hoạt động: " + ex.getMessage());
-        }
-    }
-
     private void loadTableView(){
         TableColumn<Exerciselog, String> colName = new TableColumn<>("Mục Tiêu");
         colName.setCellValueFactory(cellData -> {
@@ -291,6 +274,19 @@ public class ExerciseLogController extends SwitchSceneController implements Init
             showAlert(Alert.AlertType.WARNING, "Yêu cầu đăng nhập", "Vui lòng đăng nhập để xem lịch sử.");
             tbExercise.setPlaceholder(new Label("Bạn cần đăng nhập để xem dữ liệu."));
             txtTotal.setText("0");
+        }
+    }
+     
+    @FXML
+    public void SwitchToActivityChart() throws IOException {
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/com/milkyway/healthmanagement/ActivityChart.fxml"));
+            Parent root = loader.load();
+            Scene scene = btnClose.getScene();
+            scene.setRoot(root);
+        } catch (IOException ex) {
+            Logger.getLogger(ExerciseLogController.class.getName()).log(Level.SEVERE, null, ex);
+            showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể chuyển đến giao diện Hoạt động: " + ex.getMessage());
         }
     }
 }
