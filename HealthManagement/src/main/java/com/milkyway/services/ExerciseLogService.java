@@ -17,20 +17,12 @@ import java.util.logging.Logger;
 
 
 public class ExerciseLogService extends SwitchSceneController {
-
-    /**
-     * Lưu nhật ký bài tập mới
-     * @param log Đối tượng log cần lưu
-     * @return true nếu lưu thành công, false nếu thất bại
-     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
-     */
     public boolean saveLog(Exerciselog log) throws SQLException {
         if (log == null || log.getExerciseId() == null || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
             return false;
         }
         
         // Kiểm tra giới hạn thời gian tập luyện trong ngày
-        // System.out.println(log.getUserId().getId() + " " + log.getDatetime() + " " + log.getDuration() + " null");
         if (isExceedingDailyTimeLimit(log.getUserId().getId(), log.getDatetime(), log.getDuration(), null)) {
             throw new SQLException("Tổng thời gian tập luyện trong ngày không được vượt quá 24 giờ");
         }
@@ -62,16 +54,9 @@ public class ExerciseLogService extends SwitchSceneController {
                     stm.close(); 
                 } 
                 catch (SQLException e) { }
-            // Không đóng kết nối ở đây để tránh lỗi với các thao tác tiếp theo
         }
     }
 
-    /**
-     * Cập nhật thông tin nhật ký bài tập
-     * @param log Đối tượng log chứa thông tin cần cập nhật
-     * @return true nếu cập nhật thành công, false nếu thất bại
-     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
-     */
     public boolean updateLog(Exerciselog log) throws SQLException {
         if (log == null || log.getIdExLog() == null || log.getExerciseId() == null 
                 || log.getUserId() == null || log.getDatetime() == null || log.getDuration() <= 0) {
@@ -110,15 +95,9 @@ public class ExerciseLogService extends SwitchSceneController {
             throw ex; 
         } finally {
             if (stm != null) try { stm.close(); } catch (SQLException e) { }
-            // Không đóng kết nối ở đây để tránh lỗi với các thao tác tiếp theo
         }
     }
 
-    /**
-     * Xóa nhật ký bài tập theo ID
-     * @param logId ID của nhật ký bài tập cần xóa
-     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
-     */
     public void deleteExerciseLog(int logId) throws SQLException {
         String sql = "DELETE FROM exerciselog WHERE idExLog=?";
         Connection connect = null;
@@ -136,17 +115,9 @@ public class ExerciseLogService extends SwitchSceneController {
             throw ex;
         } finally {
             if (stm != null) try { stm.close(); } catch (SQLException e) { }
-            // Không đóng kết nối ở đây để tránh lỗi với các thao tác tiếp theo
         }
     }
 
-    /**
-     * Lấy danh sách nhật ký bài tập của người dùng theo ngày
-     * @param userId ID của người dùng
-     * @param filterDate Ngày cần lọc (có thể null để lấy tất cả)
-     * @return Danh sách nhật ký bài tập
-     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
-     */
     public List<Exerciselog> getExerciseLogsByUserAndDate(int userId, Date filterDate) throws SQLException {
         List<Exerciselog> list = new ArrayList<>();
         Connection connect = null;
@@ -164,7 +135,6 @@ public class ExerciseLogService extends SwitchSceneController {
 
         boolean hasDateFilter = filterDate != null;
         if (hasDateFilter) {
-            // Hàm DATE() cho MySQL, điều chỉnh nếu dùng CSDL khác
             sqlBuilder.append("AND DATE(el.datetime) = ? ");
         }
         sqlBuilder.append("ORDER BY el.datetime DESC");
@@ -179,7 +149,6 @@ public class ExerciseLogService extends SwitchSceneController {
             stm.setInt(paramIndex++, userId);
 
             if (hasDateFilter) {
-                // Dùng java.sql.Date cho setDate
                 stm.setDate(paramIndex++, new java.sql.Date(filterDate.getTime()));
             }
 
@@ -209,7 +178,6 @@ public class ExerciseLogService extends SwitchSceneController {
                 list.add(log);
             }
         } finally {
-            // Đóng tài nguyên
             if (rs != null) try { rs.close(); } catch (SQLException e) { }
             if (stm != null) try { stm.close(); } catch (SQLException e) { }
             // Không đóng connection ở đây vì nó có thể được sử dụng bên ngoài
@@ -217,13 +185,6 @@ public class ExerciseLogService extends SwitchSceneController {
         return list;
     }
 
-    /**
-     * Lấy danh sách nhật ký bài tập của người dùng trong khoảng thời gian
-     * @param userId ID của người dùng cần lấy nhật ký
-     * @param startDate Ngày bắt đầu khoảng thời gian
-     * @param endDate Ngày kết thúc khoảng thời gian
-     * @return Danh sách các nhật ký bài tập trong khoảng thời gian
-     */
     public List<Exerciselog> getExerciseLogsByDateRange(int userId, Date startDate, Date endDate) {
         List<Exerciselog> list = new ArrayList<>();
         Connection connect = null;
@@ -292,15 +253,6 @@ public class ExerciseLogService extends SwitchSceneController {
         return list;
     }
 
-    /**
-     * Kiểm tra xem tổng thời gian tập trong một ngày có vượt quá 24 giờ (1440 phút) hay không
-     * @param userId ID của người dùng
-     * @param date Ngày cần kiểm tra
-     * @param newDuration Thời gian tập mới sẽ thêm vào (phút)
-     * @param excludeLogId ID của log hiện tại (để loại trừ khi cập nhật, null khi thêm mới)
-     * @return true nếu tổng thời gian tập vượt quá 24 giờ, false nếu không
-     * @throws SQLException nếu có lỗi xảy ra khi tương tác với CSDL
-     */
     public boolean isExceedingDailyTimeLimit(int userId, Date date, int newDuration, Integer excludeLogId) throws SQLException {
         final int MAX_MINUTES_PER_DAY = 1440; 
         
@@ -345,12 +297,9 @@ public class ExerciseLogService extends SwitchSceneController {
             // Không đóng kết nối ở đây để tránh lỗi với các thao tác tiếp theo
         }
         
-        return false; // Nếu không có dữ liệu hoặc có lỗi, giả định là chưa vượt quá giới hạn
+        return false; 
     }
 
-    /**
-     * Hàm tiện ích kiểm tra cột
-     */
     private boolean hasColumn(ResultSet rs, String columnName) throws SQLException {
         try {
             rs.findColumn(columnName);

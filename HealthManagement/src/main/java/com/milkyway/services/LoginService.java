@@ -4,6 +4,7 @@
  */
 package com.milkyway.services;
 
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.User;
 
@@ -49,6 +50,8 @@ public class LoginService {
     public User login(String username, String password) throws SQLException {
         String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE BINARY username = ?";
 
+=======
+>>>>>>> Stashed changes
         Connection conn = getConnection();
         if (conn == null) {
             return null;
@@ -112,6 +115,8 @@ public class LoginService {
                     preparedStatement.setString(4, user.getGender());
 
 
+=======
+>>>>>>> Stashed changes
                     // Handle null current_weight
                     if (user.getCurrentWeight() != null) {
                         preparedStatement.setBigDecimal(5, user.getCurrentWeight());

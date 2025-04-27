@@ -12,7 +12,6 @@ com\milkyway\healthmanagement\App.class
 com\milkyway\pojo\Exerciselog.class
 module-info.class
 com\milkyway\healthmanagement\TargetController$1.class
-com\milkyway\healthmanagement\PersonalInforController$1.class
 com\milkyway\services\NutritionGoalService.class
 com\milkyway\services\HistoryService.class
 com\milkyway\healthmanagement\ExerciseDetailController.class

@@ -19,7 +19,7 @@ public class PersonalInforService {
     public void updateUsername(int userId, String newUsername) throws SQLException {
         Connection con = JdbcUtils.getConn();
         if (con == null) {
-            return;
+            throw new SQLException("Không thể thiết lập kết nối cơ sở dữ liệu");
         }
 
         String query = "UPDATE user SET username=? WHERE id=?;";
@@ -27,14 +27,24 @@ public class PersonalInforService {
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, newUsername);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            // Ensure commit happened
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
+            
+            if (rowsAffected == 0) {
+                // No rows were affected, which might indicate an issue
+                System.out.println("Warning: No rows updated when updating username for user ID " + userId);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating username: " + e.getMessage());
+            throw e;
         } finally {
-            try {
+            // Only close the connection if it's not a test connection
+            if (con != null && !con.isClosed() && !JdbcUtils.isTestConnection(con)) {
                 con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
             }
         }
     }
@@ -42,7 +52,7 @@ public class PersonalInforService {
     public void updatePassword(int userId, String newPassword) throws SQLException {
         Connection con = JdbcUtils.getConn();
         if (con == null) {
-            return;
+            throw new SQLException("Không thể thiết lập kết nối cơ sở dữ liệu");
         }
 
         String query = "UPDATE user SET password=? WHERE id=?;";
@@ -50,14 +60,24 @@ public class PersonalInforService {
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setString(1, newPassword);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            // Ensure commit happened
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
+            
+            if (rowsAffected == 0) {
+                // No rows were affected, which might indicate an issue
+                System.out.println("Warning: No rows updated when updating password for user ID " + userId);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating password: " + e.getMessage());
+            throw e;
         } finally {
-            try {
+            // Only close the connection if it's not a test connection
+            if (con != null && !con.isClosed() && !JdbcUtils.isTestConnection(con)) {
                 con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
             }
         }
     }
@@ -65,7 +85,7 @@ public class PersonalInforService {
     public void updateWeight(int userId, BigDecimal newWeight) throws SQLException {
         Connection con = JdbcUtils.getConn();
         if (con == null) {
-            return;
+            throw new SQLException("Không thể thiết lập kết nối cơ sở dữ liệu");
         }
 
         String query = "UPDATE user SET current_weight=? WHERE id=?;";
@@ -73,14 +93,25 @@ public class PersonalInforService {
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setBigDecimal(1, newWeight);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            // Ensure commit happened
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
+            
+            if (rowsAffected == 0) {
+                // No rows were affected, which might indicate an issue
+                System.out.println("Warning: No rows updated when updating weight for user ID " + userId);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating weight: " + e.getMessage());
+            throw e;
         } finally {
-            try {
+            // Only close the connection if it's not a test connection
+            // This prevents closing the H2 in-memory database connection during tests
+            if (con != null && !con.isClosed() && !JdbcUtils.isTestConnection(con)) {
                 con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
             }
         }
     }
@@ -88,7 +119,7 @@ public class PersonalInforService {
     public void updateHeight(int userId, int newHeight) throws SQLException {
         Connection con = JdbcUtils.getConn();
         if (con == null) {
-            return;
+            throw new SQLException("Không thể thiết lập kết nối cơ sở dữ liệu");
         }
 
         String query = "UPDATE user SET height=? WHERE id=?;";
@@ -96,14 +127,24 @@ public class PersonalInforService {
         try (PreparedStatement preparedStatement = con.prepareStatement(query)) {
             preparedStatement.setInt(1, newHeight);
             preparedStatement.setInt(2, userId);
-            preparedStatement.executeUpdate();
-        } catch (SQLException se) {
-            se.printStackTrace();
+            int rowsAffected = preparedStatement.executeUpdate();
+            
+            // Ensure commit happened
+            if (!con.getAutoCommit()) {
+                con.commit();
+            }
+            
+            if (rowsAffected == 0) {
+                // No rows were affected, which might indicate an issue
+                System.out.println("Warning: No rows updated when updating height for user ID " + userId);
+            }
+        } catch (SQLException e) {
+            System.err.println("Error updating height: " + e.getMessage());
+            throw e;
         } finally {
-            try {
+            // Only close the connection if it's not a test connection
+            if (con != null && !con.isClosed() && !JdbcUtils.isTestConnection(con)) {
                 con.close();
-            } catch (SQLException throwables) {
-                throwables.printStackTrace();
             }
         }
     }

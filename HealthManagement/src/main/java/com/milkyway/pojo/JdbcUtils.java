@@ -49,4 +49,13 @@ public class JdbcUtils {
     public static void resetTestConnection() {
         testConnection = null;
     }
+    
+    /**
+     * Kiểm tra xem kết nối cụ thể có phải là kết nối thử nghiệm hay không
+     * @param conn Kết nối cần kiểm tra
+     * @return true nếu đây là kết nối thử nghiệm, false nếu không phải
+     */
+    public static boolean isTestConnection(Connection conn) {
+        return testConnection != null && testConnection.equals(conn);
+    }
 }

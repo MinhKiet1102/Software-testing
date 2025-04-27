@@ -4,7 +4,6 @@ import com.milkyway.pojo.JdbcUtils;
 import com.milkyway.pojo.Target;
 import com.milkyway.pojo.User;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,6 +25,7 @@ public class TargetServiceTest {
     
     @BeforeEach
     public void setUp() throws SQLException {
+<<<<<<< Updated upstream
         // Setup H2 in-memory database with a unique name for this test run
         String dbName = "test_db_" + System.currentTimeMillis();
         h2Connection = DriverManager.getConnection("jdbc:h2:mem:" + dbName + ";DB_CLOSE_DELAY=-1", "sa", "");
@@ -90,6 +90,68 @@ public class TargetServiceTest {
         TargetService.setTestEnvironment(true);
     }
 
+=======
+        // Thiết lập H2 database trong bộ nhớ sử dụng lớp tiện ích TestDatabaseSetup
+        h2Connection = TestDatabaseSetup.createH2Connection();
+        
+        // Tạo schema cho các bảng kiểm thử
+        try (Statement stmt = h2Connection.createStatement()) {
+            // Tạo bảng user (cần thiết cho khóa ngoại) - Đặt "user" trong ngoặc kép vì nó là từ khóa trong H2
+            stmt.execute("CREATE TABLE \"user\" (" +
+                    "id INT AUTO_INCREMENT PRIMARY KEY," +
+                    "username VARCHAR(50) NOT NULL," +
+                    "password VARCHAR(100) NOT NULL," +
+                    "email VARCHAR(100)," +
+                    "role VARCHAR(10) NOT NULL" +
+                    ")");
+            
+            // Tạo bảng target với auto-increment bắt đầu từ một số cao hơn
+            stmt.execute("CREATE TABLE target (" +
+                    "idTarget INT AUTO_INCREMENT PRIMARY KEY," +
+                    "targetName VARCHAR(100) NOT NULL," +
+                    "dateCreated DATE NOT NULL," +
+                    "startDate DATE NOT NULL," +
+                    "endDate DATE NOT NULL," +
+                    "targetNumber FLOAT NOT NULL," +
+                    "unit VARCHAR(20) NOT NULL," +
+                    "progress FLOAT NOT NULL," +
+                    "status ENUM('Not Started', 'In Progress', 'Achieved', 'Failed', 'Cancelled') NOT NULL," +
+                    "userId INT," +
+                    "FOREIGN KEY (userId) REFERENCES \"user\"(id)" +
+                    ")");
+            
+            // Chèn người dùng thử nghiệm
+            stmt.execute("INSERT INTO \"user\" (id, username, password, email, role) " +
+                    "VALUES (1, 'testuser', 'password', 'test@example.com', 'user')");
+            
+            // Chèn các mục tiêu mẫu
+            LocalDate today = LocalDate.now();
+            LocalDate yesterday = today.minusDays(1);
+            LocalDate tomorrow = today.plusDays(1);
+            LocalDate nextWeek = today.plusDays(7);
+            
+            // Sử dụng các giá trị idTarget cụ thể để tránh xung đột auto-increment
+            stmt.execute("INSERT INTO target (idTarget, targetName, dateCreated, startDate, endDate, targetNumber, unit, progress, status, userId) " +
+                    "VALUES (1, 'Test Plan 1', '" + today + "', '" + yesterday + "', '" + nextWeek + "', 100.0, 'kg', 50.0, 'In Progress', 1)");
+            
+            stmt.execute("INSERT INTO target (idTarget, targetName, dateCreated, startDate, endDate, targetNumber, unit, progress, status, userId) " +
+                    "VALUES (2, 'Achieved Plan', '" + today + "', '" + yesterday + "', '" + tomorrow + "', 100.0, 'steps', 100.0, 'Achieved', 1)");
+            
+            stmt.execute("INSERT INTO target (idTarget, targetName, dateCreated, startDate, endDate, targetNumber, unit, progress, status, userId) " +
+                    "VALUES (3, 'Not Started Plan', '" + today + "', '" + tomorrow + "', '" + nextWeek + "', 150.0, 'mins', 0.0, 'Not Started', 1)");
+            
+            // Đặt auto-increment bắt đầu sau các bản ghi đã chèn thủ công
+            stmt.execute("ALTER TABLE target ALTER COLUMN idTarget RESTART WITH 4");
+        }
+        
+        // Tạo target service
+        targetService = new TargetService();
+        
+        // Đặt môi trường kiểm thử để tránh hiển thị cảnh báo UI
+        TargetService.setTestEnvironment(true);
+    }
+    
+>>>>>>> Stashed changes
     @AfterEach
     public void tearDown() throws SQLException {
         // Reset test environment flag
