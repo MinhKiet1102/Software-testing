@@ -370,4 +370,146 @@ public class LoginServiceTest {
         // Kiểm tra kết quả
         assertNull(user, "Không nên tìm thấy người dùng với tên null");
     }
+    
+    /**
+     * Kiểm thử phương thức usernameExists với username tồn tại
+     */
+    @Test
+    public void testUsernameExistsTrue() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Tạo một LoginService mới sử dụng kết nối thử nghiệm
+        LoginService testService = new LoginService(h2Connection);
+        
+        // Kiểm tra username đã tồn tại
+        boolean exists = testService.usernameExists("admin");
+        
+        // Kiểm tra kết quả
+        assertTrue(exists, "Username 'admin' phải tồn tại");
+    }
+    
+    /**
+     * Kiểm thử phương thức usernameExists với username không tồn tại
+     */
+    @Test
+    public void testUsernameExistsFalse() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Tạo một LoginService mới sử dụng kết nối thử nghiệm
+        LoginService testService = new LoginService(h2Connection);
+        
+        // Kiểm tra username không tồn tại
+        boolean exists = testService.usernameExists("nonexistentuser");
+        
+        // Kiểm tra kết quả
+        assertFalse(exists, "Username 'nonexistentuser' không nên tồn tại");
+    }
+    
+    /**
+     * Kiểm thử phương thức usernameExists với username null
+     */
+    @Test
+    public void testUsernameExistsWithNull() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Tạo một LoginService mới sử dụng kết nối thử nghiệm
+        LoginService testService = new LoginService(h2Connection);
+        
+        // Kiểm tra với username null
+        boolean exists = testService.usernameExists(null);
+        
+        // Kiểm tra kết quả
+        assertFalse(exists, "Username null không nên tồn tại");
+    }
+    
+    /**
+     * Kiểm thử phương thức usernameExists với username rỗng
+     */
+    @Test
+    public void testUsernameExistsWithEmpty() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Tạo một LoginService mới sử dụng kết nối thử nghiệm
+        LoginService testService = new LoginService(h2Connection);
+        
+        // Kiểm tra với username rỗng
+        boolean exists = testService.usernameExists("");
+        
+        // Kiểm tra kết quả
+        assertFalse(exists, "Username rỗng không nên tồn tại");
+    }
+    
+    /**
+     * Kiểm thử phương thức countAdminUsers
+     */
+    @Test
+    public void testCountAdminUsers() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Tạo một LoginService mới sử dụng kết nối thử nghiệm
+        LoginService testService = new LoginService(h2Connection);
+        
+        // Đếm số lượng admin
+        int count = testService.countAdminUsers();
+        
+        // Kiểm tra kết quả - mặc định có 1 admin "admin"
+        assertEquals(1, count, "Phải có đúng 1 admin trong cơ sở dữ liệu thử nghiệm");
+    }
+    
+    /**
+     * Kiểm thử phương thức countAdminUsers khi không có admin nào
+     */
+    @Test
+    public void testCountAdminUsersWithNoAdmin() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Xóa toàn bộ người dùng admin khỏi cơ sở dữ liệu
+        try (PreparedStatement stmt = h2Connection.prepareStatement("UPDATE user SET role = 'USER' WHERE role = 'ADMIN'")) {
+            stmt.executeUpdate();
+        }
+        
+        // Tạo một LoginService mới sử dụng kết nối thử nghiệm
+        LoginService testService = new LoginService(h2Connection);
+        
+        // Đếm số lượng admin
+        int count = testService.countAdminUsers();
+        
+        // Kiểm tra kết quả - không có admin nào
+        assertEquals(0, count, "Không nên có admin nào trong cơ sở dữ liệu khi tất cả đã bị chuyển sang USER");
+    }
+    
+    /**
+     * Kiểm thử phương thức countAdminUsers với nhiều admin
+     */
+    @Test
+    public void testCountMultipleAdminUsers() throws SQLException {
+        // Đảm bảo kết nối vẫn mở
+        ensureConnectionIsOpen();
+        
+        // Thêm một admin mới
+        User newAdmin = new User();
+        newAdmin.setUsername("admin2");
+        newAdmin.setPassword("admin2pass");
+        newAdmin.setEmail("admin2@example.com");
+        newAdmin.setRole("ADMIN");
+        newAdmin.setRegistrationDate(new Date());
+        
+        // Đăng ký người dùng admin mới
+        loginService.register(newAdmin);
+        
+        // Tạo một LoginService mới sử dụng kết nối thử nghiệm
+        LoginService testService = new LoginService(h2Connection);
+        
+        // Đếm số lượng admin
+        int count = testService.countAdminUsers();
+        
+        // Kiểm tra kết quả - phải có 2 admin
+        assertEquals(2, count, "Phải có đúng 2 admin trong cơ sở dữ liệu thử nghiệm");
+    }
 }
