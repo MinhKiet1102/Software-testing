@@ -210,13 +210,6 @@ public class HomeController extends SwitchSceneController implements Initializab
             nutritionSummary.put("Sugar", 0.0);         // Đơn vị: gram (g)
             nutritionSummary.put("Natri", 0.0);         // Đơn vị: milligram (mg)
             
-            // Tạo dữ liệu mẫu khi không có dữ liệu thực
-            nutritionSummary.put("Carbohydrate", 100.0);
-            nutritionSummary.put("Protein", 75.0);
-            nutritionSummary.put("Lipid", 50.0);
-            nutritionSummary.put("Sugar", 25.0);
-            nutritionSummary.put("Natri", 150.0);
-            
             // Lấy danh sách tất cả bữa ăn của người dùng từ trước đến ngày hiện tại
             try {
                 if (User.getCurrentUser() != null) {
@@ -274,55 +267,68 @@ public class HomeController extends SwitchSceneController implements Initializab
             } catch (Exception e) {
                 Logger.getLogger(HomeController.class.getName()).log(Level.SEVERE, "Không thể lấy dữ liệu bữa ăn", e);
                 e.printStackTrace();
-                // Vẫn tiếp tục vẽ biểu đồ với dữ liệu mẫu đã thiết lập
+                // Vẫn tiếp tục vẽ biểu đồ với dữ liệu trống
             }
             
             // Xóa dữ liệu cũ trong biểu đồ
             chartFood.getData().clear();
             
+            // Biến để theo dõi xem có dữ liệu thực tế không
+            boolean hasData = false;
+            
             // Tạo dữ liệu cho biểu đồ
             for (Map.Entry<String, Double> entry : nutritionSummary.entrySet()) {
-                // Tạo một phần (slice) của biểu đồ tròn
-                String unit = entry.getKey().equals("Natri") ? "mg" : "g";
-                PieChart.Data slice = new PieChart.Data(
-                    entry.getKey() + " (" + String.format("%.1f", entry.getValue()) + " " + unit + ")", 
-                    entry.getValue()
-                );
-                chartFood.getData().add(slice);
-            
-                // Thêm tooltip khi hover chuột vào từng phần của biểu đồ để hiển thị thông tin chi tiết
-                Tooltip tooltip = new Tooltip(entry.getKey() + ": " + String.format("%.1f", entry.getValue()) + " " + unit);
-                tooltip.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+                // Chỉ thêm dữ liệu vào biểu đồ nếu có giá trị > 0
+                if (entry.getValue() > 0) {
+                    hasData = true;
+                    // Tạo một phần (slice) của biểu đồ tròn
+                    String unit = entry.getKey().equals("Natri") ? "mg" : "g";
+                    PieChart.Data slice = new PieChart.Data(
+                        entry.getKey() + " (" + String.format("%.1f", entry.getValue()) + " " + unit + ")", 
+                        entry.getValue()
+                    );
+                    chartFood.getData().add(slice);
                 
-                // Đảm bảo rằng chúng ta không thực hiện thao tác này trước khi JavaFX hoàn thành quá trình hiển thị
-                Platform.runLater(() -> {
-                    if (slice.getNode() != null) {
-                        Tooltip.install(slice.getNode(), tooltip);
-                        
-                        // Thêm màu riêng cho từng loại dinh dưỡng để dễ phân biệt
-                        switch(entry.getKey()) {
-                            case "Carbohydrate":
-                                slice.getNode().setStyle("-fx-pie-color: #FFA726;"); // Màu cam
-                                break;
-                            case "Protein":
-                                slice.getNode().setStyle("-fx-pie-color: #66BB6A;"); // Màu xanh lá
-                                break;
-                            case "Lipid":
-                                slice.getNode().setStyle("-fx-pie-color: #EF5350;"); // Màu đỏ
-                                break;
-                            case "Sugar":
-                                slice.getNode().setStyle("-fx-pie-color: #42A5F5;"); // Màu xanh dương
-                                break;
-                            case "Natri":
-                                slice.getNode().setStyle("-fx-pie-color: #AB47BC;"); // Màu tím
-                                break;
+                    // Thêm tooltip khi hover chuột vào từng phần của biểu đồ để hiển thị thông tin chi tiết
+                    Tooltip tooltip = new Tooltip(entry.getKey() + ": " + String.format("%.1f", entry.getValue()) + " " + unit);
+                    tooltip.setStyle("-fx-font-size: 12px; -fx-font-weight: bold;");
+                    
+                    // Đảm bảo rằng chúng ta không thực hiện thao tác này trước khi JavaFX hoàn thành quá trình hiển thị
+                    final PieChart.Data sliceFinal = slice;
+                    Platform.runLater(() -> {
+                        if (sliceFinal.getNode() != null) {
+                            Tooltip.install(sliceFinal.getNode(), tooltip);
+                            
+                            // Thêm màu riêng cho từng loại dinh dưỡng để dễ phân biệt
+                            switch(entry.getKey()) {
+                                case "Carbohydrate":
+                                    sliceFinal.getNode().setStyle("-fx-pie-color: #FFA726;"); // Màu cam
+                                    break;
+                                case "Protein":
+                                    sliceFinal.getNode().setStyle("-fx-pie-color: #66BB6A;"); // Màu xanh lá
+                                    break;
+                                case "Lipid":
+                                    sliceFinal.getNode().setStyle("-fx-pie-color: #EF5350;"); // Màu đỏ
+                                    break;
+                                case "Sugar":
+                                    sliceFinal.getNode().setStyle("-fx-pie-color: #42A5F5;"); // Màu xanh dương
+                                    break;
+                                case "Natri":
+                                    sliceFinal.getNode().setStyle("-fx-pie-color: #AB47BC;"); // Màu tím
+                                    break;
+                            }
                         }
-                    }
-                });
+                    });
+                }
+            }
+            
+            // Nếu không có dữ liệu, hiển thị một mẫu để biểu đồ không trống
+            if (!hasData) {
+                chartFood.getData().add(new PieChart.Data("Không có dữ liệu", 1));
             }
 
             // Thêm các thuộc tính hiển thị cho biểu đồ
-            chartFood.setTitle("Tổng Hợp Dinh Dưỡng (Tất Cả Ngày)");
+            chartFood.setTitle("Tổng Hợp Dinh Dưỡng");
             chartFood.setLabelLineLength(10);
             chartFood.setLabelsVisible(true);
             chartFood.setStartAngle(90);
@@ -338,11 +344,9 @@ public class HomeController extends SwitchSceneController implements Initializab
             ex.printStackTrace();
             showAlert(Alert.AlertType.ERROR, "Lỗi", "Không thể tải dữ liệu dinh dưỡng: " + ex.getMessage());
             
-            // Hiển thị một biểu đồ mẫu khi có lỗi
+            // Hiển thị một biểu đồ mẫu khi có lỗi - chỉ hiển thị thông báo "Không có dữ liệu"
             chartFood.getData().clear();
-            chartFood.getData().add(new PieChart.Data("Carbohydrate (100.0 g)", 100.0));
-            chartFood.getData().add(new PieChart.Data("Protein (75.0 g)", 75.0));
-            chartFood.getData().add(new PieChart.Data("Lipid (50.0 g)", 50.0));
+            chartFood.getData().add(new PieChart.Data("Không có dữ liệu", 1));
         }
     }
 

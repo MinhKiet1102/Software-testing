@@ -22,57 +22,40 @@ import java.util.Calendar;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Kiểm thử tích hợp cho HistoryService sử dụng H2 database
- */
+
 public class HistoryServiceTest {
     
     private Connection h2Connection;
     private HistoryService historyService;
     private User currentUser;
     
-    /**
-     * Thiết lập H2 database trong bộ nhớ trước mỗi kiểm thử
-     */
+ 
     @BeforeEach
     public void setUp() throws Exception {
-        // Khởi tạo kết nối H2 database trong bộ nhớ và cấu hình MODE=MySQL để tương thích tốt hơn
         h2Connection = DriverManager.getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=MySQL;DATABASE_TO_UPPER=FALSE;NON_KEYWORDS=USER", "sa", "");
         
-        // Bật SQL trace để debug các câu lệnh SQL
         try (Statement stmt = h2Connection.createStatement()) {
             stmt.execute("SET TRACE_LEVEL_SYSTEM_OUT=3");
         }
         
-        // Thiết lập kết nối thử nghiệm trong JdbcUtils
         JdbcUtils.setTestConnection(h2Connection);
         
-        // Tạo các bảng thử nghiệm
         createUserTable();
         createHistoryTable();
-        
-        // Tạo và thiết lập người dùng hiện tại cho các bài kiểm tra 
         setupCurrentUser();
         
-        // Chèn dữ liệu thử nghiệm
         insertTestData();
         
-        // Khởi tạo service
         historyService = new HistoryService();
     }
     
-    /**
-     * Dọn dẹp sau mỗi kiểm thử
-     */
+ 
     @AfterEach
     public void tearDown() throws Exception {
-        // Xóa người dùng hiện tại
         cleanupCurrentUser();
         
         try {
-            // Đảm bảo kết nối vẫn mở
             if (h2Connection != null && !h2Connection.isClosed()) {
-                // Chỉ xóa dữ liệu, không xóa bảng và không đóng kết nối
                 try (Statement stmt = h2Connection.createStatement()) {
                     // Tắt ràng buộc khóa ngoại tạm thời để có thể xóa dữ liệu
                     stmt.execute("SET REFERENTIAL_INTEGRITY FALSE");
