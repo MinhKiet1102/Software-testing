@@ -49,6 +49,7 @@ public class LoginService {
 
     public User login(String username, String password) throws SQLException {
         String sql = "SELECT id, username, password, email, gender, current_weight, age, height, registration_date, role FROM user WHERE BINARY username = ?";
+<<<<<<< Updated upstream
 
 =======
 >>>>>>> Stashed changes
@@ -114,6 +115,7 @@ public class LoginService {
                     preparedStatement.setString(3, user.getEmail());
                     preparedStatement.setString(4, user.getGender());
 
+<<<<<<< Updated upstream
 
 =======
 >>>>>>> Stashed changes
@@ -153,7 +155,10 @@ public class LoginService {
                 String query = "INSERT INTO user (username, password, email, gender, current_weight, age, height, registration_date, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
                 try (PreparedStatement preparedStatement = conn.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
                     preparedStatement.setString(1, user.getUsername());
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
                     String hashedPassword = new BCryptPasswordEncoder().encode(user.getPassword());
                     preparedStatement.setString(2, hashedPassword);
 
@@ -208,7 +213,9 @@ public class LoginService {
                 }
             }
         }
-    }
+    }  
+
+
 
     public User getUserByUsername(String username) throws SQLException {
         // Nếu đang kiểm thử, sử dụng kết nối đã được truyền vào
