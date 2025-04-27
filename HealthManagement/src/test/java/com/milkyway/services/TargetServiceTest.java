@@ -25,72 +25,6 @@ public class TargetServiceTest {
     
     @BeforeEach
     public void setUp() throws SQLException {
-<<<<<<< Updated upstream
-        // Setup H2 in-memory database with a unique name for this test run
-        String dbName = "test_db_" + System.currentTimeMillis();
-        h2Connection = DriverManager.getConnection("jdbc:h2:mem:" + dbName + ";DB_CLOSE_DELAY=-1", "sa", "");
-        
-        // Set the H2 connection as test connection in JdbcUtils
-        JdbcUtils.setTestConnection(h2Connection);
-        
-        // Create test table schema
-        try (Statement stmt = h2Connection.createStatement()) {
-            // Create user table (needed for foreign key) - Đặt "user" trong ngoặc kép vì nó là từ khóa trong H2
-            stmt.execute("CREATE TABLE \"user\" (" +
-                    "id INT AUTO_INCREMENT PRIMARY KEY," +
-                    "username VARCHAR(50) NOT NULL," +
-                    "password VARCHAR(100) NOT NULL," +
-                    "email VARCHAR(100)," +
-                    "role VARCHAR(10) NOT NULL" +
-                    ")");
-            
-            // Create target table with explicit auto-increment starting from a higher number
-            stmt.execute("CREATE TABLE target (" +
-                    "idTarget INT AUTO_INCREMENT PRIMARY KEY," +
-                    "targetName VARCHAR(100) NOT NULL," +
-                    "dateCreated DATE NOT NULL," +
-                    "startDate DATE NOT NULL," +
-                    "endDate DATE NOT NULL," +
-                    "targetNumber FLOAT NOT NULL," +
-                    "unit VARCHAR(20) NOT NULL," +
-                    "progress FLOAT NOT NULL," +
-                    "status ENUM('Not Started', 'In Progress', 'Achieved', 'Failed', 'Cancelled') NOT NULL," +
-                    "userId INT," +
-                    "FOREIGN KEY (userId) REFERENCES \"user\"(id)" +
-                    ")");
-            
-            // Insert test user
-            stmt.execute("INSERT INTO \"user\" (id, username, password, email, role) " +
-                    "VALUES (1, 'testuser', 'password', 'test@example.com', 'user')");
-            
-            // Insert sample targets
-            LocalDate today = LocalDate.now();
-            LocalDate yesterday = today.minusDays(1);
-            LocalDate tomorrow = today.plusDays(1);
-            LocalDate nextWeek = today.plusDays(7);
-            
-            // Use explicit idTarget values to avoid auto-increment conflicts
-            stmt.execute("INSERT INTO target (idTarget, targetName, dateCreated, startDate, endDate, targetNumber, unit, progress, status, userId) " +
-                    "VALUES (1, 'Test Plan 1', '" + today + "', '" + yesterday + "', '" + nextWeek + "', 100.0, 'kg', 50.0, 'In Progress', 1)");
-            
-            stmt.execute("INSERT INTO target (idTarget, targetName, dateCreated, startDate, endDate, targetNumber, unit, progress, status, userId) " +
-                    "VALUES (2, 'Achieved Plan', '" + today + "', '" + yesterday + "', '" + tomorrow + "', 100.0, 'steps', 100.0, 'Achieved', 1)");
-            
-            stmt.execute("INSERT INTO target (idTarget, targetName, dateCreated, startDate, endDate, targetNumber, unit, progress, status, userId) " +
-                    "VALUES (3, 'Not Started Plan', '" + today + "', '" + tomorrow + "', '" + nextWeek + "', 150.0, 'mins', 0.0, 'Not Started', 1)");
-            
-            // Set the auto-increment to start after our manually inserted records
-            stmt.execute("ALTER TABLE target ALTER COLUMN idTarget RESTART WITH 4");
-        }
-        
-        // Create target service
-        targetService = new TargetService();
-        
-        // Set test environment to avoid UI alerts
-        TargetService.setTestEnvironment(true);
-    }
-
-=======
         // Thiết lập H2 database trong bộ nhớ sử dụng lớp tiện ích TestDatabaseSetup
         h2Connection = TestDatabaseSetup.createH2Connection();
         
@@ -151,7 +85,6 @@ public class TargetServiceTest {
         TargetService.setTestEnvironment(true);
     }
     
->>>>>>> Stashed changes
     @AfterEach
     public void tearDown() throws SQLException {
         // Reset test environment flag
