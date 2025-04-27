@@ -5,11 +5,9 @@ module com.milkyway.healthmanagement {
     requires java.base;
     requires java.persistence;
     requires java.sql;
-    requires spring.security.crypto;
     
     requires de.jensd.fx.glyphs.fontawesome;
     requires spring.security.crypto;
-
 
     requires java.mail;
     requires activation;
